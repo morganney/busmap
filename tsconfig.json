@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "noEmit": true,
+    "declaration": false,
+    "isolatedModules": true,
+    "lib": ["DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "module": "NodeNext",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}

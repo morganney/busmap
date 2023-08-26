@@ -1,0 +1,62 @@
+services:
+  api:
+    build:
+      context: .
+      target: busmap
+    container_name: api
+    volumes:
+      - .:/app:delegated
+      - shared_node_modules:/app/node_modules
+      - api_node_modules:/app/packages/api/node_modules
+    ports:
+      - "3000:3000"
+    entrypoint:
+      - npm
+      - run
+      - start
+      - -w
+      - api
+  ui:
+    depends_on:
+      - api
+    build:
+      context: .
+      target: busmap
+    container_name: ui
+    volumes:
+      - .:/app:delegated
+      - shared_node_modules:/app/node_modules
+      - ui_node_modules:/app/packages/ui/node_modules
+    ports:
+      - "5173:5173"
+    entrypoint:
+      - npm
+      - run
+      - dev
+      - -w
+      - ui
+  dev:
+    depends_on:
+      - ui
+    build:
+      context: .
+      target: dev
+    container_name: dev
+    ports:
+      - "80:80"
+      - "443:443"
+  web:
+    depends_on:
+      - ui
+    build:
+      context: .
+      target: web
+    container_name: web
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  shared_node_modules:
+  api_node_modules:
+  ui_node_modules:
