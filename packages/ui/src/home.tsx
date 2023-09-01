@@ -1,3 +1,8 @@
+import styled from 'styled-components'
+
+const Homey = styled.p`
+  margin: 0;
+`
 export const Home = () => {
-  return <p>Home</p>
+  return <Homey>home</Homey>
 }

@@ -3,9 +3,10 @@ WORKDIR /app
 COPY package-lock.json package.json .
 COPY packages/api/package.json /app/packages/api/package.json
 COPY packages/ui/package.json /app/packages/ui/package.json
+COPY packages/components/package.json /app/packages/components/package.json
 RUN npm config set registry https://registry.npmjs.org/
 RUN npm install
-EXPOSE 3000 5173
+EXPOSE 3000 5173 9000
 
 FROM nginx:1.25.2 AS dev
 # core nginx conf

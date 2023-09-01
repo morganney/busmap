@@ -1,0 +1,57 @@
+{
+  "name": "@busmap/components",
+  "version": "1.0.0-alpha.0",
+  "description": "BusMap component library.",
+  "type": "module",
+  "main": "dist",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "prettier": "prettier -w .",
+    "lint": "eslint . src --ext .ts,.tsx",
+    "storybook": "storybook dev -p 9000",
+    "build": "duel",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react",
+    "component",
+    "library"
+  ],
+  "author": "Morgan Ney <morganney@gmail.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "styled-components": "^5.3.11"
+  },
+  "dependencies": {
+    "downshift": "^8.1.0",
+    "hex-rgb": "^5.0.0",
+    "lodash.debounce": "^4.0.8",
+    "match-sorter": "^6.3.1"
+  },
+  "devDependencies": {
+    "@knighted/duel": "^1.0.0-rc.13",
+    "@storybook/addon-essentials": "^7.3.2",
+    "@storybook/builder-vite": "^7.3.2",
+    "@storybook/react": "^7.3.2",
+    "@storybook/react-vite": "^7.3.2",
+    "@types/lodash.debounce": "^4.0.7",
+    "@types/styled-components": "^5.1.26",
+    "storybook": "^7.3.2",
+    "styled-components": "^5.3.11"
+  }
+}

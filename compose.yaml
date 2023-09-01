@@ -27,6 +27,7 @@ services:
       - .:/app:delegated
       - shared_node_modules:/app/node_modules
       - ui_node_modules:/app/packages/ui/node_modules
+      - components_node_modules:/app/packages/components/node_modules
     ports:
       - "5173:5173"
     entrypoint:
@@ -35,6 +36,23 @@ services:
       - dev
       - -w
       - ui
+  storybook:
+    build:
+      context: .
+      target: busmap
+    container_name: storybook
+    volumes:
+      - .:/app:delegated
+      - shared_node_modules:/app/node_modules
+      - components_node_modules:/app/packages/components/node_modules
+    ports:
+      - "9000:9000"
+    entrypoint:
+      - npm
+      - run
+      - storybook
+      - -w
+      - "@busmap/components"
   dev:
     depends_on:
       - ui
@@ -60,3 +78,4 @@ volumes:
   shared_node_modules:
   api_node_modules:
   ui_node_modules:
+  components_node_modules:
