@@ -15,6 +15,7 @@ const Agencies: FC<Props> = ({ agencies }) => {
     <>
       <p>Selection: {selection || 'n/a'}</p>
       <AutoSuggest
+        inputBoundByItems
         placeholder="Select a transit agency"
         items={agencies.map(agency => agency.title)}
         onChange={onChange}

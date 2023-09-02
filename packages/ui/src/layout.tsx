@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query'
 import { createPortal } from 'react-dom'
 import type { FC, ReactNode } from 'react'
-import { Input } from '@busmap/components'
 
 import { Agencies } from './components/agencies.js'
 
@@ -15,7 +14,7 @@ export const Layout: FC<{ children: ReactNode }> = ({ children }) => {
 
   if (error) {
     if (error instanceof Error) {
-      return <Input value={error.message} />
+      return <p>An unexpected error occured: {error.message}</p>
     }
   }
 
