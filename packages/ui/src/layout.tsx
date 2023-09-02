@@ -1,8 +1,9 @@
 import { useQuery } from 'react-query'
 import { createPortal } from 'react-dom'
-import type { FC, ReactNode } from 'react'
 
 import { Agencies } from './components/agencies.js'
+
+import type { FC, ReactNode } from 'react'
 
 export const Layout: FC<{ children: ReactNode }> = ({ children }) => {
   const { data, error } = useQuery('agencies', async () => {

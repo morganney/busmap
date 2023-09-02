@@ -1,9 +1,10 @@
 import { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import type { StoryFn } from '@storybook/react'
-import type { ChangeEvent, FC } from 'react'
 
 import { AutoSuggest } from './mod.js'
+
+import type { StoryFn } from '@storybook/react'
+import type { ChangeEvent, FC } from 'react'
 
 type Story = StoryFn<typeof AutoSuggest>
 

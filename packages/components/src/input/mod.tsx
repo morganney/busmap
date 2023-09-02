@@ -1,9 +1,10 @@
 import { forwardRef, useCallback, useState, useRef } from 'react'
 import styled from 'styled-components'
-import type { KeyboardEvent, ChangeEvent, ForwardedRef, FocusEvent } from 'react'
 
 import { ClearIcon } from '../clearIcon/mod.js'
 import { sizing } from '../styles.js'
+
+import type { KeyboardEvent, ChangeEvent, ForwardedRef, FocusEvent } from 'react'
 import type { Size } from '../types.js'
 
 interface InputProps {

@@ -4,14 +4,14 @@ import { matchSorter } from 'match-sorter'
 import debounce from 'lodash.debounce'
 import styled from 'styled-components'
 
-import type { UseComboboxStateChange, UseComboboxStateChangeTypes } from 'downshift'
-import type { ChangeEvent, FC, ReactNode } from 'react'
-
 import { SelectWrap, SelectMenuWrap, SelectMenu, SelectItem } from '../core.js'
 import { focusedStyles, sizing } from '../styles.js'
 import { Input } from '../input/mod.js'
 import { PB40T, SLB30T } from '../colors.js'
 import { ChevronDown } from '../chevronDown/mod.js'
+
+import type { ChangeEvent, FC, ReactNode } from 'react'
+import type { UseComboboxStateChange, UseComboboxStateChangeTypes } from 'downshift'
 import type { Size } from '../types.js'
 
 interface Item {

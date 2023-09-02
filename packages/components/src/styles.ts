@@ -1,7 +1,6 @@
 import { css } from 'styled-components'
 
 import { PB40T, PB80T, SLB30T } from './colors.js'
-
 import { MenuDirection } from './types.js'
 
 const sizing = {
