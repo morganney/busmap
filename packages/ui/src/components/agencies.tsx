@@ -1,19 +1,27 @@
-import type { FC } from 'react'
+import { useCallback, useState } from 'react'
+import { AutoSuggest } from '@busmap/components'
+import type { ChangeEvent, FC } from 'react'
 
 interface Props {
   agencies: { region: string; title: string; id: string }[]
 }
 const Agencies: FC<Props> = ({ agencies }) => {
-  return agencies.map(agency => (
-    <dl key={agency.id}>
-      <dt>Region</dt>
-      <dd>{agency.region}</dd>
-      <dt>Title</dt>
-      <dd>{agency.title}</dd>
-      <dt>ID</dt>
-      <dd>{agency.id}</dd>
-    </dl>
-  ))
+  const [selection, setSelection] = useState('')
+  const onChange = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
+    setSelection(evt.target.value)
+  }, [])
+
+  return (
+    <>
+      <p>Selection: {selection || 'n/a'}</p>
+      <AutoSuggest
+        inputBoundByItems
+        placeholder="Select a transit agency"
+        items={agencies.map(agency => agency.title)}
+        onChange={onChange}
+      />
+    </>
+  )
 }
 
 export { Agencies }

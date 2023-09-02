@@ -16,6 +16,7 @@ const GlobalStyles = createGlobalStyle`
   }
   body {
     display: grid;
+    grid-auto-rows: max-content;
     margin: 0;
     background-color: var(--bg-color);
   }

@@ -5,12 +5,18 @@ import type { FC, ReactNode } from 'react'
 import { Agencies } from './components/agencies.js'
 
 export const Layout: FC<{ children: ReactNode }> = ({ children }) => {
-  const { data } = useQuery('agencies', async () => {
+  const { data, error } = useQuery('agencies', async () => {
     const resp = await fetch('/restbus/agencies')
     const json = await resp.json()
 
     return json
   })
+
+  if (error) {
+    if (error instanceof Error) {
+      return <p>An unexpected error occured: {error.message}</p>
+    }
+  }
 
   if (data) {
     return (
