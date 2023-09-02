@@ -27,9 +27,9 @@ jobs:
         with:
           name: npm-debug-log-${{ hashFiles('package-lock.json') }}
           path: npm-debug.log
-      - name: Lint
-        run: npm run lint
       - name: Build Components
         run: npm run build -w @busmap/components
       - name: Build UI
         run: npm run build -w ui
+      - name: Lint
+        run: npm run lint
