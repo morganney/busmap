@@ -7,8 +7,9 @@ import {
   getMenuDirectionStyles,
   getToggleDirectionStyles,
 } from './styles.js'
-import type { MenuDirection } from './types.js'
 import { PB40T, SLB30T } from './colors.js'
+
+import type { MenuDirection } from './types.js'
 
 interface CoreProps {
   menuDirection?: MenuDirection

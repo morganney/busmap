@@ -1,9 +1,9 @@
 import { useMemo, useState, useRef, useEffect } from 'react'
 import debounce from 'lodash.debounce'
 
-import type { FC, ChangeEvent } from 'react'
-
 import { Input } from '../input/mod.js'
+
+import type { FC, ChangeEvent } from 'react'
 
 interface DataListProps {
   value?: string

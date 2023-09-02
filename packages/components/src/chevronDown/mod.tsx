@@ -1,8 +1,8 @@
 import styled from 'styled-components'
 
-import type { FC } from 'react'
-
 import { SLB30T } from '../colors.js'
+
+import type { FC } from 'react'
 import type { Size } from '../types.js'
 
 interface ChevronDownProps {

@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { createGlobalStyle } from 'styled-components'
-import type { FC } from 'react'
 
 import { Providers } from './providers.js'
 import { Layout } from './layout.js'
 import { Home } from './home.js'
+
+import type { FC } from 'react'
 
 const GlobalStyles = createGlobalStyle`
   :root {

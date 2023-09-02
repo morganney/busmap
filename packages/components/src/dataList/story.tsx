@@ -1,6 +1,6 @@
-import type { StoryObj } from '@storybook/react'
-
 import { DataList } from './mod.js'
+
+import type { StoryObj } from '@storybook/react'
 
 type Story = StoryObj<typeof DataList>
 

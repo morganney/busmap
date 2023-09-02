@@ -1,9 +1,9 @@
-import type { StoryFn } from '@storybook/react'
 import { useState, useCallback, useRef } from 'react'
 
-import type { ChangeEvent } from 'react'
-
 import { Input } from './mod.js'
+
+import type { StoryFn } from '@storybook/react'
+import type { ChangeEvent } from 'react'
 
 const Single: StoryFn<typeof Input> = args => {
   const ref = useRef<HTMLInputElement>(null)

@@ -7,21 +7,41 @@
   },
   "extends": [
     "eslint:recommended",
+    "plugin:n/recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
-    "plugin:jsx-a11y/recommended",
-    "plugin:react-hooks/recommended"
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
   "ignorePatterns": ["dist"],
-  "plugins": ["react", "react-hooks", "jsx-a11y"],
+  "plugins": ["@typescript-eslint", "import", "react", "react-hooks", "jsx-a11y"],
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2024,
+    "sourceType": "module"
+  },
   "settings": {
+    "import/resolver": {
+      "node": true,
+      "typescript": true
+    },
     "react": {
       "version": "detect"
     }
   },
   "rules": {
-    "no-console": "error"
+    "no-console": "error",
+    "n/no-missing-import": "off",
+    "n/no-unpublished-import": "off",
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "internal", "index", "sibling", "parent", "type"],
+        "newlines-between": "always"
+      }
+    ]
   }
 }

@@ -7,6 +7,7 @@
   "scripts": {
     "prettier": "prettier -w .",
     "lint": "eslint . src --ext .ts,.tsx --no-error-on-unmatched-pattern",
+    "lint:fix": "npm run lint -- --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Morgan Ney <morganney@gmail.com>"

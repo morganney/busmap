@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from 'react-query'
+
 import type { ReactNode, FC } from 'react'
 
 const queryClient = new QueryClient({

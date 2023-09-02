@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
 
-import type { FC, KeyboardEvent } from 'react'
-
 import { SLB30T } from '../colors.js'
+
+import type { FC, KeyboardEvent } from 'react'
 import type { Size } from '../types.js'
 
 interface ClearIconProps {
