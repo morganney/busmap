@@ -29,7 +29,7 @@ jobs:
           path: npm-debug.log
       - name: Lint
         run: npm run lint
-      - name: Build UI
-        run: npm run build -w ui
       - name: Build Components
         run: npm run build -w @busmap/components
+      - name: Build UI
+        run: npm run build -w ui
