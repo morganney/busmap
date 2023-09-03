@@ -5,7 +5,7 @@ import { Input } from './mod.js'
 import type { StoryFn } from '@storybook/react'
 import type { ChangeEvent } from 'react'
 
-const Single: StoryFn<typeof Input> = args => {
+const Primary: StoryFn<typeof Input> = args => {
   const ref = useRef<HTMLInputElement>(null)
   const [value, setValue] = useState('')
   const onChange = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
@@ -36,49 +36,49 @@ export default {
   component: Input,
   args: {
     size: 'medium',
-    placeholder: 'placeholder',
+    placeholder: 'placeholder'
   },
   argTypes: {
     id: {
       table: {
-        disable: true,
-      },
+        disable: true
+      }
     },
     list: {
       table: {
-        disable: true,
-      },
+        disable: true
+      }
     },
     labelledBy: {
       table: {
-        disable: true,
-      },
+        disable: true
+      }
     },
     size: {
       control: 'select',
-      options: ['small', 'medium', 'large'],
+      options: ['small', 'medium', 'large']
     },
     fontSize: {
-      control: 'text',
+      control: 'text'
     },
     isDisabled: {
-      control: 'boolean',
+      control: 'boolean'
     },
     color: {
-      control: 'color',
+      control: 'color'
     },
     borderColor: {
-      control: 'color',
+      control: 'color'
     },
     value: {
-      control: false,
+      control: false
     },
     placeholder: {
-      control: 'text',
+      control: 'text'
     },
     onChange: {
-      action: 'onChange',
-    },
-  },
+      action: 'onChange'
+    }
+  }
 }
-export { Single }
+export { Primary }

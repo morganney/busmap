@@ -20,7 +20,7 @@ const DataList: FC<DataListProps> = ({
   placeholder,
   loadOptions,
   onChange,
-  onBlur,
+  onBlur
 }) => {
   const [options, setOptions] = useState(items || [])
   const loadOptionsRef = useRef(
@@ -33,8 +33,8 @@ const DataList: FC<DataListProps> = ({
         setOptions(newOptions)
       },
       250,
-      { leading: true },
-    ),
+      { leading: true }
+    )
   )
   const [listId] = useMemo(() => {
     const randomValues = Array.from(window.crypto.getRandomValues(new Uint32Array(1)))

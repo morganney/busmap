@@ -1,52 +1,16 @@
-import styled from 'styled-components'
 import { useCallback } from 'react'
 
-import { SLB30T } from '../colors.js'
+import { Icon } from '../common.js'
 
 import type { FC, KeyboardEvent } from 'react'
-import type { Size } from '../types.js'
+import type { IconProps } from '../common.js'
 
-interface ClearIconProps {
-  size?: Size
-  color?: string
-  onClick?: () => void
-  className?: string
-  tabIndex?: number
-}
-
-const getSizing = (size: Size) => {
-  switch (size) {
-    case 'small':
-      return '16px'
-    case 'medium':
-      return '24px'
-    case 'large':
-      return '32px'
-  }
-}
-const Icon = styled.span<{ $size: Size; $color: string }>`
-  display: flex;
-  width: ${({ $size }) => getSizing($size)};
-  height: ${({ $size }) => getSizing($size)};
-  color: ${({ $color }) => $color};
-  cursor: pointer;
-
-  svg {
-    fill: currentColor;
-  }
-
-  &:focus-visible {
-    outline: none;
-    border: 1px solid ${SLB30T};
-    border-radius: 50%;
-  }
-`
-const ClearIcon: FC<ClearIconProps> = ({
+const Clear: FC<IconProps> = ({
   onClick,
   className,
   size = 'medium',
   color = '#c1c1c199',
-  tabIndex = 0,
+  tabIndex = 0
 }) => {
   const handleOnClick = useCallback(() => {
     if (typeof onClick === 'function') {
@@ -59,13 +23,13 @@ const ClearIcon: FC<ClearIconProps> = ({
         handleOnClick()
       }
     },
-    [handleOnClick],
+    [handleOnClick]
   )
 
   return (
     <Icon
-      $size={size}
-      $color={color}
+      size={size}
+      color={color}
       onClick={handleOnClick}
       onKeyDown={onKeyDown}
       className={className}
@@ -78,5 +42,4 @@ const ClearIcon: FC<ClearIconProps> = ({
   )
 }
 
-export { ClearIcon }
-export type { ClearIconProps }
+export { Clear }

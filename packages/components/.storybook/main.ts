@@ -13,19 +13,19 @@ const config: StorybookConfig = {
    * @see https://github.com/storybookjs/storybook/issues/21414#issuecomment-1694357674
    */
   features: {
-    storyStoreV7: false,
+    storyStoreV7: false
   },
   core: {
     builder: {
       name: '@storybook/builder-vite',
       options: {
-        viteConfigPath: '../ui/vite.config.ts',
-      },
-    },
+        viteConfigPath: '../ui/vite.config.ts'
+      }
+    }
   },
   async viteFinal(config) {
     return config
-  },
+  }
 }
 
 export default config
