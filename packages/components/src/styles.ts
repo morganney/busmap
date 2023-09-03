@@ -11,14 +11,14 @@ const sizing = {
       top: '5px',
       left: '10px',
       right: '10px',
-      padding: '8px 14px 8px 38px',
+      padding: '8px 14px 8px 38px'
     },
     clearable: {
-      padding: '8px 38px 8px 14px',
+      padding: '8px 38px 8px 14px'
     },
     iconClearable: {
-      padding: '8px 38px 8px 38px',
-    },
+      padding: '8px 38px 8px 38px'
+    }
   },
   medium: {
     fontSize: '16px',
@@ -27,14 +27,14 @@ const sizing = {
       top: '8px',
       left: '10px',
       right: '10px',
-      padding: '10px 16px 10px 40px',
+      padding: '10px 16px 10px 40px'
     },
     clearable: {
-      padding: '10px 40px 10px 16px',
+      padding: '10px 40px 10px 16px'
     },
     iconClearable: {
-      padding: '10px 40px 10px 40px',
-    },
+      padding: '10px 40px 10px 40px'
+    }
   },
   large: {
     fontSize: '16px',
@@ -43,15 +43,15 @@ const sizing = {
       top: '12px',
       left: '10px',
       right: '10px',
-      padding: '14px 16px 14px 40px',
+      padding: '14px 16px 14px 40px'
     },
     clearable: {
-      padding: '14px 40px 14px 16px',
+      padding: '14px 40px 14px 16px'
     },
     iconClearable: {
-      padding: '14px 40px 14px 40px',
-    },
-  },
+      padding: '14px 40px 14px 40px'
+    }
+  }
 }
 const focusedStyles = css`
   border-color: ${SLB30T};
@@ -68,7 +68,7 @@ const placeholderStyles = css`
   color: ${PB40T};
 `
 const getToggleDirectionStyles = ({
-  menuDirection,
+  menuDirection
 }: {
   menuDirection?: MenuDirection
 }) => {
@@ -112,5 +112,5 @@ export {
   borderOutlineStyles,
   placeholderStyles,
   getMenuDirectionStyles,
-  getToggleDirectionStyles,
+  getToggleDirectionStyles
 }

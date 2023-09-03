@@ -8,12 +8,12 @@ export default defineConfig(() => {
         babel: {
           babelrc: true,
           configFile: true,
-          rootMode: 'upward',
-        },
-      }),
+          rootMode: 'upward'
+        }
+      })
     ],
     server: {
-      host: true,
-    },
+      host: true
+    }
   }
 })

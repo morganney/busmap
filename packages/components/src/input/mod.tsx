@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useState, useRef } from 'react'
 import styled from 'styled-components'
 
-import { ClearIcon } from '../clearIcon/mod.js'
+import { Clear as ClearIcon } from '../icons/clear/mod.js'
 import { sizing } from '../styles.js'
 
 import type { KeyboardEvent, ChangeEvent, ForwardedRef, FocusEvent } from 'react'
@@ -91,9 +91,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     color = 'black',
     placeholder = '',
     borderColor = 'black',
-    isDisabled = false,
+    isDisabled = false
   },
-  ref,
+  ref
 ) {
   const wrapper = useRef<HTMLSpanElement>(null)
   const isClearable = typeof onClear === 'function'
@@ -106,7 +106,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         onFocus(evt)
       }
     },
-    [onFocus],
+    [onFocus]
   )
   const handleOnBlur = useCallback((evt: FocusEvent) => {
     if (!evt.currentTarget.contains(evt.relatedTarget)) {

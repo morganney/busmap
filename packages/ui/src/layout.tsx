@@ -24,7 +24,7 @@ export const Layout: FC<{ children: ReactNode }> = ({ children }) => {
       <>
         {createPortal(
           <Agencies agencies={data} />,
-          document.querySelector('body > aside') as HTMLElement,
+          document.querySelector('body > aside') as HTMLElement
         )}
         {children}
       </>

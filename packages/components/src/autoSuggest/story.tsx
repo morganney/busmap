@@ -3,8 +3,9 @@ import styled from 'styled-components'
 
 import { AutoSuggest } from './mod.js'
 
+import type { AnItem } from './mod.js'
 import type { StoryFn } from '@storybook/react'
-import type { ChangeEvent, FC } from 'react'
+import type { FC } from 'react'
 
 type Story = StoryFn<typeof AutoSuggest>
 
@@ -22,34 +23,58 @@ const Dl = styled.dl`
     margin: 0;
   }
 `
-const Selection: FC<{ selection: string }> = ({ selection }) => {
+const Selection: FC<{ selection: AnItem }> = ({ selection }) => {
   return (
     <Dl>
       <dt>Selected</dt>
-      <dd>{selection || 'None'}</dd>
+      <dd>{typeof selection === 'string' ? selection : selection.value}</dd>
     </Dl>
   )
 }
 const useSelection = () => {
-  const [selected, setSelected] = useState('')
-  const onChange = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
-    setSelected(evt.target.value)
+  const [selected, setSelected] = useState<AnItem>('')
+  const onSelect = useCallback((selection: AnItem) => {
+    setSelected(selection)
   }, [])
 
-  return { selected, onChange }
+  return { selected, onSelect }
 }
 const Primary: Story = args => {
-  const { selected, onChange } = useSelection()
+  const { selected, onSelect } = useSelection()
 
   return (
     <>
       <Selection selection={selected} />
-      <AutoSuggest {...args} onChange={onChange} />
+      <AutoSuggest {...args} onSelect={onSelect} />
+    </>
+  )
+}
+const ItemsAsObject: Story = args => {
+  const { selected, onSelect } = useSelection()
+  const items = [
+    {
+      label: 'One',
+      value: '1'
+    },
+    {
+      label: 'Two',
+      value: '2'
+    },
+    {
+      label: 'Three',
+      value: '3'
+    }
+  ]
+
+  return (
+    <>
+      <Selection selection={selected} />
+      <AutoSuggest {...args} items={items} onSelect={onSelect} inputBoundByItems />
     </>
   )
 }
 const InputBoundByItems: Story = args => {
-  const { selected, onChange } = useSelection()
+  const { selected, onSelect } = useSelection()
 
   return (
     <>
@@ -57,7 +82,7 @@ const InputBoundByItems: Story = args => {
       <AutoSuggest
         {...args}
         items={['one', 'two', 'three', 'thrice', 'thence', 'throw']}
-        onChange={onChange}
+        onSelect={onSelect}
         inputBoundByItems
       />
     </>
@@ -65,8 +90,8 @@ const InputBoundByItems: Story = args => {
 }
 InputBoundByItems.argTypes = {
   inputBoundByItems: {
-    control: false,
-  },
+    control: false
+  }
 }
 export default {
   title: 'AutoSuggest',
@@ -77,37 +102,37 @@ export default {
     inputBoundByItems: false,
     isDisabled: false,
     color: '#000000',
-    placeholder: 'type to search...',
+    placeholder: 'type to search...'
   },
   argTypes: {
     items: {
-      control: false,
+      control: false
     },
     value: {
-      control: false,
+      control: false
     },
     placeholder: {
-      control: 'text',
+      control: 'text'
     },
     onChange: {
-      action: 'onChange',
+      action: 'onChange'
     },
     isDisabled: {
-      control: 'boolean',
+      control: 'boolean'
     },
     color: {
-      control: 'color',
+      control: 'color'
     },
     size: {
       control: 'select',
-      options: ['small', 'medium', 'large'],
+      options: ['small', 'medium', 'large']
     },
     preload: {
-      control: false,
+      control: false
     },
     loadItems: {
-      control: false,
-    },
-  },
+      control: false
+    }
+  }
 }
-export { Primary, InputBoundByItems }
+export { Primary, InputBoundByItems, ItemsAsObject }

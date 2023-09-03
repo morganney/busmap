@@ -5,7 +5,7 @@ import {
   focusedStyles,
   placeholderStyles,
   getMenuDirectionStyles,
-  getToggleDirectionStyles,
+  getToggleDirectionStyles
 } from './styles.js'
 import { PB40T, SLB30T } from './colors.js'
 
@@ -110,5 +110,5 @@ export {
   SelectMenu,
   SelectItem,
   SelectPlaceholder,
-  SelectedItem,
+  SelectedItem
 }

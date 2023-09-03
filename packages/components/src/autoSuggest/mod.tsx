@@ -8,17 +8,13 @@ import { SelectWrap, SelectMenuWrap, SelectMenu, SelectItem } from '../core.js'
 import { focusedStyles, sizing } from '../styles.js'
 import { Input } from '../input/mod.js'
 import { PB40T, SLB30T } from '../colors.js'
-import { ChevronDown } from '../chevronDown/mod.js'
+import { ChevronDown } from '../icons/chevronDown/mod.js'
 
 import type { ChangeEvent, FC, ReactNode } from 'react'
 import type { UseComboboxStateChange, UseComboboxStateChangeTypes } from 'downshift'
 import type { Size } from '../types.js'
 
-interface Item {
-  value: string
-  label: string
-}
-type AnItem = Item | string
+type AnItem = { value: string; label: string } | string
 type Items = AnItem[]
 interface AutoSuggestProps {
   items: Items
@@ -29,10 +25,11 @@ interface AutoSuggestProps {
   onClear?: boolean | (() => void)
   onChange: (
     evt: ChangeEvent<HTMLInputElement>,
-    type?: UseComboboxStateChangeTypes,
+    type?: UseComboboxStateChangeTypes
   ) => void
+  onSelect?: (selected: AnItem) => void
   onBlur?: () => void
-  renderItem?: (item: Item | string) => ReactNode
+  renderItem?: (item: AnItem) => ReactNode
   isDisabled?: boolean
   width?: string
   color?: string
@@ -124,17 +121,17 @@ const ToggleMenuButton = styled.button<{ size: Size }>`
 `
 const matchSorterOptions = {
   keys: [(item: AnItem) => itemToString(item)],
-  threshold: matchSorter.rankings.CONTAINS,
+  threshold: matchSorter.rankings.CONTAINS
 }
 const getChangeEvt = (value?: AnItem | null): ChangeEvent<HTMLInputElement> => {
   const evt = new Event('change', {
     bubbles: true,
-    cancelable: false,
+    cancelable: false
   })
 
   Object.defineProperty(evt, 'target', {
     writable: false,
-    value: { value },
+    value: { value }
   })
 
   return evt as unknown as ChangeEvent<HTMLInputElement>
@@ -146,6 +143,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
   onBlur,
   onClear,
   onChange,
+  onSelect,
   preload,
   loadItems,
   labelledBy,
@@ -155,7 +153,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
   size = 'medium',
   placeholder = '',
   isDisabled = false,
-  inputBoundByItems = false,
+  inputBoundByItems = false
 }) => {
   const initialLoadedItems = useRef<Items>([])
   const [inputText, setInputText] = useState(itemToString(value))
@@ -176,7 +174,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
           setInputItems(newItems)
         },
         250,
-        { leading: true },
+        { leading: true }
       )
     }
 
@@ -188,7 +186,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
     if (preload && typeof loadItems === 'function') {
       return async () => {
         initialLoadedItems.current = await loadItems(
-          typeof preload === 'string' ? preload : '',
+          typeof preload === 'string' ? preload : ''
         )
 
         setInputItems(initialLoadedItems.current)
@@ -223,7 +221,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
     getMenuProps,
     getInputProps,
     highlightedIndex,
-    getItemProps,
+    getItemProps
   } = useCombobox({
     itemToString,
     items: inputItems,
@@ -236,8 +234,12 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
         if (onChange) {
           onChange(getChangeEvt(changes.selectedItem), changes.type)
         }
+
+        if (onSelect) {
+          onSelect(changes.selectedItem ?? '')
+        }
       },
-      [onChange],
+      [onChange]
     ),
     onStateChange: useCallback(
       (changes: UseComboboxStateChange<AnItem>): void => {
@@ -254,6 +256,10 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
               if (onChange) {
                 onChange(getChangeEvt(inputValue), type)
               }
+
+              if (onSelect && inputItems.includes(inputValue)) {
+                onSelect(inputValue)
+              }
             } else if (inputBoundByItems) {
               const nextItems = matchSorter(items, inputValue, matchSorterOptions)
 
@@ -263,6 +269,10 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
 
                 if (onChange) {
                   onChange(getChangeEvt(inputValue), type)
+                }
+
+                if (onSelect && inputItems.includes(inputValue)) {
+                  onSelect(inputValue)
                 }
               }
             }
@@ -278,15 +288,8 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
           }
         }
       },
-      [
-        loadItems,
-        inputBoundByItems,
-        items,
-        inputText,
-        handleOnInputValueChange,
-        onChange,
-      ],
-    ),
+      [loadItems, inputBoundByItems, items, inputText, handleOnInputValueChange, onChange]
+    )
   })
 
   useEffect(() => {
@@ -306,7 +309,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
               if (!isOpen) {
                 openMenu()
               }
-            },
+            }
           })}
           id={id}
           color={color}
@@ -346,4 +349,4 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
 }
 
 export { AutoSuggest }
-export type { AutoSuggestProps }
+export type { AutoSuggestProps, AnItem }
