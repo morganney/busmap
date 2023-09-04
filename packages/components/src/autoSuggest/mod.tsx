@@ -14,7 +14,11 @@ import type { ChangeEvent, FC, ReactNode } from 'react'
 import type { UseComboboxStateChange, UseComboboxStateChangeTypes } from 'downshift'
 import type { Size } from '../types.js'
 
-type AnItem = { value: string; label: string } | string
+interface Item {
+  value: string
+  label: string
+}
+type AnItem = Item | string
 type Items = AnItem[]
 interface AutoSuggestProps {
   items: Items
@@ -23,7 +27,7 @@ interface AutoSuggestProps {
   value?: AnItem
   inputBoundByItems?: boolean
   onClear?: boolean | (() => void)
-  onChange: (
+  onChange?: (
     evt: ChangeEvent<HTMLInputElement>,
     type?: UseComboboxStateChangeTypes
   ) => void
@@ -31,6 +35,7 @@ interface AutoSuggestProps {
   onBlur?: () => void
   renderItem?: (item: AnItem) => ReactNode
   isDisabled?: boolean
+  caseInsensitive?: boolean
   width?: string
   color?: string
   size?: Size
@@ -153,6 +158,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
   size = 'medium',
   placeholder = '',
   isDisabled = false,
+  caseInsensitive = false,
   inputBoundByItems = false
 }) => {
   const initialLoadedItems = useRef<Items>([])
@@ -239,7 +245,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
           onSelect(changes.selectedItem ?? '')
         }
       },
-      [onChange]
+      [onChange, onSelect]
     ),
     onStateChange: useCallback(
       (changes: UseComboboxStateChange<AnItem>): void => {
@@ -257,8 +263,16 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
                 onChange(getChangeEvt(inputValue), type)
               }
 
-              if (onSelect && inputItems.includes(inputValue)) {
-                onSelect(inputValue)
+              if (onSelect) {
+                const found = inputItems.find(item =>
+                  caseInsensitive
+                    ? itemToString(item).toLowerCase() === inputValue.toLowerCase()
+                    : itemToString(item) === inputValue
+                )
+
+                if (found) {
+                  onSelect(found)
+                }
               }
             } else if (inputBoundByItems) {
               const nextItems = matchSorter(items, inputValue, matchSorterOptions)
@@ -271,8 +285,16 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
                   onChange(getChangeEvt(inputValue), type)
                 }
 
-                if (onSelect && inputItems.includes(inputValue)) {
-                  onSelect(inputValue)
+                if (onSelect) {
+                  const found = inputItems.find(item =>
+                    caseInsensitive
+                      ? itemToString(item).toLowerCase() === inputValue.toLowerCase()
+                      : itemToString(item) === inputValue
+                  )
+
+                  if (found) {
+                    onSelect(found)
+                  }
                 }
               }
             }
@@ -288,7 +310,17 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
           }
         }
       },
-      [loadItems, inputBoundByItems, items, inputText, handleOnInputValueChange, onChange]
+      [
+        loadItems,
+        inputBoundByItems,
+        items,
+        inputItems,
+        inputText,
+        caseInsensitive,
+        handleOnInputValueChange,
+        onSelect,
+        onChange
+      ]
     )
   })
 
@@ -349,4 +381,4 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
 }
 
 export { AutoSuggest }
-export type { AutoSuggestProps, AnItem }
+export type { AutoSuggestProps, AnItem, Item }

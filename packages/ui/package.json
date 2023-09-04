@@ -7,7 +7,7 @@
   "scripts": {
     "prettier": "prettier -w .",
     "dev": "vite",
-    "lint": "eslint . src --ext .ts,.tsx",
+    "lint": "eslint . src --ext .ts,.tsx --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "build": "tsc && vite build",
     "preview": "vite preview",
