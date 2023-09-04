@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { createGlobalStyle } from 'styled-components'
 
 import { Providers } from './providers.js'
 import { Layout } from './layout.js'
@@ -7,25 +6,9 @@ import { Home } from './home.js'
 
 import type { FC } from 'react'
 
-const GlobalStyles = createGlobalStyle`
-  :root {
-    --bg-color: #e0e0e0;
-  }
-  html {
-    height: 100%;
-    display: grid;
-  }
-  body {
-    display: grid;
-    grid-auto-rows: max-content;
-    margin: 0;
-    background-color: var(--bg-color);
-  }
-`
 const BusMap: FC = () => {
   return (
     <Providers>
-      <GlobalStyles />
       <Layout>
         <BrowserRouter>
           <Routes>

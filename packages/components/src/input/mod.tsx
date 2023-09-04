@@ -1,7 +1,7 @@
 import { forwardRef, useCallback, useState, useRef } from 'react'
 import styled from 'styled-components'
 
-import { Clear as ClearIcon } from '../icons/clear/mod.js'
+import { Close as CloseIcon } from '../icons/close/mod.js'
 import { sizing } from '../styles.js'
 
 import type { KeyboardEvent, ChangeEvent, ForwardedRef, FocusEvent } from 'react'
@@ -39,7 +39,7 @@ const Wrapper = styled.span`
   align-items: center;
   position: relative;
 `
-const Clear = styled(ClearIcon)`
+const Close = styled(CloseIcon)`
   position: absolute;
   right: 9px;
 `
@@ -113,7 +113,13 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       setHasFocus(false)
     }
   }, [])
-  const clearSize = size === 'small' ? 'small' : 'medium'
+  const handleOnClear = useCallback(() => {
+    wrapper.current?.querySelector('input')?.focus()
+
+    if (typeof onClear === 'function') {
+      onClear()
+    }
+  }, [onClear])
 
   return (
     <Wrapper ref={wrapper} onBlur={handleOnBlur}>
@@ -137,7 +143,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         aria-labelledby={labelledBy}
       />
       {value && !isDisabled && isClearable && hasFocus && (
-        <Clear onClick={onClear} tabIndex={0} size={clearSize} />
+        <Close onClick={handleOnClear} tabIndex={0} size="small" />
       )}
     </Wrapper>
   )

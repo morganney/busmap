@@ -15,9 +15,13 @@
         "default": "./dist/cjs/index.cjs"
       }
     },
-    "./*": {
-      "import": "./dist/*.js",
-      "require": "./dist/cjs/*.js"
+    "./autoSuggest": {
+      "import": "./dist/autoSuggest/mod.js",
+      "require": "./dist/cjs/autoSuggest/mod.cjs"
+    },
+    "./input": {
+      "import": "./dist/input/mod.js",
+      "require": "./dist/cjs/input/mod.cjs"
     },
     "./package.json": "./package.json"
   },

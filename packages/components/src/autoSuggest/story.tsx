@@ -49,6 +49,16 @@ const Primary: Story = args => {
     </>
   )
 }
+const InitialValue: Story = args => {
+  const { selected, onSelect } = useSelection()
+
+  return (
+    <>
+      <Selection selection={selected} />
+      <AutoSuggest {...args} onSelect={onSelect} value="Hannah" />
+    </>
+  )
+}
 const ItemsAsObject: Story = args => {
   const { selected, onSelect } = useSelection()
   const items = [
@@ -69,7 +79,13 @@ const ItemsAsObject: Story = args => {
   return (
     <>
       <Selection selection={selected} />
-      <AutoSuggest {...args} items={items} onSelect={onSelect} inputBoundByItems />
+      <AutoSuggest
+        {...args}
+        items={items}
+        onSelect={onSelect}
+        inputBoundByItems
+        caseInsensitive
+      />
     </>
   )
 }
@@ -97,6 +113,8 @@ export default {
   title: 'AutoSuggest',
   component: AutoSuggest,
   args: {
+    onClear: true,
+    caseInsensitive: false,
     items: ['Hannah', 'Emma', 'Rebecca'],
     size: 'medium',
     inputBoundByItems: false,
@@ -132,7 +150,10 @@ export default {
     },
     loadItems: {
       control: false
+    },
+    caseInsensitive: {
+      control: 'boolean'
     }
   }
 }
-export { Primary, InputBoundByItems, ItemsAsObject }
+export { Primary, InitialValue, InputBoundByItems, ItemsAsObject }
