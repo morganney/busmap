@@ -29,9 +29,5 @@ jobs:
           path: npm-debug.log
       - name: Build Docker
         run: docker compose build
-      - name: Build Components
-        run: npm run build -w @busmap/components
-      - name: Build UI
-        run: npm run build -w ui
       - name: Lint
         run: npm run lint

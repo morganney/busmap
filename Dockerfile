@@ -8,6 +8,12 @@ RUN npm config set registry https://registry.npmjs.org/
 RUN npm install
 EXPOSE 3000 5173 9000
 
+FROM busmap AS uibuild
+WORKDIR /app
+COPY . .
+RUN npm run build -w @busmap/components
+RUN npm run build -w ui
+
 FROM nginx:1.25.2 AS dev
 # core nginx conf
 COPY packages/web/nginx.local.conf /etc/nginx/nginx.conf
@@ -24,5 +30,4 @@ COPY packages/web/conf.d/ /etc/nginx/conf.d/
 # ssl certs
 COPY packages/web/certs/ /etc/nginx/certs/
 # ui build
-COPY packages/ui/dist /usr/share/nginx/html
-#COPY --from=ui packages/ui/dist /usr/share/nginx/html
+COPY --from=uibuild /app/packages/ui/dist /usr/share/nginx/html
