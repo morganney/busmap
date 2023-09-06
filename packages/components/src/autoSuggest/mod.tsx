@@ -8,7 +8,7 @@ import { SelectWrap, SelectMenuWrap, SelectMenu, SelectItem } from '../core.js'
 import { focusedStyles, sizing } from '../styles.js'
 import { Input } from '../input/mod.js'
 import { PB40T, SLB30T } from '../colors.js'
-import { ChevronDown } from '../icons/chevronDown/mod.js'
+import { ChevronDown as ChevronDownIcon } from '../icons/chevronDown/mod.js'
 
 import type { ChangeEvent, FC, ReactNode } from 'react'
 import type { UseComboboxStateChange, UseComboboxStateChangeTypes } from 'downshift'
@@ -70,6 +70,14 @@ const getRightPosition = ({ size }: { size: Size }) => {
       return `calc(${right} + 30px)`
   }
 }
+const ChevronDown = styled(ChevronDownIcon)`
+  position: relative;
+  right: -2px;
+
+  &.isOpen {
+    transform: rotate(180deg);
+  }
+`
 const Combobox = styled.div`
   display: flex;
   align-items: center;

@@ -19,6 +19,7 @@ const Agencies: FC<Props> = ({ agencies }) => {
       <p>Selection: {selection || 'n/a'}</p>
       <AutoSuggest
         onClear
+        caseInsensitive
         inputBoundByItems
         placeholder="Select a transit agency"
         items={items}
