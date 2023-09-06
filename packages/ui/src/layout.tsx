@@ -1,35 +1,29 @@
-import { useQuery } from 'react-query'
-import { createPortal } from 'react-dom'
-
-import { Agencies } from './components/agencies.js'
+import L from 'leaflet'
+import { useEffect } from 'react'
 
 import type { FC, ReactNode } from 'react'
 
-export const Layout: FC<{ children: ReactNode }> = ({ children }) => {
-  const { data, error } = useQuery('agencies', async () => {
-    const resp = await fetch('/restbus/agencies')
-    const json = await resp.json()
+export interface LayoutProps {
+  children: ReactNode
+}
+export const Layout: FC<LayoutProps> = ({ children }) => {
+  useEffect(() => {
+    const main = document.querySelector('main') as HTMLElement
+    const map = L.map(main, {
+      center: [32.79578, -95.45166],
+      zoom: 13
+    })
 
-    return json
-  })
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map)
 
-  if (error) {
-    if (error instanceof Error) {
-      return <p>An unexpected error occured: {error.message}</p>
+    return () => {
+      map.remove()
     }
-  }
+  }, [])
 
-  if (data) {
-    return (
-      <>
-        {createPortal(
-          <Agencies agencies={data} />,
-          document.querySelector('body > aside') as HTMLElement
-        )}
-        {children}
-      </>
-    )
-  }
-
-  return <>Loading...</>
+  return children
 }

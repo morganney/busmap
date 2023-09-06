@@ -14,7 +14,7 @@ const sizing = {
       padding: '8px 14px 8px 38px'
     },
     clearable: {
-      padding: '8px 38px 8px 14px'
+      padding: '8px 28px 8px 14px'
     },
     iconClearable: {
       padding: '8px 38px 8px 38px'
@@ -30,7 +30,7 @@ const sizing = {
       padding: '10px 16px 10px 40px'
     },
     clearable: {
-      padding: '10px 40px 10px 16px'
+      padding: '10px 30px 10px 16px'
     },
     iconClearable: {
       padding: '10px 40px 10px 40px'
@@ -46,7 +46,7 @@ const sizing = {
       padding: '14px 16px 14px 40px'
     },
     clearable: {
-      padding: '14px 40px 14px 16px'
+      padding: '14px 30px 14px 16px'
     },
     iconClearable: {
       padding: '14px 40px 14px 40px'

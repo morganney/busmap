@@ -40,10 +40,6 @@ const Icon = styled.span<{ size: Size; color: string }>`
     border: 1px solid ${SLB30T};
     border-radius: 50%;
   }
-
-  &.isOpen {
-    transform: rotate(180deg);
-  }
 `
 
 export { getSizing, Icon }

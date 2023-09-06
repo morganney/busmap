@@ -41,7 +41,7 @@ const Wrapper = styled.span`
 `
 const Close = styled(CloseIcon)`
   position: absolute;
-  right: 9px;
+  right: 10px;
 `
 const StyledInput = styled.input<{
   color: string
