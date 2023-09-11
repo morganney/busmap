@@ -11,8 +11,12 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
   switch (action.type) {
     case 'bounds':
       return { ...state, bounds: action.value }
+    case 'agency':
+      return { ...state, agency: action.value }
     case 'route':
       return { ...state, route: action.value }
+    case 'stop':
+      return { ...state, stop: action.value }
     default:
       return { ...defaults, ...state }
   }

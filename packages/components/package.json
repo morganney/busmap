@@ -27,6 +27,10 @@
       "import": "./dist/dataList/mod.js",
       "require": "./dist/cjs/dataList/mod.cjs"
     },
+    "./skeleton": {
+      "import": "./dist/skeleton/mod.js",
+      "require": "./dist/cjs/skeleton/mod.cjs"
+    },
     "./icons/*": {
       "import": "./dist/icons/*/mod.js",
       "require": "./dist/cjs/*/mod.js"

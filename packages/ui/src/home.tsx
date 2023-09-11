@@ -15,6 +15,7 @@ import type { AnItem } from '@busmap/components'
 interface HomeState {
   agency?: string
   route?: string
+  stop?: string
 }
 interface HomeAction {
   type: 'agency' | 'route'
@@ -65,19 +66,28 @@ const Home: FC<HomeProps> = () => {
     ['route', state.route],
     () => getRoute(state.agency, state.route),
     {
-      enabled: Boolean(state.route),
+      enabled: Boolean(state.route) && Boolean(state.agency),
       onSuccess(data) {
         update({ type: 'bounds', value: data.bounds })
         update({ type: 'route', value: data })
       }
     }
   )
-  const onSelectAgency = useCallback((selected: AnItem) => {
-    dispatch({
-      type: 'agency',
-      value: typeof selected === 'string' ? selected : selected.value
-    })
-  }, [])
+  const onSelectAgency = useCallback(
+    (selected: AnItem) => {
+      const value = typeof selected === 'string' ? selected : selected.value
+
+      dispatch({
+        type: 'agency',
+        value
+      })
+      update({
+        type: 'agency',
+        value
+      })
+    },
+    [update]
+  )
   const onSelectRoute = useCallback((selected: AnItem) => {
     dispatch({
       type: 'route',

@@ -12,6 +12,11 @@ interface Bounds {
 interface Path {
   points: Point[]
 }
+interface Vehicle {
+  id: string
+  block: string
+  trip: string
+}
 interface AgencyName {
   id: string
   title: string
@@ -19,16 +24,20 @@ interface AgencyName {
 interface Agency extends AgencyName {
   region: string
 }
-interface Stop {
+interface StopName {
   id: string
-  code: string
   title: string
+}
+interface Stop extends StopName {
+  code: string
   lat: number
   lon: number
 }
-interface Direction {
+interface DirectionName {
   id: string
   title: string
+}
+interface Direction extends DirectionName {
   shortTitle: string | null
   useForUi: boolean
   stops: Stop['id'][]
@@ -46,6 +55,24 @@ interface Route extends RouteName {
   directions: [from: Direction, to: Direction]
   paths: Path[]
 }
+interface Pred {
+  epochTime: number
+  seconds: number
+  minutes: number
+  branch: string
+  isDeparture: boolean
+  affectedByLayover: boolean
+  isScheduleBased: boolean
+  vehicle: Vehicle
+  direction: DirectionName
+}
+interface Prediction {
+  agency: Agency & { logoUrl: string | null }
+  route: RouteName
+  stop: StopName & { distance: number | null }
+  messages: string[]
+  values: Pred[]
+}
 
 // Busmap types
 interface BoundsChanged {
@@ -56,15 +83,31 @@ interface CenterChanged {
   type: 'center'
   value: Point
 }
+interface AgencyChanged {
+  type: 'agency'
+  value: string
+}
 interface RouteChanged {
   type: 'route'
   value: Route
 }
-type BusmapAction = BoundsChanged | CenterChanged | RouteChanged
+interface StopChanged {
+  type: 'stop'
+  value: Stop
+}
+type BusmapAction =
+  | BoundsChanged
+  | CenterChanged
+  | AgencyChanged
+  | RouteChanged
+  | StopChanged
 interface BusmapGlobals {
   dispatch: Dispatch<BusmapAction>
   center: Point
   bounds: Bounds
+  agency?: string
+  stop?: Stop
+  arrivals?: string[]
   route: Route | null
 }
 
@@ -78,6 +121,8 @@ export type {
   Direction,
   RouteName,
   Route,
+  Pred,
+  Prediction,
   BusmapGlobals,
   BusmapAction
 }
