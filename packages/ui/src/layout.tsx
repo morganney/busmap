@@ -49,7 +49,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
 
     if (route) {
       const icon = L.icon({
-        iconUrl: '../assets/png/stop.png',
+        iconUrl: '../assets/svg/circled.svg',
         iconSize: [7, 7]
       })
       const popup = L.popup()
