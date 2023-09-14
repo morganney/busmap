@@ -1,16 +1,28 @@
 import L from 'leaflet'
 import { useEffect, useContext } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { Root, createRoot } from 'react-dom/client'
+import { flushSync } from 'react-dom'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 import { Globals } from './globals.js'
-import { getForStop } from './api/rb/predictions.js'
 import { Stop } from './components/stop.js'
 
 import type { FC, ReactNode } from 'react'
 import type { Direction } from './types.js'
 
 type Point = [number, number]
+interface LayoutProps {
+  children: ReactNode
+}
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: true
+    }
+  }
+})
 const getDirectionForStop = (id: string, directions: Direction[]) => {
   for (const direction of directions) {
     const found = direction.stops.find(stop => stop === id)
@@ -22,11 +34,7 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
 
   return directions[0].title
 }
-
-export interface LayoutProps {
-  children: ReactNode
-}
-export const Layout: FC<LayoutProps> = ({ children }) => {
+const Layout: FC<LayoutProps> = ({ children }) => {
   const { bounds, route, agency, dispatch } = useContext(Globals)
 
   useEffect(() => {
@@ -34,6 +42,7 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
     const map = L.map(main)
     const bnds = route?.bounds ?? bounds
     const polylines: Point[][] = []
+    let popupRoot: null | Root = null
 
     map.fitBounds(
       L.latLngBounds(
@@ -54,6 +63,10 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
       })
       const popup = L.popup()
 
+      popup.on('remove', () => {
+        popupRoot?.unmount()
+        popupRoot = null
+      })
       route.paths.forEach(path => {
         polylines.push(path.points.map(({ lat, lon }) => [lat, lon]))
       })
@@ -64,28 +77,26 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
 
         marker.addTo(map).bindPopup(popup)
         marker.on('click', async () => {
-          marker.setPopupContent(
-            renderToStaticMarkup(
-              <Stop isLoading stop={stop} route={route} direction={direction} />
-            )
-          )
-          const preds = await getForStop(agency, route.id, stop.id)
-          const arrivals = !preds.length
-            ? []
-            : /**
-               * Given that the agency, route, and stop
-               * are defined the first prediction's values
-               * should suffice.
-               */
-              preds[0].values
-                .slice(0, 3)
-                .map(({ minutes }) => `${minutes === 0 ? 'Arriving' : `${minutes} min`}`)
+          const popupEl = popup.getElement()
 
-          marker.setPopupContent(
-            renderToStaticMarkup(
-              <Stop stop={stop} route={route} direction={direction} arrivals={arrivals} />
-            )
-          )
+          if (popupEl && agency) {
+            if (!popupRoot) {
+              const rootNode = popupEl.querySelector(
+                'div.leaflet-popup-content'
+              ) as Element
+
+              popupRoot = createRoot(rootNode)
+            }
+
+            flushSync(() => {
+              popupRoot?.render(
+                <QueryClientProvider client={queryClient}>
+                  <Stop agency={agency} stop={stop} route={route} direction={direction} />
+                </QueryClientProvider>
+              )
+            })
+            popup.update()
+          }
         })
       })
     }
@@ -97,3 +108,6 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
 
   return children
 }
+
+export { Layout }
+export type { LayoutProps }
