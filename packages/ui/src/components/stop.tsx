@@ -1,10 +1,12 @@
 import styled, { keyframes } from 'styled-components'
+import { useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { Skeleton } from '@busmap/components/skeleton'
 
 import { getForStop } from '../api/rb/predictions.js'
 
 import type { FC } from 'react'
+import type { Popup } from 'leaflet'
 import type { Stop, Route } from '../types.js'
 
 interface StopProps {
@@ -12,6 +14,7 @@ interface StopProps {
   agency: string
   route: Route
   direction: string
+  popup: Popup
 }
 
 const blink = keyframes`
@@ -72,11 +75,12 @@ const Definition = styled.dl`
     }
   }
 `
-const Stop: FC<StopProps> = ({ stop, agency, route, direction }) => {
+const Stop: FC<StopProps> = ({ stop, agency, route, direction, popup }) => {
   const { data, error, isFetching } = useQuery(
     ['preds', agency, route.id, stop.id],
     () => getForStop(agency, route.id, stop.id),
     {
+      refetchOnWindowFocus: true,
       refetchInterval: 8_000
     }
   )
@@ -97,6 +101,12 @@ const Stop: FC<StopProps> = ({ stop, agency, route, direction }) => {
           </time>
         )
       })
+
+  useEffect(() => {
+    if (popup) {
+      popup.update()
+    }
+  }, [popup])
 
   if (error) {
     const msg = error instanceof Error ? error.message : 'An unexpected error occured.'

@@ -1,8 +1,6 @@
 import L from 'leaflet'
-import { useEffect, useContext } from 'react'
-import { Root, createRoot } from 'react-dom/client'
-import { flushSync } from 'react-dom'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { useEffect, useContext, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 import { Globals } from './globals.js'
 import { Stop } from './components/stop.js'
@@ -15,14 +13,6 @@ interface LayoutProps {
   children: ReactNode
 }
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: true
-    }
-  }
-})
 const getDirectionForStop = (id: string, directions: Direction[]) => {
   for (const direction of directions) {
     const found = direction.stops.find(stop => stop === id)
@@ -35,14 +25,15 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
   return directions[0].title
 }
 const Layout: FC<LayoutProps> = ({ children }) => {
-  const { bounds, route, agency, dispatch } = useContext(Globals)
+  const { bounds, route, agency, selected, dispatch } = useContext(Globals)
+  const content = useRef(document.createElement('div'))
+  const popup = useRef(L.popup())
 
   useEffect(() => {
     const main = document.querySelector('main') as HTMLElement
     const map = L.map(main)
     const bnds = route?.bounds ?? bounds
     const polylines: Point[][] = []
-    let popupRoot: null | Root = null
 
     map.fitBounds(
       L.latLngBounds(
@@ -61,11 +52,10 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         iconUrl: '../assets/svg/circled.svg',
         iconSize: [7, 7]
       })
-      const popup = L.popup()
 
-      popup.on('remove', () => {
-        popupRoot?.unmount()
-        popupRoot = null
+      popup.current.setContent(content.current)
+      popup.current.on('remove', () => {
+        dispatch({ type: 'selected', value: undefined })
       })
       route.paths.forEach(path => {
         polylines.push(path.points.map(({ lat, lon }) => [lat, lon]))
@@ -75,28 +65,9 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         const direction = getDirectionForStop(stop.id, route.directions)
         const marker = L.marker([stop.lat, stop.lon], { icon })
 
-        marker.addTo(map).bindPopup(popup)
-        marker.on('click', async () => {
-          const popupEl = popup.getElement()
-
-          if (popupEl && agency) {
-            if (!popupRoot) {
-              const rootNode = popupEl.querySelector(
-                'div.leaflet-popup-content'
-              ) as Element
-
-              popupRoot = createRoot(rootNode)
-            }
-
-            flushSync(() => {
-              popupRoot?.render(
-                <QueryClientProvider client={queryClient}>
-                  <Stop agency={agency} stop={stop} route={route} direction={direction} />
-                </QueryClientProvider>
-              )
-            })
-            popup.update()
-          }
+        marker.addTo(map).bindPopup(popup.current)
+        marker.on('click', () => {
+          dispatch({ type: 'selected', value: { stop, direction } })
         })
       })
     }
@@ -105,6 +76,26 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       map.remove()
     }
   }, [bounds, agency, route, dispatch])
+
+  if (selected && agency && route) {
+    const { stop, direction } = selected
+
+    return (
+      <>
+        {children}
+        {createPortal(
+          <Stop
+            agency={agency}
+            stop={stop}
+            route={route}
+            direction={direction}
+            popup={popup.current}
+          />,
+          content.current
+        )}
+      </>
+    )
+  }
 
   return children
 }
