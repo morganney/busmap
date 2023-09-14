@@ -1,15 +1,17 @@
 import L from 'leaflet'
-import { useEffect, useContext } from 'react'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { useEffect, useContext, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 import { Globals } from './globals.js'
-import { getForStop } from './api/rb/predictions.js'
 import { Stop } from './components/stop.js'
 
 import type { FC, ReactNode } from 'react'
 import type { Direction } from './types.js'
 
 type Point = [number, number]
+interface LayoutProps {
+  children: ReactNode
+}
 
 const getDirectionForStop = (id: string, directions: Direction[]) => {
   for (const direction of directions) {
@@ -22,12 +24,10 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
 
   return directions[0].title
 }
-
-export interface LayoutProps {
-  children: ReactNode
-}
-export const Layout: FC<LayoutProps> = ({ children }) => {
-  const { bounds, route, agency, dispatch } = useContext(Globals)
+const Layout: FC<LayoutProps> = ({ children }) => {
+  const { bounds, route, agency, selected, dispatch } = useContext(Globals)
+  const content = useRef(document.createElement('div'))
+  const popup = useRef(L.popup())
 
   useEffect(() => {
     const main = document.querySelector('main') as HTMLElement
@@ -52,8 +52,11 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
         iconUrl: '../assets/svg/circled.svg',
         iconSize: [7, 7]
       })
-      const popup = L.popup()
 
+      popup.current.setContent(content.current)
+      popup.current.on('remove', () => {
+        dispatch({ type: 'selected', value: undefined })
+      })
       route.paths.forEach(path => {
         polylines.push(path.points.map(({ lat, lon }) => [lat, lon]))
       })
@@ -62,30 +65,9 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
         const direction = getDirectionForStop(stop.id, route.directions)
         const marker = L.marker([stop.lat, stop.lon], { icon })
 
-        marker.addTo(map).bindPopup(popup)
-        marker.on('click', async () => {
-          marker.setPopupContent(
-            renderToStaticMarkup(
-              <Stop isLoading stop={stop} route={route} direction={direction} />
-            )
-          )
-          const preds = await getForStop(agency, route.id, stop.id)
-          const arrivals = !preds.length
-            ? []
-            : /**
-               * Given that the agency, route, and stop
-               * are defined the first prediction's values
-               * should suffice.
-               */
-              preds[0].values
-                .slice(0, 3)
-                .map(({ minutes }) => `${minutes === 0 ? 'Arriving' : `${minutes} min`}`)
-
-          marker.setPopupContent(
-            renderToStaticMarkup(
-              <Stop stop={stop} route={route} direction={direction} arrivals={arrivals} />
-            )
-          )
+        marker.addTo(map).bindPopup(popup.current)
+        marker.on('click', () => {
+          dispatch({ type: 'selected', value: { stop, direction } })
         })
       })
     }
@@ -95,5 +77,28 @@ export const Layout: FC<LayoutProps> = ({ children }) => {
     }
   }, [bounds, agency, route, dispatch])
 
+  if (selected && agency && route) {
+    const { stop, direction } = selected
+
+    return (
+      <>
+        {children}
+        {createPortal(
+          <Stop
+            agency={agency}
+            stop={stop}
+            route={route}
+            direction={direction}
+            popup={popup.current}
+          />,
+          content.current
+        )}
+      </>
+    )
+  }
+
   return children
 }
+
+export { Layout }
+export type { LayoutProps }
