@@ -62,7 +62,6 @@ const Definition = styled.dl`
   dd:last-child {
     display: flex;
     gap: 5px;
-
     align-items: center;
     white-space: nowrap;
   }
