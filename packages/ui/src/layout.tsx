@@ -3,7 +3,7 @@ import { useEffect, useContext, useRef } from 'react'
 import { createPortal } from 'react-dom'
 
 import { Globals } from './globals.js'
-import { Stop } from './components/stop.js'
+import { Selection } from './components/selection.js'
 
 import type { FC, ReactNode } from 'react'
 import type { Direction } from './types.js'
@@ -18,34 +18,55 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
     const found = direction.stops.find(stop => stop === id)
 
     if (found) {
-      return direction.title
+      return direction
     }
   }
 
-  return directions[0].title
+  return directions[0]
 }
 const Layout: FC<LayoutProps> = ({ children }) => {
-  const { bounds, route, agency, selected, dispatch } = useContext(Globals)
-  const content = useRef(document.createElement('div'))
+  const { center, route, agency, selected, dispatch } = useContext(Globals)
+  const selection = useRef(document.createElement('div'))
   const popup = useRef(L.popup())
 
   useEffect(() => {
     const main = document.querySelector('main') as HTMLElement
     const map = L.map(main)
-    const bnds = route?.bounds ?? bounds
     const polylines: Point[][] = []
 
-    map.fitBounds(
-      L.latLngBounds(
-        L.latLng(bnds.sw.lat, bnds.sw.lon),
-        L.latLng(bnds.ne.lat, bnds.ne.lon)
-      )
-    )
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution:
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map)
+    map.on('locationfound', evt => {
+      L.marker(evt.latlng)
+        .addTo(map)
+        .bindPopup(
+          `Your location within ${Intl.NumberFormat().format(evt.accuracy)} meters.`
+        )
+      dispatch({ type: 'locationSettled', value: true })
+    })
+    map.on('locationerror', () => {
+      if (!agency) {
+        map.setView(L.latLng(center.lat, center.lon), 13)
+      }
+
+      dispatch({ type: 'locationSettled', value: true })
+    })
+
+    if (route) {
+      const bnds = route.bounds
+
+      map.fitBounds(
+        L.latLngBounds(
+          L.latLng(bnds.sw.lat, bnds.sw.lon),
+          L.latLng(bnds.ne.lat, bnds.ne.lon)
+        )
+      )
+    } else {
+      map.locate({ setView: true })
+    }
 
     if (route) {
       const icon = L.icon({
@@ -53,7 +74,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         iconSize: [7, 7]
       })
 
-      popup.current.setContent(content.current)
+      popup.current.setContent(selection.current)
       popup.current.on('remove', () => {
         dispatch({ type: 'selected', value: undefined })
       })
@@ -75,7 +96,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     return () => {
       map.remove()
     }
-  }, [bounds, agency, route, dispatch])
+  }, [center, agency, route, dispatch])
 
   if (selected && agency && route) {
     const { stop, direction } = selected
@@ -84,14 +105,14 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       <>
         {children}
         {createPortal(
-          <Stop
+          <Selection
             agency={agency}
             stop={stop}
             route={route}
             direction={direction}
             popup={popup.current}
           />,
-          content.current
+          selection.current
         )}
       </>
     )

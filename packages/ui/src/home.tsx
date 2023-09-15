@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import { Globals } from './globals.js'
 import { Agencies } from './components/selectors/agencies.js'
 import { Routes } from './components/selectors/routes.js'
+import { Loading } from './components/loading.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
 import { getAll as getAllRoutes, get as getRoute } from './api/rb/route.js'
 
@@ -15,7 +16,6 @@ import type { AnItem } from '@busmap/components'
 interface HomeState {
   agency?: string
   route?: string
-  stop?: string
 }
 interface HomeAction {
   type: 'agency' | 'route'
@@ -48,7 +48,7 @@ const Form = styled.form`
   gap: 17px;
 `
 const Home: FC<HomeProps> = () => {
-  const { dispatch: update } = useContext(Globals)
+  const { dispatch: update, locationSettled } = useContext(Globals)
   const [state, dispatch] = useReducer(reducer, initialState)
   const {
     data: agencies,
@@ -60,7 +60,11 @@ const Home: FC<HomeProps> = () => {
     error: routesError,
     isLoading: isRoutesLoading
   } = useQuery(['routes', state.agency], () => getAllRoutes(state.agency), {
-    enabled: Boolean(state.agency)
+    enabled: Boolean(state.agency),
+    onSuccess(data) {
+      // When agency changes, use the first route as the default
+      dispatch({ type: 'route', value: data[0].id })
+    }
   })
   const { error: routeError, isLoading: isRouteLoading } = useQuery(
     ['route', state.route],
@@ -68,7 +72,6 @@ const Home: FC<HomeProps> = () => {
     {
       enabled: Boolean(state.route) && Boolean(state.agency),
       onSuccess(data) {
-        update({ type: 'bounds', value: data.bounds })
         update({ type: 'route', value: data })
       }
     }
@@ -117,8 +120,8 @@ const Home: FC<HomeProps> = () => {
     )
   }
 
-  if (agencies) {
-    return createPortal(
+  return createPortal(
+    locationSettled && agencies ? (
       <Form
         onSubmit={evt => {
           evt.preventDefault()
@@ -132,15 +135,16 @@ const Home: FC<HomeProps> = () => {
         />
         <Routes
           routes={routes}
+          selected={state.route}
           onSelect={onSelectRoute}
           isDisabled={isLoading || !routes}
         />
-      </Form>,
-      document.querySelector('body > aside') as HTMLElement
-    )
-  }
-
-  return <>Loading...</>
+      </Form>
+    ) : (
+      <Loading />
+    ),
+    document.querySelector('body > aside') as HTMLElement
+  )
 }
 
 export { Home }

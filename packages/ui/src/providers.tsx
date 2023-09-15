@@ -12,11 +12,14 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
     case 'bounds':
       return { ...state, bounds: action.value }
     case 'agency':
-      return { ...state, agency: action.value }
+      return { ...state, agency: action.value, selected: undefined }
     case 'route':
-      return { ...state, selected: undefined, route: action.value }
+      return { ...state, route: action.value, selected: undefined }
     case 'stop':
       return { ...state, stop: action.value }
+    case 'locationSettled': {
+      return { ...state, locationSettled: action.value }
+    }
     case 'selected': {
       return { ...state, selected: action.value }
     }

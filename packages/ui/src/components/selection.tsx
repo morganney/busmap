@@ -7,13 +7,13 @@ import { getForStop } from '../api/rb/predictions.js'
 
 import type { FC } from 'react'
 import type { Popup } from 'leaflet'
-import type { Stop, Route } from '../types.js'
+import type { Stop, Route, Direction } from '../types.js'
 
-interface StopProps {
+interface SelectionProps {
   stop: Stop
   agency: string
   route: Route
-  direction: string
+  direction: Direction
   popup: Popup
 }
 
@@ -62,6 +62,9 @@ const Definition = styled.dl`
   dd:last-child {
     display: flex;
     gap: 5px;
+
+    align-items: center;
+    white-space: nowrap;
   }
   dd:last-child {
     em {
@@ -75,7 +78,7 @@ const Definition = styled.dl`
     }
   }
 `
-const Stop: FC<StopProps> = ({ stop, agency, route, direction, popup }) => {
+const Selection: FC<SelectionProps> = ({ stop, agency, route, direction, popup }) => {
   const { data, error, isFetching } = useQuery(
     ['preds', agency, route.id, stop.id],
     () => getForStop(agency, route.id, stop.id),
@@ -117,11 +120,11 @@ const Stop: FC<StopProps> = ({ stop, agency, route, direction, popup }) => {
   return (
     <Definition>
       <dt>Route</dt>
-      <dd>{route?.title}</dd>
+      <dd>{route.title}</dd>
       <dt>Direction</dt>
-      <dd>{direction}</dd>
+      <dd>{direction.title}</dd>
       <dt>Stop</dt>
-      <dd>{stop?.title}</dd>
+      <dd>{stop.title}</dd>
       <dt>Arrivals</dt>
       <dd>
         {isFetching ? (
@@ -136,4 +139,5 @@ const Stop: FC<StopProps> = ({ stop, agency, route, direction, popup }) => {
   )
 }
 
-export { Stop }
+export { Selection }
+export type { SelectionProps }

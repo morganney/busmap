@@ -344,6 +344,12 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
     }
   }, [items])
 
+  useEffect(() => {
+    if (value) {
+      setInputText(itemToString(value))
+    }
+  }, [value])
+
   return (
     <SelectWrap width={width}>
       <Combobox size={size} data-menu-empty={inputItems.length === 0}>
