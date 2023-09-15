@@ -4,8 +4,8 @@ import type { BusmapGlobals } from './types'
 
 const defaultGlobals = {
   dispatch: () => {},
-  route: null,
-  center: { lat: 32.79578, lon: -95.45166 },
+  locationSettled: false,
+  center: { lat: 37.7775, lon: -122.416389 },
   bounds: {
     sw: {
       lat: 37.7625799,

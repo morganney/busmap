@@ -3,7 +3,8 @@ import { StrictMode } from 'react'
 
 import { BusMap } from './app.js'
 
-const root = createRoot(document.querySelector('main') as HTMLElement)
+const rootEl = document.querySelector('main') as HTMLElement
+const root = createRoot(rootEl)
 
 root.render(
   <StrictMode>

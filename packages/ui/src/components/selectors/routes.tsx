@@ -8,11 +8,18 @@ import type { RouteName } from '../../types.js'
 
 interface Props {
   routes?: RouteName[]
+  selected?: RouteName['id']
   isDisabled?: boolean
   onSelect: (selected: AnItem) => void
 }
-const Routes: FC<Props> = ({ routes, onSelect, isDisabled = Boolean(routes) }) => {
+const Routes: FC<Props> = ({
+  routes,
+  selected,
+  onSelect,
+  isDisabled = Boolean(routes)
+}) => {
   const items = routes?.map(({ title, id }) => ({ label: title, value: id }))
+  const value = selected ? items?.find(({ value }) => value === selected) : undefined
 
   return (
     <FormItem label="Route" direction="horizontal">
@@ -20,6 +27,7 @@ const Routes: FC<Props> = ({ routes, onSelect, isDisabled = Boolean(routes) }) =
         onClear
         caseInsensitive
         inputBoundByItems
+        value={value}
         isDisabled={isDisabled}
         placeholder="Route ..."
         items={items ?? []}

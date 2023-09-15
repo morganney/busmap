@@ -75,7 +75,7 @@ interface Prediction {
 }
 interface Selection {
   stop: Stop
-  direction: string
+  direction: Direction
 }
 
 // Busmap types
@@ -103,6 +103,10 @@ interface SelectedChanged {
   type: 'selected'
   value: Selection | undefined
 }
+interface LocationSettled {
+  type: 'locationSettled'
+  value: boolean
+}
 type BusmapAction =
   | BoundsChanged
   | CenterChanged
@@ -110,15 +114,17 @@ type BusmapAction =
   | RouteChanged
   | StopChanged
   | SelectedChanged
+  | LocationSettled
 interface BusmapGlobals {
   dispatch: Dispatch<BusmapAction>
   center: Point
   bounds: Bounds
   agency?: string
   stop?: Stop
-  selected?: { stop: Stop; direction: string }
+  selected?: Selection
   arrivals?: string[]
-  route: Route | null
+  route?: Route
+  locationSettled: boolean
 }
 
 export type {

@@ -24,3 +24,6 @@ aside {
   width: 35%;
   min-width: 320px;
 }
+.leaflet-container {
+  background: transparent;
+}
