@@ -1,87 +1,72 @@
 import { useCallback, useState } from 'react'
-import styled from 'styled-components'
 
 import { AutoSuggest } from './mod.js'
 
-import type { AnItem } from './mod.js'
 import type { StoryFn } from '@storybook/react'
-import type { FC } from 'react'
 
-type Story = StoryFn<typeof AutoSuggest>
-
-const Dl = styled.dl`
-  margin: 0 0 5px 0;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  dt::after {
-    content: ':';
-  }
-  dd {
-    margin: 0;
-  }
-`
-const Selection: FC<{ selection: AnItem }> = ({ selection }) => {
-  return (
-    <Dl>
-      <dt>Selected</dt>
-      <dd>{typeof selection === 'string' ? selection : selection.value}</dd>
-    </Dl>
-  )
-}
-const useSelection = () => {
-  const [selected, setSelected] = useState<AnItem>('')
-  const onSelect = useCallback((selection: AnItem) => {
+const useSelection = <T,>(initial: T) => {
+  const [selected, setSelected] = useState<T>(initial)
+  const onSelect = useCallback((selection: T) => {
     setSelected(selection)
   }, [])
 
   return { selected, onSelect }
 }
-const Primary: Story = args => {
-  const { selected, onSelect } = useSelection()
+const Primary: StoryFn<typeof AutoSuggest<string>> = args => {
+  const { selected, onSelect } = useSelection<string>('')
+  const onClear = useCallback(() => {
+    onSelect('')
+  }, [onSelect])
 
   return (
     <>
-      <Selection selection={selected} />
-      <AutoSuggest {...args} onSelect={onSelect} />
+      <p>Selected: {selected || 'N/A'}</p>
+      <AutoSuggest {...args} onSelect={onSelect} onClear={onClear} />
     </>
   )
 }
-const InitialValue: Story = args => {
-  const { selected, onSelect } = useSelection()
+const InitialValue: StoryFn<typeof AutoSuggest<string>> = args => {
+  const { selected, onSelect } = useSelection<string>('Hannah')
 
   return (
     <>
-      <Selection selection={selected} />
+      <p>Selected: {selected || 'N/A'}</p>
       <AutoSuggest {...args} onSelect={onSelect} value="Hannah" />
     </>
   )
 }
-const ItemsAsObject: Story = args => {
-  const { selected, onSelect } = useSelection()
-  const items = [
+interface Agency {
+  id: string
+  title: string
+  region: string
+}
+const ItemsAsObject: StoryFn<typeof AutoSuggest<Agency>> = args => {
+  const items: Agency[] = [
     {
-      label: 'One',
-      value: '1'
+      id: 'sfmuni-sandbox',
+      title: 'San Francisco Muni Sandbox',
+      region: 'California-Northern'
     },
     {
-      label: 'Two',
-      value: '2'
+      id: 'ttc',
+      title: 'Toronto Transit Commission',
+      region: 'Ontario'
     },
     {
-      label: 'Three',
-      value: '3'
+      id: 'indianapolis-air',
+      title: 'Indianapolis International Airport',
+      region: 'Indiana'
     }
   ]
+  const { selected, onSelect } = useSelection<Agency | null>(items[0])
 
   return (
     <>
-      <Selection selection={selected} />
+      <p>Selected: {selected?.id ?? 'N/A'}</p>
       <AutoSuggest
         {...args}
         items={items}
+        value={items[0]}
         onSelect={onSelect}
         inputBoundByItems
         caseInsensitive
@@ -89,16 +74,20 @@ const ItemsAsObject: Story = args => {
     </>
   )
 }
-const InputBoundByItems: Story = args => {
-  const { selected, onSelect } = useSelection()
+const InputBoundByItems: StoryFn<typeof AutoSuggest<string>> = args => {
+  const { selected, onSelect } = useSelection<string>('')
+  const onClear = useCallback(() => {
+    onSelect('')
+  }, [onSelect])
 
   return (
     <>
-      <Selection selection={selected} />
+      <p>Selected: {selected || 'N/A'}</p>
       <AutoSuggest
         {...args}
         items={['one', 'two', 'three', 'thrice', 'thence', 'throw']}
         onSelect={onSelect}
+        onClear={onClear}
         inputBoundByItems
       />
     </>
@@ -109,6 +98,7 @@ InputBoundByItems.argTypes = {
     control: false
   }
 }
+
 export default {
   title: 'AutoSuggest',
   component: AutoSuggest,
@@ -156,4 +146,4 @@ export default {
     }
   }
 }
-export { Primary, InitialValue, InputBoundByItems, ItemsAsObject }
+export { Primary, InitialValue, ItemsAsObject, InputBoundByItems }

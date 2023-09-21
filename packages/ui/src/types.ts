@@ -17,11 +17,9 @@ interface Vehicle {
   block: string
   trip: string
 }
-interface AgencyName {
+interface Agency {
   id: string
   title: string
-}
-interface Agency extends AgencyName {
   region: string
 }
 interface StopName {
@@ -74,8 +72,10 @@ interface Prediction {
   values: Pred[]
 }
 interface Selection {
-  stop: Stop
+  agency: Agency
+  route: Route
   direction: Direction
+  stop: Stop
 }
 
 // Busmap types
@@ -89,19 +89,23 @@ interface CenterChanged {
 }
 interface AgencyChanged {
   type: 'agency'
-  value: string
+  value?: Agency
 }
 interface RouteChanged {
   type: 'route'
-  value: Route
+  value?: Route
+}
+interface DirectionChanged {
+  type: 'direction'
+  value?: Direction
 }
 interface StopChanged {
   type: 'stop'
-  value: Stop
+  value?: Stop
 }
 interface SelectedChanged {
   type: 'selected'
-  value: Selection | undefined
+  value?: Selection
 }
 interface LocationSettled {
   type: 'locationSettled'
@@ -112,6 +116,7 @@ type BusmapAction =
   | CenterChanged
   | AgencyChanged
   | RouteChanged
+  | DirectionChanged
   | StopChanged
   | SelectedChanged
   | LocationSettled
@@ -119,11 +124,12 @@ interface BusmapGlobals {
   dispatch: Dispatch<BusmapAction>
   center: Point
   bounds: Bounds
-  agency?: string
+  agency?: Agency
+  route?: Route
+  direction?: Direction
   stop?: Stop
   selected?: Selection
   arrivals?: string[]
-  route?: Route
   locationSettled: boolean
 }
 
@@ -131,7 +137,6 @@ export type {
   Point,
   Bounds,
   Path,
-  AgencyName,
   Agency,
   Stop,
   Direction,

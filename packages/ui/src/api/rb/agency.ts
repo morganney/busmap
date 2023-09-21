@@ -2,7 +2,7 @@ import { ROOT } from './common.js'
 
 import { transport } from '../transport.js'
 
-import type { Agency, AgencyName } from '../../types.js'
+import type { Agency } from '../../types.js'
 
 const get = async (id: string) => {
   const agency = await transport.fetch<Agency>(`${ROOT}/agencies/${id}`)
@@ -10,7 +10,7 @@ const get = async (id: string) => {
   return agency
 }
 const getAll = async () => {
-  const agencies = await transport.fetch<AgencyName[]>(`${ROOT}/agencies`)
+  const agencies = await transport.fetch<Agency[]>(`${ROOT}/agencies`)
 
   return agencies
 }

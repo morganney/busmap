@@ -7,13 +7,13 @@ import { getForStop } from '../api/rb/predictions.js'
 
 import type { FC } from 'react'
 import type { Popup } from 'leaflet'
-import type { Stop, Route, Direction } from '../types.js'
+import type { Agency, Stop, Route, Direction } from '../types.js'
 
 interface SelectionProps {
-  stop: Stop
-  agency: string
+  agency: Agency
   route: Route
   direction: Direction
+  stop: Stop
   popup: Popup
 }
 
@@ -79,8 +79,8 @@ const Definition = styled.dl`
 `
 const Selection: FC<SelectionProps> = ({ stop, agency, route, direction, popup }) => {
   const { data, error, isFetching } = useQuery(
-    ['preds', agency, route.id, stop.id],
-    () => getForStop(agency, route.id, stop.id),
+    ['preds', agency.id, route.id, stop.id],
+    () => getForStop(agency.id, route.id, stop.id),
     {
       refetchOnWindowFocus: true,
       refetchInterval: 8_000
