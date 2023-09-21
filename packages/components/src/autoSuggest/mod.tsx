@@ -10,30 +10,24 @@ import { Input } from '../input/mod.js'
 import { PB40T, SLB30T } from '../colors.js'
 import { ChevronDown as ChevronDownIcon } from '../icons/chevronDown/mod.js'
 
-import type { ChangeEvent, FC, ReactNode } from 'react'
+import type { ChangeEvent, ReactNode } from 'react'
 import type { UseComboboxStateChange, UseComboboxStateChangeTypes } from 'downshift'
 import type { Size } from '../types.js'
 
-interface Item {
-  value: string
-  label: string
-}
-type AnItem = Item | string
-type Items = AnItem[]
-interface AutoSuggestProps {
-  items: Items
-  loadItems?: (value: string) => Promise<Items>
+interface AutoSuggestProps<T> {
+  items: T[]
+  loadItems?: (value: string) => Promise<T[]>
   preload?: boolean | string
-  value?: AnItem
+  value?: T
   inputBoundByItems?: boolean
-  onClear?: boolean | (() => void)
+  onClear?: boolean | ((clearItem: () => void) => void)
   onChange?: (
     evt: ChangeEvent<HTMLInputElement>,
     type?: UseComboboxStateChangeTypes
   ) => void
-  onSelect?: (selected: AnItem) => void
+  onSelect?: (selected: T) => void
   onBlur?: () => void
-  renderItem?: (item: AnItem) => ReactNode
+  renderItem?: (item: T) => ReactNode
   isDisabled?: boolean
   caseInsensitive?: boolean
   width?: string
@@ -43,9 +37,42 @@ interface AutoSuggestProps {
   labelledBy?: string
   id?: string
 }
+interface Label {
+  label: string
+}
+interface Title {
+  title: string
+}
 
-const itemToString = (item?: AnItem | null) =>
-  typeof item === 'object' ? item?.label ?? '' : item?.toString() ?? ''
+const itemIsLabel = (x: unknown): x is Label => {
+  if (x && typeof x === 'object' && 'label' in x && typeof x.label === 'string') {
+    return true
+  }
+
+  return false
+}
+const itemIsTitle = (x: unknown): x is Title => {
+  if (x && typeof x === 'object' && 'title' in x && typeof x.title === 'string') {
+    return true
+  }
+
+  return false
+}
+const itemToString = <T,>(item?: T) => {
+  if (typeof item === 'string' || typeof item === 'number') {
+    return item.toString()
+  }
+
+  if (itemIsTitle(item)) {
+    return item.title
+  }
+
+  if (itemIsLabel(item)) {
+    return item.label
+  }
+
+  return ''
+}
 const getPadding = ({ size }: { size: Size }) => {
   const [top, right, bottom, left] = sizing[size].clearable.padding.split(' ')
 
@@ -133,10 +160,10 @@ const ToggleMenuButton = styled.button<{ size: Size }>`
   cursor: pointer;
 `
 const matchSorterOptions = {
-  keys: [(item: AnItem) => itemToString(item)],
+  keys: [<T,>(item: T) => itemToString(item)],
   threshold: matchSorter.rankings.CONTAINS
 }
-const getChangeEvt = (value?: AnItem | null): ChangeEvent<HTMLInputElement> => {
+const getChangeEvt = (value?: string | null): ChangeEvent<HTMLInputElement> => {
   const evt = new Event('change', {
     bubbles: true,
     cancelable: false
@@ -149,7 +176,7 @@ const getChangeEvt = (value?: AnItem | null): ChangeEvent<HTMLInputElement> => {
 
   return evt as unknown as ChangeEvent<HTMLInputElement>
 }
-const AutoSuggest: FC<AutoSuggestProps> = ({
+const AutoSuggest = <U,>({
   id,
   items,
   value,
@@ -168,8 +195,8 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
   isDisabled = false,
   caseInsensitive = false,
   inputBoundByItems = false
-}) => {
-  const initialLoadedItems = useRef<Items>([])
+}: AutoSuggestProps<U>) => {
+  const initialLoadedItems = useRef<U[]>([])
   const [inputText, setInputText] = useState(itemToString(value))
   const [inputItems, setInputItems] = useState(items ?? [])
   const render = useMemo(() => {
@@ -177,7 +204,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
       return renderItem
     }
 
-    return (item: AnItem) => itemToString(item)
+    return (item: U) => itemToString(item)
   }, [renderItem])
   const handleOnInputValueChange = useMemo(() => {
     if (typeof loadItems === 'function') {
@@ -192,7 +219,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
       )
     }
 
-    return (changes: UseComboboxStateChange<AnItem>) => {
+    return (changes: UseComboboxStateChange<U>) => {
       setInputItems(matchSorter(items, changes.inputValue ?? '', matchSorterOptions))
     }
   }, [items, loadItems])
@@ -209,28 +236,10 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
 
     return null
   }, [preload, loadItems])
-  const handleOnClear = useMemo(() => {
-    if (onClear) {
-      return async () => {
-        setInputText('')
-
-        if (initialLoadedItems.current.length) {
-          setInputItems(initialLoadedItems.current)
-        } else if (typeof loadItems === 'function') {
-          setInputItems(await loadItems(''))
-        } else {
-          setInputItems(items)
-        }
-
-        if (typeof onClear === 'function') {
-          onClear()
-        }
-      }
-    }
-  }, [onClear, items, loadItems])
   const {
     isOpen,
     openMenu,
+    selectItem,
     getToggleButtonProps,
     getMenuProps,
     getInputProps,
@@ -242,21 +251,23 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
     inputValue: inputText,
     initialSelectedItem: value,
     onSelectedItemChange: useCallback(
-      (changes: UseComboboxStateChange<AnItem>): void => {
-        setInputText(itemToString(changes.selectedItem))
+      (changes: UseComboboxStateChange<U>): void => {
+        const asString = itemToString(changes.selectedItem)
+
+        setInputText(asString)
 
         if (onChange) {
-          onChange(getChangeEvt(changes.selectedItem), changes.type)
+          onChange(getChangeEvt(asString), changes.type)
         }
 
-        if (onSelect) {
-          onSelect(changes.selectedItem ?? '')
+        if (onSelect && changes.selectedItem) {
+          onSelect(changes.selectedItem)
         }
       },
       [onChange, onSelect]
     ),
     onStateChange: useCallback(
-      (changes: UseComboboxStateChange<AnItem>): void => {
+      (changes: UseComboboxStateChange<U>): void => {
         const { type } = changes
 
         switch (type) {
@@ -331,6 +342,28 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
       ]
     )
   })
+  const clearItem = useCallback(() => {
+    selectItem(null)
+  }, [selectItem])
+  const handleOnClear = useMemo(() => {
+    if (onClear) {
+      return async () => {
+        setInputText('')
+
+        if (initialLoadedItems.current.length) {
+          setInputItems(initialLoadedItems.current)
+        } else if (typeof loadItems === 'function') {
+          setInputItems(await loadItems(''))
+        } else {
+          setInputItems(items)
+        }
+
+        if (typeof onClear === 'function') {
+          onClear(clearItem)
+        }
+      }
+    }
+  }, [onClear, items, loadItems, clearItem])
 
   useEffect(() => {
     if (typeof preloadItems === 'function') {
@@ -345,9 +378,7 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
   }, [items])
 
   useEffect(() => {
-    if (value) {
-      setInputText(itemToString(value))
-    }
+    setInputText(itemToString(value))
   }, [value])
 
   return (
@@ -401,4 +432,4 @@ const AutoSuggest: FC<AutoSuggestProps> = ({
 }
 
 export { AutoSuggest }
-export type { AutoSuggestProps, AnItem, Item }
+export type { AutoSuggestProps }

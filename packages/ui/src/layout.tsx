@@ -65,10 +65,10 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         )
       )
     } else {
-      map.locate({ setView: true })
+      map.locate({ setView: true, enableHighAccuracy: true })
     }
 
-    if (route) {
+    if (agency && route) {
       const icon = L.icon({
         iconUrl: '../assets/svg/circled.svg',
         iconSize: [7, 7]
@@ -88,7 +88,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
         marker.addTo(map).bindPopup(popup.current)
         marker.on('click', () => {
-          dispatch({ type: 'selected', value: { stop, direction } })
+          dispatch({ type: 'selected', value: { agency, route, stop, direction } })
         })
       })
     }
@@ -98,18 +98,16 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     }
   }, [center, agency, route, dispatch])
 
-  if (selected && agency && route) {
-    const { stop, direction } = selected
-
+  if (selected) {
     return (
       <>
         {children}
         {createPortal(
           <Selection
-            agency={agency}
-            stop={stop}
-            route={route}
-            direction={direction}
+            agency={selected.agency}
+            stop={selected.stop}
+            route={selected.route}
+            direction={selected.direction}
             popup={popup.current}
           />,
           selection.current

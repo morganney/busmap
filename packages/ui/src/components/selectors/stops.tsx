@@ -3,34 +3,29 @@ import { AutoSuggest } from '@busmap/components/autoSuggest'
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
-import type { RouteName } from '../../types.js'
+import type { Stop } from '../../types.js'
 
 interface Props {
-  routes?: RouteName[]
-  selected?: RouteName
+  stops?: Stop[]
+  selected?: Stop
   isDisabled?: boolean
-  onSelect: (selected: RouteName) => void
+  onSelect: (selected: Stop) => void
 }
-const Routes: FC<Props> = ({
-  routes,
-  selected,
-  onSelect,
-  isDisabled = Boolean(routes)
-}) => {
+const Stops: FC<Props> = ({ stops, selected, onSelect, isDisabled = Boolean(stops) }) => {
   return (
-    <FormItem label="Route" direction="horizontal">
+    <FormItem label="Stop" direction="horizontal">
       <AutoSuggest
         onClear
         caseInsensitive
         inputBoundByItems
         value={selected ?? undefined}
         isDisabled={isDisabled}
-        placeholder="Route ..."
-        items={routes ?? []}
+        placeholder="Stop ..."
+        items={stops ?? []}
         onSelect={onSelect}
       />
     </FormItem>
   )
 }
 
-export { Routes }
+export { Stops }
