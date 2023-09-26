@@ -5,7 +5,7 @@ services:
       target: busmap
     container_name: api
     volumes:
-      - .:/app:delegated
+      - .:/app
       - shared_node_modules:/app/node_modules
       - api_node_modules:/app/packages/api/node_modules
     ports:
@@ -24,7 +24,7 @@ services:
       target: busmap
     container_name: ui
     volumes:
-      - .:/app:delegated
+      - .:/app
       - shared_node_modules:/app/node_modules
       - ui_node_modules:/app/packages/ui/node_modules
       - components_node_modules:/app/packages/components/node_modules
@@ -42,7 +42,7 @@ services:
       target: busmap
     container_name: storybook
     volumes:
-      - .:/app:delegated
+      - .:/app
       - shared_node_modules:/app/node_modules
       - components_node_modules:/app/packages/components/node_modules
     ports:
