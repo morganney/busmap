@@ -37,6 +37,7 @@
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "types": "./dist/index.d.ts",
   "scripts": {
     "prettier": "prettier -w .",

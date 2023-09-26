@@ -18,14 +18,14 @@ const Directions: FC<Props> = ({
   isDisabled = Boolean(directions)
 }) => {
   return (
-    <FormItem label="Direction" direction="horizontal">
+    <FormItem label="Direction">
       <AutoSuggest
         onClear
         caseInsensitive
         inputBoundByItems
         value={selected ?? undefined}
         isDisabled={isDisabled}
-        placeholder="Direction ..."
+        placeholder={`Directions ... ${directions ? `(${directions.length})` : ''}`}
         items={directions ?? []}
         onSelect={onSelect}
       />

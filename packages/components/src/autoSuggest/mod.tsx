@@ -10,10 +10,16 @@ import { Input } from '../input/mod.js'
 import { PB40T, SLB30T } from '../colors.js'
 import { ChevronDown as ChevronDownIcon } from '../icons/chevronDown/mod.js'
 
-import type { ChangeEvent, ReactNode } from 'react'
-import type { UseComboboxStateChange, UseComboboxStateChangeTypes } from 'downshift'
+import type { ChangeEvent, ReactNode, Dispatch, SetStateAction } from 'react'
+import type {
+  UseComboboxStateChange,
+  UseComboboxStateChangeTypes,
+  UseComboboxState,
+  UseComboboxStateChangeOptions
+} from 'downshift'
 import type { Size } from '../types.js'
 
+type SetInputText = Dispatch<SetStateAction<string>>
 interface AutoSuggestProps<T> {
   items: T[]
   loadItems?: (value: string) => Promise<T[]>
@@ -26,8 +32,13 @@ interface AutoSuggestProps<T> {
     type?: UseComboboxStateChangeTypes
   ) => void
   onSelect?: (selected: T) => void
-  onBlur?: () => void
+  onBlur?: (selected: T | null, inputText: string, setInputText: SetInputText) => void
   renderItem?: (item: T) => ReactNode
+  /**
+   * Whether the item is selected/deselected when the text entered
+   * in the input field matches/mismatches an item from the list.
+   */
+  selectOnTextMatch?: boolean
   isDisabled?: boolean
   caseInsensitive?: boolean
   width?: string
@@ -194,7 +205,8 @@ const AutoSuggest = <U,>({
   placeholder = '',
   isDisabled = false,
   caseInsensitive = false,
-  inputBoundByItems = false
+  inputBoundByItems = false,
+  selectOnTextMatch = false
 }: AutoSuggestProps<U>) => {
   const initialLoadedItems = useRef<U[]>([])
   const [inputText, setInputText] = useState(itemToString(value))
@@ -243,6 +255,7 @@ const AutoSuggest = <U,>({
     getToggleButtonProps,
     getMenuProps,
     getInputProps,
+    selectedItem,
     highlightedIndex,
     getItemProps
   } = useCombobox({
@@ -250,6 +263,41 @@ const AutoSuggest = <U,>({
     items: inputItems,
     inputValue: inputText,
     initialSelectedItem: value,
+    stateReducer: useCallback(
+      (
+        state: UseComboboxState<U>,
+        actionAndChanges: UseComboboxStateChangeOptions<U>
+      ) => {
+        const { type, changes } = actionAndChanges
+
+        if (selectOnTextMatch) {
+          switch (type) {
+            case useCombobox.stateChangeTypes.InputChange: {
+              const inputValue = changes.inputValue ?? ''
+              const found = inputItems.find(item =>
+                caseInsensitive
+                  ? itemToString(item).toLowerCase() === inputValue.toLowerCase()
+                  : itemToString(item) === inputValue
+              )
+
+              if (found) {
+                return {
+                  ...changes,
+                  selectedItem: found
+                }
+              }
+
+              return changes
+            }
+            default:
+              return changes
+          }
+        }
+
+        return changes
+      },
+      [caseInsensitive, selectOnTextMatch, inputItems]
+    ),
     onSelectedItemChange: useCallback(
       (changes: UseComboboxStateChange<U>): void => {
         const asString = itemToString(changes.selectedItem)
@@ -281,18 +329,6 @@ const AutoSuggest = <U,>({
               if (onChange) {
                 onChange(getChangeEvt(inputValue), type)
               }
-
-              if (onSelect) {
-                const found = inputItems.find(item =>
-                  caseInsensitive
-                    ? itemToString(item).toLowerCase() === inputValue.toLowerCase()
-                    : itemToString(item) === inputValue
-                )
-
-                if (found) {
-                  onSelect(found)
-                }
-              }
             } else if (inputBoundByItems) {
               const nextItems = matchSorter(items, inputValue, matchSorterOptions)
 
@@ -302,18 +338,6 @@ const AutoSuggest = <U,>({
 
                 if (onChange) {
                   onChange(getChangeEvt(inputValue), type)
-                }
-
-                if (onSelect) {
-                  const found = inputItems.find(item =>
-                    caseInsensitive
-                      ? itemToString(item).toLowerCase() === inputValue.toLowerCase()
-                      : itemToString(item) === inputValue
-                  )
-
-                  if (found) {
-                    onSelect(found)
-                  }
                 }
               }
             }
@@ -329,19 +353,20 @@ const AutoSuggest = <U,>({
           }
         }
       },
-      [
-        loadItems,
-        inputBoundByItems,
-        items,
-        inputItems,
-        inputText,
-        caseInsensitive,
-        handleOnInputValueChange,
-        onSelect,
-        onChange
-      ]
+      [loadItems, inputBoundByItems, items, inputText, handleOnInputValueChange, onChange]
     )
   })
+  const handleOnBlur = useCallback(() => {
+    if (typeof onBlur === 'function') {
+      onBlur(selectedItem, inputText, setInputText)
+    } else if (selectedItem) {
+      const itemAsString = itemToString(selectedItem)
+
+      if (inputText !== itemAsString) {
+        setInputText(itemAsString)
+      }
+    }
+  }, [onBlur, selectedItem, inputText, setInputText])
   const clearItem = useCallback(() => {
     selectItem(null)
   }, [selectItem])
@@ -378,16 +403,16 @@ const AutoSuggest = <U,>({
   }, [items])
 
   useEffect(() => {
-    setInputText(itemToString(value))
-  }, [value])
+    selectItem(value ?? null)
+  }, [value, selectItem])
 
   return (
     <SelectWrap width={width}>
       <Combobox size={size} data-menu-empty={inputItems.length === 0}>
         <Input
           {...getInputProps({
-            onBlur,
             value: inputText,
+            onBlur: handleOnBlur,
             onFocus: () => {
               if (!isOpen) {
                 openMenu()
@@ -432,4 +457,4 @@ const AutoSuggest = <U,>({
 }
 
 export { AutoSuggest }
-export type { AutoSuggestProps }
+export type { AutoSuggestProps, SetInputText }

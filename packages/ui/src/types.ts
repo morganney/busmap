@@ -144,6 +144,7 @@ export type {
   Route,
   Pred,
   Prediction,
+  Selection,
   BusmapGlobals,
   BusmapAction
 }

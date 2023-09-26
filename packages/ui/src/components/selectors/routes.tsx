@@ -18,14 +18,14 @@ const Routes: FC<Props> = ({
   isDisabled = Boolean(routes)
 }) => {
   return (
-    <FormItem label="Route" direction="horizontal">
+    <FormItem label="Route">
       <AutoSuggest
         onClear
         caseInsensitive
         inputBoundByItems
         value={selected ?? undefined}
         isDisabled={isDisabled}
-        placeholder="Route ..."
+        placeholder={`Routes ... ${routes ? `(${routes.length})` : ''}`}
         items={routes ?? []}
         onSelect={onSelect}
       />
