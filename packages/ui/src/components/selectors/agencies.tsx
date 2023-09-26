@@ -12,13 +12,13 @@ interface Props {
 }
 const Agencies: FC<Props> = ({ agencies, isDisabled, onSelect }) => {
   return (
-    <FormItem>
+    <FormItem label="Agency">
       <AutoSuggest
         onClear
         caseInsensitive
         inputBoundByItems
         isDisabled={isDisabled}
-        placeholder="Agency ..."
+        placeholder={`Agencies ... (${agencies.length})`}
         items={agencies}
         onSelect={onSelect}
       />

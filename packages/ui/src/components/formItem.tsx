@@ -9,6 +9,7 @@ const Label = styled.label<{ direction: Direction }>`
   flex-direction: ${({ direction }) => (direction === 'vertical' ? 'column' : 'row')};
   align-items: ${({ direction }) => (direction === 'vertical' ? 'normal' : 'center')};
   gap: ${({ direction }) => (direction === 'vertical' ? 4 : 8)}px;
+  font-size: 14px;
 
   span:last-child {
     flex-grow: ${({ direction }) => (direction === 'vertical' ? 0 : 1)};

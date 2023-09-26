@@ -6,21 +6,21 @@ import type { FC } from 'react'
 import type { Stop } from '../../types.js'
 
 interface Props {
-  stops?: Stop[]
+  stops: Stop[]
   selected?: Stop
   isDisabled?: boolean
   onSelect: (selected: Stop) => void
 }
 const Stops: FC<Props> = ({ stops, selected, onSelect, isDisabled = Boolean(stops) }) => {
   return (
-    <FormItem label="Stop" direction="horizontal">
+    <FormItem label="Stop">
       <AutoSuggest
         onClear
         caseInsensitive
         inputBoundByItems
         value={selected ?? undefined}
         isDisabled={isDisabled}
-        placeholder="Stop ..."
+        placeholder={`Stops ... ${stops.length ? `(${stops.length})` : ''}`}
         items={stops ?? []}
         onSelect={onSelect}
       />

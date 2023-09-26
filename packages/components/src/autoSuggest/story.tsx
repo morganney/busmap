@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import { AutoSuggest } from './mod.js'
 
 import type { StoryFn } from '@storybook/react'
+import type { SetInputText } from './mod.js'
 
 const useSelection = <T,>(initial: T) => {
   const [selected, setSelected] = useState<T>(initial)
@@ -14,14 +15,19 @@ const useSelection = <T,>(initial: T) => {
 }
 const Primary: StoryFn<typeof AutoSuggest<string>> = args => {
   const { selected, onSelect } = useSelection<string>('')
-  const onClear = useCallback(() => {
-    onSelect('')
-  }, [onSelect])
+  const onClear = useCallback(
+    (clearItem: () => void) => {
+      clearItem()
+      onSelect('')
+    },
+    [onSelect]
+  )
+  const { onBlur, ...rest } = args
 
   return (
     <>
       <p>Selected: {selected || 'N/A'}</p>
-      <AutoSuggest {...args} onSelect={onSelect} onClear={onClear} />
+      <AutoSuggest {...rest} onSelect={onSelect} onClear={onClear} selectOnTextMatch />
     </>
   )
 }
@@ -59,6 +65,14 @@ const ItemsAsObject: StoryFn<typeof AutoSuggest<Agency>> = args => {
     }
   ]
   const { selected, onSelect } = useSelection<Agency | null>(items[0])
+  const onBlur = useCallback(
+    (selected: Agency | null, inputText: string, setInputText: SetInputText) => {
+      if (selected && inputText !== selected.title) {
+        setInputText(selected.title)
+      }
+    },
+    []
+  )
 
   return (
     <>
@@ -66,7 +80,8 @@ const ItemsAsObject: StoryFn<typeof AutoSuggest<Agency>> = args => {
       <AutoSuggest
         {...args}
         items={items}
-        value={items[0]}
+        value={selected ?? undefined}
+        onBlur={onBlur}
         onSelect={onSelect}
         inputBoundByItems
         caseInsensitive
@@ -104,6 +119,7 @@ export default {
   component: AutoSuggest,
   args: {
     onClear: true,
+    selectOnTextMatch: false,
     caseInsensitive: false,
     items: ['Hannah', 'Emma', 'Rebecca'],
     size: 'medium',
@@ -124,6 +140,9 @@ export default {
     },
     onChange: {
       action: 'onChange'
+    },
+    onBlur: {
+      action: 'onBlur'
     },
     isDisabled: {
       control: 'boolean'
