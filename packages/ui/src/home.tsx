@@ -143,6 +143,7 @@ const Home: FC<HomeProps> = () => {
   }, [update])
   const error = getFirstDataError([agenciesError, routesError, routeError])
   const isLoading = isAgenciesLoading || isRoutesLoading || isRouteLoading
+  const loopDirection = route?.directions.length === 1 ? route.directions[0] : undefined
 
   useQuery(
     ['vehicles', agency?.id, route?.id],
@@ -186,7 +187,7 @@ const Home: FC<HomeProps> = () => {
           />
           <Directions
             directions={route?.directions}
-            selected={direction}
+            selected={direction ?? loopDirection}
             onSelect={onSelectDirection}
             isDisabled={isLoading || !agency || !route}
           />

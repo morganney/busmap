@@ -62,7 +62,7 @@ interface Route extends RouteName {
   textColor: string
   bounds: Bounds
   stops: Stop[]
-  directions: [from: Direction, to: Direction]
+  directions: Direction[]
   paths: Path[]
 }
 interface Pred {
