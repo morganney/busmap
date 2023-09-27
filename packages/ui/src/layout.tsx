@@ -26,7 +26,7 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
 }
 const Layout: FC<LayoutProps> = ({ children }) => {
   const { center, route, agency, selected, dispatch } = useContext(Globals)
-  const selection = useRef(document.createElement('div'))
+  const selectionRef = useRef(document.createElement('div'))
   const popup = useRef(L.popup())
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         iconSize: [7, 7]
       })
 
-      popup.current.setContent(selection.current)
+      popup.current.setContent(selectionRef.current)
       popup.current.on('remove', () => {
         dispatch({ type: 'selected', value: undefined })
       })
@@ -110,7 +110,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             direction={selected.direction}
             popup={popup.current}
           />,
-          selection.current
+          selectionRef.current
         )}
       </>
     )

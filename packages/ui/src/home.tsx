@@ -9,8 +9,11 @@ import { Routes } from './components/selectors/routes.js'
 import { Directions } from './components/selectors/directions.js'
 import { Stops } from './components/selectors/stops.js'
 import { Loading } from './components/loading.js'
+import { Predictions } from './components/predictions.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
 import { getAll as getAllRoutes, get as getRoute } from './api/rb/route.js'
+import { getAll as getAllVehicles } from './api/rb/vehicles.js'
+import { getForStop } from './api/rb/predictions.js'
 
 import type { ReactNode, FC } from 'react'
 import type { Agency, RouteName, Direction, Stop } from './types.js'
@@ -93,6 +96,15 @@ const Home: FC<HomeProps> = () => {
       }
     }
   )
+  const { data: preds } = useQuery(
+    ['preds', agency?.id, route?.id, stop?.id],
+    () => getForStop(agency?.id, route?.id, stop?.id),
+    {
+      enabled: Boolean(agency) && Boolean(route) && Boolean(stop),
+      refetchOnWindowFocus: true,
+      refetchInterval: 8_000
+    }
+  )
   const onSelectAgency = useCallback(
     (selected: Agency) => {
       update({
@@ -126,8 +138,22 @@ const Home: FC<HomeProps> = () => {
     },
     [update]
   )
+  const onClearStop = useCallback(() => {
+    update({ type: 'stop', value: undefined })
+  }, [update])
   const error = getFirstDataError([agenciesError, routesError, routeError])
   const isLoading = isAgenciesLoading || isRoutesLoading || isRouteLoading
+
+  useQuery(
+    ['vehicles', agency?.id, route?.id],
+    () => getAllVehicles(agency?.id, route?.id),
+    {
+      enabled: Boolean(agency) && Boolean(route),
+      onSuccess(data) {
+        update({ type: 'vehicles', value: data })
+      }
+    }
+  )
 
   if (error instanceof Error) {
     return createPortal(
@@ -141,31 +167,39 @@ const Home: FC<HomeProps> = () => {
 
   return createPortal(
     locationSettled && agencies ? (
-      <Form
-        onSubmit={evt => {
-          evt.preventDefault()
-        }}
-      >
-        <Agencies agencies={agencies} onSelect={onSelectAgency} isDisabled={isLoading} />
-        <Routes
-          routes={routes}
-          selected={state.routeName}
-          onSelect={onSelectRoute}
-          isDisabled={isLoading || !agency}
-        />
-        <Directions
-          directions={route?.directions}
-          selected={direction}
-          onSelect={onSelectDirection}
-          isDisabled={isLoading || !agency || !route}
-        />
-        <Stops
-          stops={stops}
-          selected={stop}
-          onSelect={onSelectStop}
-          isDisabled={isLoading || !agency || !route || !direction}
-        />
-      </Form>
+      <>
+        <Form
+          onSubmit={evt => {
+            evt.preventDefault()
+          }}
+        >
+          <Agencies
+            agencies={agencies}
+            onSelect={onSelectAgency}
+            isDisabled={isLoading}
+          />
+          <Routes
+            routes={routes}
+            selected={state.routeName}
+            onSelect={onSelectRoute}
+            isDisabled={isLoading || !agency}
+          />
+          <Directions
+            directions={route?.directions}
+            selected={direction}
+            onSelect={onSelectDirection}
+            isDisabled={isLoading || !agency || !route}
+          />
+          <Stops
+            stops={stops}
+            selected={stop}
+            onClear={onClearStop}
+            onSelect={onSelectStop}
+            isDisabled={isLoading || !agency || !route || !direction}
+          />
+        </Form>
+        {preds?.length && <Predictions preds={preds[0].values.slice(0, 3)} />}
+      </>
     ) : (
       <Loading />
     ),

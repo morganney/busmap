@@ -12,10 +12,22 @@ interface Bounds {
 interface Path {
   points: Point[]
 }
-interface Vehicle {
+interface PredVehicle {
   id: string
   block: string
   trip: string
+}
+interface Vehicle {
+  id: string
+  routeId: string
+  directionId: string
+  predictable: boolean
+  secsSinceReport: number
+  kph: number
+  heading: number
+  lat: number
+  lon: number
+  leadingVehicleId: null | string
 }
 interface Agency {
   id: string
@@ -61,7 +73,7 @@ interface Pred {
   isDeparture: boolean
   affectedByLayover: boolean
   isScheduleBased: boolean
-  vehicle: Vehicle
+  vehicle: PredVehicle
   direction: DirectionName
 }
 interface Prediction {
@@ -103,6 +115,10 @@ interface StopChanged {
   type: 'stop'
   value?: Stop
 }
+interface VehiclesChanged {
+  type: 'vehicles'
+  value: Vehicle[]
+}
 interface SelectedChanged {
   type: 'selected'
   value?: Selection
@@ -118,6 +134,7 @@ type BusmapAction =
   | RouteChanged
   | DirectionChanged
   | StopChanged
+  | VehiclesChanged
   | SelectedChanged
   | LocationSettled
 interface BusmapGlobals {
@@ -126,6 +143,7 @@ interface BusmapGlobals {
   bounds: Bounds
   agency?: Agency
   route?: Route
+  vehicles?: Vehicle[]
   direction?: Direction
   stop?: Stop
   selected?: Selection
@@ -144,6 +162,7 @@ export type {
   Route,
   Pred,
   Prediction,
+  Vehicle,
   Selection,
   BusmapGlobals,
   BusmapAction
