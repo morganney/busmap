@@ -1,12 +1,13 @@
 import L from 'leaflet'
-import { useEffect, useContext, useRef } from 'react'
+import { useEffect, useContext, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { Globals } from './globals.js'
 import { Selection } from './components/selection.js'
 
 import type { FC, ReactNode } from 'react'
-import type { Direction } from './types.js'
+import type { Map, Popup, Marker, LayerGroup } from 'leaflet'
+import type { BusmapAction, Direction, Route, Agency } from './types.js'
 
 type Point = [number, number]
 interface LayoutProps {
@@ -24,79 +25,118 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
 
   return directions[0]
 }
+const getRoutePolyline = (route: Route) => {
+  const polylines: Point[][] = []
+
+  route.paths.forEach(path => {
+    polylines.push(path.points.map(({ lat, lon }) => [lat, lon]))
+  })
+
+  return L.polyline(polylines, { color: route.color })
+}
+const getRouteStopMarkers = (
+  agency: Agency,
+  route: Route,
+  popup: Popup,
+  dispatch: (value: BusmapAction) => void
+) => {
+  const markers: Marker[] = []
+  const icon = L.icon({
+    iconUrl: '../assets/svg/circled.svg',
+    iconSize: [7, 7]
+  })
+
+  route.stops.forEach(stop => {
+    const direction = getDirectionForStop(stop.id, route.directions)
+    const marker: L.Marker = L.marker([stop.lat, stop.lon], { icon })
+
+    marker.bindPopup(popup)
+    marker.on('click', () => {
+      dispatch({ type: 'selected', value: { agency, route, stop, direction } })
+    })
+    markers.push(marker)
+  })
+
+  return markers
+}
 const Layout: FC<LayoutProps> = ({ children }) => {
-  const { center, route, agency, selected, dispatch } = useContext(Globals)
+  const { route, agency, selected, locationSettled, dispatch } = useContext(Globals)
+  const [map, setMap] = useState<L.Map | null>(null)
   const selectionRef = useRef(document.createElement('div'))
-  const popup = useRef(L.popup())
+  const popupRef = useRef(L.popup())
+  const mapRef = useRef<Map>()
+  const routeLayerRef = useRef<LayerGroup>()
 
+  // Initialize map
   useEffect(() => {
-    const main = document.querySelector('main') as HTMLElement
-    const map = L.map(main)
-    const polylines: Point[][] = []
-
+    mapRef.current = L.map(document.querySelector('main') as HTMLElement)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution:
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map)
-    map.on('locationfound', evt => {
-      L.marker(evt.latlng)
-        .addTo(map)
-        .bindPopup(
-          `Your location within ${Intl.NumberFormat().format(evt.accuracy)} meters.`
-        )
-      dispatch({ type: 'locationSettled', value: true })
+    }).addTo(mapRef.current)
+    popupRef.current.setContent(selectionRef.current)
+    popupRef.current.on('remove', () => {
+      dispatch({ type: 'selected', value: undefined })
     })
-    map.on('locationerror', () => {
-      if (!agency) {
-        map.setView(L.latLng(center.lat, center.lon), 13)
-      }
-
-      dispatch({ type: 'locationSettled', value: true })
-    })
-
-    if (route) {
-      const bnds = route.bounds
-
-      map.fitBounds(
-        L.latLngBounds(
-          L.latLng(bnds.sw.lat, bnds.sw.lon),
-          L.latLng(bnds.ne.lat, bnds.ne.lon)
-        )
-      )
-    } else {
-      map.locate({ setView: true, enableHighAccuracy: true })
-    }
-
-    if (agency && route) {
-      const icon = L.icon({
-        iconUrl: '../assets/svg/circled.svg',
-        iconSize: [7, 7]
-      })
-
-      popup.current.setContent(selectionRef.current)
-      popup.current.on('remove', () => {
-        dispatch({ type: 'selected', value: undefined })
-      })
-      route.paths.forEach(path => {
-        polylines.push(path.points.map(({ lat, lon }) => [lat, lon]))
-      })
-      L.polyline(polylines, { color: route.color }).addTo(map)
-      route.stops.forEach(stop => {
-        const direction = getDirectionForStop(stop.id, route.directions)
-        const marker = L.marker([stop.lat, stop.lon], { icon })
-
-        marker.addTo(map).bindPopup(popup.current)
-        marker.on('click', () => {
-          dispatch({ type: 'selected', value: { agency, route, stop, direction } })
-        })
-      })
-    }
+    setMap(mapRef.current)
 
     return () => {
-      map.remove()
+      mapRef.current?.remove()
     }
-  }, [center, agency, route, dispatch])
+  }, [dispatch])
+
+  // Initialize location search
+  useEffect(() => {
+    if (map && !locationSettled) {
+      map.on('locationfound', evt => {
+        L.marker(evt.latlng)
+          .addTo(map)
+          .bindPopup(
+            `Your location within ${Intl.NumberFormat().format(evt.accuracy)} meters.`
+          )
+        dispatch({ type: 'locationSettled', value: true })
+      })
+      map.on('locationerror', () => {
+        // Roughly North America (USA, Cananda, Mexico)
+        map.fitBounds(
+          L.latLngBounds(L.latLng(6.089467, -128.009169), L.latLng(73.28682, -78.506175))
+        )
+        dispatch({ type: 'locationSettled', value: true })
+      })
+      map.locate({ setView: true, enableHighAccuracy: true })
+    }
+  }, [map, locationSettled, dispatch])
+
+  // Create a route layer group for each combination of (agency, route) selected
+  useEffect(() => {
+    if (map) {
+      if (agency && route) {
+        const routePolyline = getRoutePolyline(route)
+        const routeStopMarkers = getRouteStopMarkers(
+          agency,
+          route,
+          popupRef.current,
+          dispatch
+        )
+        const routeLayer = L.layerGroup([routePolyline, ...routeStopMarkers])
+        const bnds = route.bounds
+
+        if (routeLayerRef.current) {
+          routeLayerRef.current.clearLayers()
+        }
+
+        map.fitBounds(
+          L.latLngBounds(
+            L.latLng(bnds.sw.lat, bnds.sw.lon),
+            L.latLng(bnds.ne.lat, bnds.ne.lon)
+          )
+        )
+        routeLayer.addTo(map)
+        routeLayerRef.current = routeLayer
+      }
+    }
+  }, [map, agency, route, dispatch])
 
   if (selected) {
     return (
@@ -108,7 +148,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
             stop={selected.stop}
             route={selected.route}
             direction={selected.direction}
-            popup={popup.current}
+            popup={popupRef.current}
           />,
           selectionRef.current
         )}
