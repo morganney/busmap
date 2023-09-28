@@ -22,6 +22,7 @@ import type { Size } from '../types.js'
 type SetInputText = Dispatch<SetStateAction<string>>
 interface AutoSuggestProps<T> {
   items: T[]
+  itemToString?: (item: T | null) => string
   loadItems?: (value: string) => Promise<T[]>
   preload?: boolean | string
   value?: T
@@ -69,7 +70,7 @@ const itemIsTitle = (x: unknown): x is Title => {
 
   return false
 }
-const itemToString = <T,>(item?: T) => {
+const itemToStringDefault = <T,>(item: T) => {
   if (typeof item === 'string' || typeof item === 'number') {
     return item.toString()
   }
@@ -170,10 +171,6 @@ const ToggleMenuButton = styled.button<{ size: Size }>`
   font-size: ${({ size }) => sizing[size].fontSize};
   cursor: pointer;
 `
-const matchSorterOptions = {
-  keys: [<T,>(item: T) => itemToString(item)],
-  threshold: matchSorter.rankings.CONTAINS
-}
 const getChangeEvt = (value?: string | null): ChangeEvent<HTMLInputElement> => {
   const evt = new Event('change', {
     bubbles: true,
@@ -206,18 +203,26 @@ const AutoSuggest = <U,>({
   isDisabled = false,
   caseInsensitive = false,
   inputBoundByItems = false,
-  selectOnTextMatch = false
+  selectOnTextMatch = false,
+  itemToString = itemToStringDefault
 }: AutoSuggestProps<U>) => {
   const initialLoadedItems = useRef<U[]>([])
-  const [inputText, setInputText] = useState(itemToString(value))
+  const [inputText, setInputText] = useState(itemToString(value ?? null))
   const [inputItems, setInputItems] = useState(items ?? [])
+  const matchSorterOptions = useMemo(
+    () => ({
+      keys: [(item: U) => itemToString(item)],
+      threshold: matchSorter.rankings.CONTAINS
+    }),
+    [itemToString]
+  )
   const render = useMemo(() => {
     if (typeof renderItem === 'function') {
       return renderItem
     }
 
     return (item: U) => itemToString(item)
-  }, [renderItem])
+  }, [renderItem, itemToString])
   const handleOnInputValueChange = useMemo(() => {
     if (typeof loadItems === 'function') {
       return debounce(
@@ -234,7 +239,7 @@ const AutoSuggest = <U,>({
     return (changes: UseComboboxStateChange<U>) => {
       setInputItems(matchSorter(items, changes.inputValue ?? '', matchSorterOptions))
     }
-  }, [items, loadItems])
+  }, [items, matchSorterOptions, loadItems])
   const preloadItems = useMemo(() => {
     if (preload && typeof loadItems === 'function') {
       return async () => {
@@ -296,11 +301,11 @@ const AutoSuggest = <U,>({
 
         return changes
       },
-      [caseInsensitive, selectOnTextMatch, inputItems]
+      [caseInsensitive, selectOnTextMatch, inputItems, itemToString]
     ),
     onSelectedItemChange: useCallback(
       (changes: UseComboboxStateChange<U>): void => {
-        const asString = itemToString(changes.selectedItem)
+        const asString = itemToString(changes.selectedItem ?? null)
 
         setInputText(asString)
 
@@ -312,7 +317,7 @@ const AutoSuggest = <U,>({
           onSelect(changes.selectedItem)
         }
       },
-      [onChange, onSelect]
+      [onChange, onSelect, itemToString]
     ),
     onStateChange: useCallback(
       (changes: UseComboboxStateChange<U>): void => {
@@ -353,7 +358,15 @@ const AutoSuggest = <U,>({
           }
         }
       },
-      [loadItems, inputBoundByItems, items, inputText, handleOnInputValueChange, onChange]
+      [
+        loadItems,
+        inputBoundByItems,
+        items,
+        inputText,
+        matchSorterOptions,
+        handleOnInputValueChange,
+        onChange
+      ]
     )
   })
   const handleOnBlur = useCallback(() => {
@@ -366,7 +379,7 @@ const AutoSuggest = <U,>({
         setInputText(itemAsString)
       }
     }
-  }, [onBlur, selectedItem, inputText, setInputText])
+  }, [onBlur, selectedItem, inputText, setInputText, itemToString])
   const clearItem = useCallback(() => {
     selectItem(null)
   }, [selectItem])

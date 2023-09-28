@@ -60,7 +60,7 @@ const getRouteStopMarkers = (
   return markers
 }
 const Layout: FC<LayoutProps> = ({ children }) => {
-  const { route, agency, selected, locationSettled, dispatch } = useContext(Globals)
+  const { route, agency, selected, locationSettled, stop, dispatch } = useContext(Globals)
   const [map, setMap] = useState<L.Map | null>(null)
   const selectionRef = useRef(document.createElement('div'))
   const popupRef = useRef(L.popup())
@@ -137,6 +137,14 @@ const Layout: FC<LayoutProps> = ({ children }) => {
       }
     }
   }, [map, agency, route, dispatch])
+
+  useEffect(() => {
+    if (stop) {
+      const { lat, lon } = stop
+
+      map?.setView(L.latLng(lat, lon), 15)
+    }
+  }, [stop, map])
 
   if (selected) {
     return (

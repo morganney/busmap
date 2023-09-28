@@ -1,9 +1,17 @@
 :root {
   --bg-color: #e0e0e0;
+  --home-bg-color: #ffffff88;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  font-family: 'Roboto', Arial, sans-serif;
 }
 html {
   height: 100%;
   display: grid;
+  box-sizing: border-box;
 }
 body {
   position: relative;
@@ -16,14 +24,28 @@ body {
 }
 aside {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 0;
+  right: 0;
   z-index: 999;
-  background: #ffffff88;
-  padding: 20px;
-  width: 35%;
+  background: var(--home-bg-color);
+  padding: 38px 28px;
+  width: 33%;
   min-width: 320px;
+  transform: translateX(0);
+  transition: transform 0.25s ease-in-out;
+}
+aside.collapsed {
+  transform: translateX(100%);
 }
 .leaflet-container {
   background: transparent;
+}
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
 }
