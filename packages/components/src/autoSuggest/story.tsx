@@ -5,6 +5,17 @@ import { AutoSuggest } from './mod.js'
 import type { StoryFn } from '@storybook/react'
 import type { SetInputText } from './mod.js'
 
+interface Agency {
+  id: string
+  title: string
+  region: string
+}
+interface Direction {
+  id: string
+  title: string
+  shortTitle: string | null
+}
+
 const useSelection = <T,>(initial: T) => {
   const [selected, setSelected] = useState<T>(initial)
   const onSelect = useCallback((selection: T) => {
@@ -40,11 +51,6 @@ const InitialValue: StoryFn<typeof AutoSuggest<string>> = args => {
       <AutoSuggest {...args} onSelect={onSelect} value="Hannah" />
     </>
   )
-}
-interface Agency {
-  id: string
-  title: string
-  region: string
 }
 const ItemsAsObject: StoryFn<typeof AutoSuggest<Agency>> = args => {
   const items: Agency[] = [
@@ -85,6 +91,44 @@ const ItemsAsObject: StoryFn<typeof AutoSuggest<Agency>> = args => {
         onSelect={onSelect}
         inputBoundByItems
         caseInsensitive
+      />
+    </>
+  )
+}
+const ItemToString: StoryFn<typeof AutoSuggest<Direction>> = args => {
+  const items: Direction[] = [
+    {
+      id: '7_0_7',
+      title: 'South - 7 Bathurst towards Bathurst Station',
+      shortTitle: 'South'
+    },
+    {
+      id: '7_1_7',
+      title: 'North - 7 Bathurst towards Steeles',
+      shortTitle: 'North'
+    }
+  ]
+  const [selected, onSelect] = useState<Direction>()
+  const itemToString = useCallback((item: Direction | null) => {
+    return item?.shortTitle ?? ''
+  }, [])
+  const onClear = useCallback(
+    (clearItem: () => void) => {
+      clearItem()
+      onSelect(undefined)
+    },
+    [onSelect]
+  )
+
+  return (
+    <>
+      <p>Selected: {selected?.title ?? 'N/A'}</p>
+      <AutoSuggest
+        {...args}
+        items={items}
+        onClear={onClear}
+        onSelect={onSelect}
+        itemToString={itemToString}
       />
     </>
   )
@@ -160,9 +204,12 @@ export default {
     loadItems: {
       control: false
     },
+    itemToString: {
+      control: false
+    },
     caseInsensitive: {
       control: 'boolean'
     }
   }
 }
-export { Primary, InitialValue, ItemsAsObject, InputBoundByItems }
+export { Primary, InitialValue, ItemsAsObject, InputBoundByItems, ItemToString }

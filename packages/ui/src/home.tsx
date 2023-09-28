@@ -1,4 +1,4 @@
-import { useContext, useReducer, useCallback, useMemo } from 'react'
+import { useContext, useReducer, useCallback, useMemo, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { createPortal } from 'react-dom'
 import styled from 'styled-components'
@@ -10,6 +10,7 @@ import { Directions } from './components/selectors/directions.js'
 import { Stops } from './components/selectors/stops.js'
 import { Loading } from './components/loading.js'
 import { Predictions } from './components/predictions.js'
+import { Anchor } from './components/anchor.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
 import { getAll as getAllRoutes, get as getRoute } from './api/rb/route.js'
 import { getAll as getAllVehicles } from './api/rb/vehicles.js'
@@ -20,17 +21,25 @@ import type { Agency, RouteName, Direction, Stop } from './types.js'
 
 interface HomeState {
   routeName?: RouteName
+  collapsed: boolean
 }
 interface RouteNameChanged {
   type: 'routeName'
   value?: RouteName
 }
-type HomeAction = RouteNameChanged
-const initialState: HomeState = { routeName: undefined }
+interface CollapsedChanged {
+  type: 'collapsed'
+  value: boolean
+}
+type HomeAction = RouteNameChanged | CollapsedChanged
+const initialState: HomeState = { routeName: undefined, collapsed: false }
+const asideNode = document.querySelector('body > aside') as HTMLElement
 const reducer = (state: HomeState, action: HomeAction) => {
   switch (action.type) {
     case 'routeName':
       return { ...state, routeName: action.value }
+    case 'collapsed':
+      return { ...state, collapsed: action.value }
     default:
       return state
   }
@@ -105,6 +114,9 @@ const Home: FC<HomeProps> = () => {
       refetchInterval: 8_000
     }
   )
+  const onClickAnchor = useCallback(() => {
+    dispatch({ type: 'collapsed', value: !state.collapsed })
+  }, [state.collapsed])
   const onSelectAgency = useCallback(
     (selected: Agency) => {
       update({
@@ -156,6 +168,14 @@ const Home: FC<HomeProps> = () => {
     }
   )
 
+  useEffect(() => {
+    if (state.collapsed) {
+      asideNode.classList.add('collapsed')
+    } else {
+      asideNode.classList.remove('collapsed')
+    }
+  }, [state.collapsed])
+
   if (error instanceof Error) {
     return createPortal(
       <div>
@@ -169,6 +189,7 @@ const Home: FC<HomeProps> = () => {
   return createPortal(
     locationSettled && agencies ? (
       <>
+        <Anchor onClick={onClickAnchor} collapsed={state.collapsed} />
         <Form
           onSubmit={evt => {
             evt.preventDefault()
@@ -199,12 +220,17 @@ const Home: FC<HomeProps> = () => {
             isDisabled={isLoading || !agency || !route || !direction}
           />
         </Form>
-        {preds?.length && <Predictions preds={preds[0].values.slice(0, 3)} />}
+        {preds?.length && (
+          <Predictions
+            preds={preds[0].values.slice(0, 3)}
+            direction={preds[0].values[0].direction.title}
+          />
+        )}
       </>
     ) : (
       <Loading />
     ),
-    document.querySelector('body > aside') as HTMLElement
+    asideNode
   )
 }
 
