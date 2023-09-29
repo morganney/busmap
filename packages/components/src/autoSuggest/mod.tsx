@@ -434,6 +434,8 @@ const AutoSuggest = <U,>({
           })}
           id={id}
           color={color}
+          size={size}
+          fontSize={sizing[size].fontSize}
           onClear={handleOnClear}
           labelledBy={labelledBy}
           isDisabled={isDisabled}

@@ -24,6 +24,7 @@ const Stops: FC<Props> = ({
       <AutoSuggest
         caseInsensitive
         inputBoundByItems
+        size="small"
         value={selected ?? undefined}
         isDisabled={isDisabled}
         placeholder={`Stops ... ${stops.length ? `(${stops.length})` : ''}`}

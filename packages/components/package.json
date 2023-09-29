@@ -31,6 +31,10 @@
       "import": "./dist/skeleton/mod.js",
       "require": "./dist/cjs/skeleton/mod.cjs"
     },
+    "./colors": {
+      "import": "./dist/colors.js",
+      "require": "./dist/cjs/colors.cjs"
+    },
     "./icons/*": {
       "import": "./dist/icons/*/mod.js",
       "require": "./dist/cjs/*/mod.js"
