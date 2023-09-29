@@ -105,7 +105,7 @@ const Home: FC<HomeProps> = () => {
       }
     }
   )
-  const { data: preds } = useQuery(
+  const { data: preds, isFetching: isPredsFetching } = useQuery(
     ['preds', agency?.id, route?.id, stop?.id],
     () => getForStop(agency?.id, route?.id, stop?.id),
     {
@@ -220,12 +220,7 @@ const Home: FC<HomeProps> = () => {
             isDisabled={isLoading || !agency || !route || !direction}
           />
         </Form>
-        {preds?.length && (
-          <Predictions
-            preds={preds[0].values.slice(0, 3)}
-            direction={preds[0].values[0].direction.title}
-          />
-        )}
+        <Predictions isFetching={isPredsFetching} stop={stop} preds={preds} />
       </>
     ) : (
       <Loading />

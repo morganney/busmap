@@ -142,7 +142,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     if (stop) {
       const { lat, lon } = stop
 
-      map?.setView(L.latLng(lat, lon), 15)
+      map?.setView(L.latLng(lat, lon), 16)
     }
   }, [stop, map])
 

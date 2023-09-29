@@ -1,3 +1,12 @@
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
 :root {
   --bg-color: #e0e0e0;
   --home-bg-color: #ffffff88;
@@ -23,7 +32,7 @@ body {
   font-style: normal;
 }
 aside {
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   z-index: 999;
@@ -39,13 +48,4 @@ aside.collapsed {
 }
 .leaflet-container {
   background: transparent;
-}
-@keyframes slide {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(100%);
-  }
 }

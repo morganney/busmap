@@ -28,6 +28,7 @@ const Directions: FC<Props> = ({
         onClear
         caseInsensitive
         inputBoundByItems
+        size="small"
         itemToString={itemToString}
         value={selected ?? undefined}
         isDisabled={isDisabled}

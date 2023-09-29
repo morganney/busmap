@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { SO50T, SO50S } from '@busmap/components/colors'
 
 import type { FC } from 'react'
 
@@ -11,7 +12,7 @@ const Button = styled.button<{ collapsed: boolean }>`
   position: fixed;
   top: 0;
   right: ${({ collapsed }) => (collapsed ? '100%' : '0')};
-  color: yellow;
+  color: ${SO50T};
   background: #80808077;
   border: none;
   border-bottom-left-radius: 50%;
@@ -21,11 +22,16 @@ const Button = styled.button<{ collapsed: boolean }>`
   justify-content: center;
   cursor: pointer;
   transition: right 0.25s ease-in-out;
+  text-shadow:
+    -1px 0 ${SO50S},
+    0 1px ${SO50S},
+    1px 0 ${SO50S},
+    0 -1px ${SO50S};
 
   span {
+    font-family: 'Roboto';
     font-size: 18px;
     font-weight: 700;
-    font-family: 'Roboto', Arial, sans-serif;
     transform: ${({ collapsed }) => (collapsed ? 'rotate(180deg)' : 'rotate(0deg)')};
     transition: transform 0.25s ease-in-out;
   }
