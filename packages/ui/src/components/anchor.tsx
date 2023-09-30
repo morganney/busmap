@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { SO50T, SO50S } from '@busmap/components/colors'
+import { PB50T } from '@busmap/components/colors'
 
 import type { FC } from 'react'
 
@@ -12,21 +12,20 @@ const Button = styled.button<{ collapsed: boolean }>`
   position: fixed;
   top: 0;
   right: ${({ collapsed }) => (collapsed ? '100%' : '0')};
-  color: ${SO50T};
-  background: #80808077;
+  color: white;
+  background: ${PB50T}99;
   border: none;
-  border-bottom-left-radius: 50%;
-  padding: 9px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: right 0.25s ease-in-out;
   text-shadow:
-    -1px 0 ${SO50S},
-    0 1px ${SO50S},
-    1px 0 ${SO50S},
-    0 -1px ${SO50S};
+    -1px 0 ${PB50T},
+    0 1px ${PB50T},
+    1px 0 ${PB50T},
+    0 -1px ${PB50T};
 
   span {
     font-family: 'Roboto';

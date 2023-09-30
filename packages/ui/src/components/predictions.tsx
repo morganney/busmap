@@ -82,7 +82,7 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, isFetching = false }) 
             {values.map(({ minutes, epochTime }) => (
               <li key={epochTime}>
                 {isFetching ? (
-                  <Skeleton height="18.5px" />
+                  <Skeleton height="18.5px" width="25%" />
                 ) : minutes === 0 ? (
                   <em key={epochTime}>Arriving</em>
                 ) : (

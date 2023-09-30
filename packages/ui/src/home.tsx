@@ -53,7 +53,7 @@ const getFirstDataError = (errors: (Error | unknown)[]) => {
 }
 const Form = styled.form`
   display: grid;
-  gap: 17px;
+  gap: 15px;
 `
 interface HomeProps {
   children?: ReactNode
@@ -111,7 +111,10 @@ const Home: FC<HomeProps> = () => {
     {
       enabled: Boolean(agency) && Boolean(route) && Boolean(stop),
       refetchOnWindowFocus: true,
-      refetchInterval: 8_000
+      refetchInterval: 8_000,
+      onSuccess(data) {
+        update({ type: 'predictions', value: data })
+      }
     }
   )
   const onClickAnchor = useCallback(() => {
