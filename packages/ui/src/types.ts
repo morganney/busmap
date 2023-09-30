@@ -153,7 +153,6 @@ interface BusmapGlobals {
   stop?: Stop
   predictions?: Prediction[]
   selected?: Selection
-  //arrivals?: string[]
   locationSettled: boolean
 }
 
