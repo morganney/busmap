@@ -127,6 +127,10 @@ interface LocationSettled {
   type: 'locationSettled'
   value: boolean
 }
+interface PredictionsChanged {
+  type: 'predictions'
+  value: Prediction[]
+}
 type BusmapAction =
   | BoundsChanged
   | CenterChanged
@@ -134,6 +138,7 @@ type BusmapAction =
   | RouteChanged
   | DirectionChanged
   | StopChanged
+  | PredictionsChanged
   | VehiclesChanged
   | SelectedChanged
   | LocationSettled
@@ -146,8 +151,8 @@ interface BusmapGlobals {
   vehicles?: Vehicle[]
   direction?: Direction
   stop?: Stop
+  predictions?: Prediction[]
   selected?: Selection
-  arrivals?: string[]
   locationSettled: boolean
 }
 

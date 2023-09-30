@@ -37,9 +37,10 @@ aside {
   right: 0;
   z-index: 999;
   background: var(--home-bg-color);
-  padding: 38px 28px;
+  padding: 34px 28px;
   width: 33%;
   min-width: 320px;
+  max-width: 450px;
   transform: translateX(0);
   transition: transform 0.25s ease-in-out;
 }
