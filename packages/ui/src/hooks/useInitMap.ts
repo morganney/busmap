@@ -10,6 +10,7 @@ const useInitMap = (dispatch: (value: BusmapAction) => void) => {
   const popupRef = useRef(L.popup())
   const mapRef = useRef<Map>()
   const routeLayerRef = useRef<LayerGroup>(L.layerGroup())
+  const routeVehLayerRef = useRef<LayerGroup>(L.layerGroup())
   const predVehLayerRef = useRef<LayerGroup>(L.layerGroup())
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const useInitMap = (dispatch: (value: BusmapAction) => void) => {
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(mapRef.current)
     routeLayerRef.current.addTo(mapRef.current)
+    routeVehLayerRef.current.addTo(mapRef.current)
     predVehLayerRef.current.addTo(mapRef.current)
     setMap(mapRef.current)
 
@@ -37,6 +39,7 @@ const useInitMap = (dispatch: (value: BusmapAction) => void) => {
     popup: popupRef.current,
     selectionNode: selectionRef.current,
     routeLayer: routeLayerRef.current,
+    routeVehiclesLayer: routeVehLayerRef.current,
     predVehLayer: predVehLayerRef.current
   }
 }

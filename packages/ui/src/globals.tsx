@@ -28,6 +28,8 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
       return {
         ...state,
         agency: action.value,
+        route: undefined,
+        vehicles: undefined,
         direction: undefined,
         stop: undefined,
         selected: undefined
