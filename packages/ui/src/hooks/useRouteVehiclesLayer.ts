@@ -1,7 +1,7 @@
-import { useRef, useEffect } from 'react'
+import { useEffect } from 'react'
 import L from 'leaflet'
 
-import type { LayerGroup } from 'leaflet'
+import type { LayerGroup, MarkerOptions, LatLng } from 'leaflet'
 import type { Vehicle } from '../types.js'
 
 interface UseRouteVehiclesLayer {
@@ -9,32 +9,62 @@ interface UseRouteVehiclesLayer {
   routeVehiclesLayer: LayerGroup
 }
 
-const usePrevious = (vehicles?: Vehicle[]) => {
-  const ref = useRef<Vehicle[]>()
+class VehicleMarker extends L.Marker {
+  #vehicleId: string = ''
 
-  useEffect(() => {
-    ref.current = vehicles ?? []
-  }, [vehicles])
+  constructor(latlng: LatLng, id: string, options?: MarkerOptions) {
+    super(latlng, options)
 
-  return ref.current
+    this.#vehicleId = id
+  }
+
+  get vehicleId() {
+    return this.#vehicleId
+  }
+}
+const updateVehicleMarkers = (group: LayerGroup, vehicles: Vehicle[]) => {
+  const markers = group.getLayers() as VehicleMarker[]
+
+  for (const v of vehicles) {
+    const vPrev = markers.find(m => m.vehicleId === v.id)
+
+    if (vPrev) {
+      vPrev.setLatLng(L.latLng(v.lat, v.lon))
+    } else {
+      const span = document.createElement('span')
+      const arrow = document.createTextNode('↑')
+      const vehicleIcon = L.divIcon({ className: 'vehicle-marker', html: span })
+      const vm = new VehicleMarker(L.latLng(v.lat, v.lon), v.id, { icon: vehicleIcon })
+
+      span.appendChild(arrow)
+      span.style.transform = `rotate(${v.heading}deg)`
+      group.addLayer(vm)
+
+      const ele = vm.getElement()
+
+      if (ele) {
+        ele.style.width = '35px'
+        ele.style.height = '10px'
+        ele.style.margin = '0'
+      }
+    }
+  }
+
+  for (const marker of markers) {
+    if (!vehicles.some(({ id }) => id === marker.vehicleId)) {
+      marker.remove()
+    }
+  }
 }
 const useRouteVehiclesLayer = ({
   vehicles,
   routeVehiclesLayer
 }: UseRouteVehiclesLayer) => {
-  const prev = usePrevious(vehicles)
-
   useEffect(() => {
     if (Array.isArray(vehicles)) {
-      routeVehiclesLayer.clearLayers()
-
-      for (const veh of vehicles) {
-        routeVehiclesLayer.addLayer(
-          L.marker(L.latLng(veh.lat, veh.lon)).bindPopup(`${veh.id}:${veh.directionId}`)
-        )
-      }
+      updateVehicleMarkers(routeVehiclesLayer, vehicles)
     }
-  }, [vehicles, routeVehiclesLayer, prev])
+  }, [vehicles, routeVehiclesLayer])
 }
 
 export { useRouteVehiclesLayer }

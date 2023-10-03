@@ -50,3 +50,14 @@ aside.collapsed {
 .leaflet-container {
   background: transparent;
 }
+.vehicle-marker {
+  background: green;
+  transition: transform 2s ease-in-out;
+  position: relative;
+}
+.vehicle-marker span {
+  display: block;
+  font-size: 20px;
+  color: white;
+  position: absolute;
+}
