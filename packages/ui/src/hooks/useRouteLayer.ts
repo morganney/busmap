@@ -73,6 +73,12 @@ const useRouteLayer = ({
         const bnds = route.bounds
 
         routeLayer.clearLayers()
+        map.fitBounds(
+          L.latLngBounds(
+            L.latLng(bnds.sw.lat, bnds.sw.lon),
+            L.latLng(bnds.ne.lat, bnds.ne.lon)
+          )
+        )
         addRoutePolyline(routeLayer, route)
         addRouteStopMarkers(routeLayer, {
           agency,
@@ -80,12 +86,6 @@ const useRouteLayer = ({
           popup,
           dispatch
         })
-        map.fitBounds(
-          L.latLngBounds(
-            L.latLng(bnds.sw.lat, bnds.sw.lon),
-            L.latLng(bnds.ne.lat, bnds.ne.lon)
-          )
-        )
       }
     }
   }, [routeLayer, map, agency, route, popup, dispatch])
