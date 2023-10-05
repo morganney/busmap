@@ -20,7 +20,7 @@ const Button = styled.button<{ collapsed: boolean }>`
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: right 0.25s ease-in-out;
+  transition: right 0.25s ease;
   text-shadow:
     -1px 0 ${PB50T},
     0 1px ${PB50T},
@@ -32,7 +32,7 @@ const Button = styled.button<{ collapsed: boolean }>`
     font-size: 18px;
     font-weight: 700;
     transform: ${({ collapsed }) => (collapsed ? 'rotate(180deg)' : 'rotate(0deg)')};
-    transition: transform 0.25s ease-in-out;
+    transition: transform 0.25s ease;
   }
 `
 const Anchor: FC<AnchorProps> = ({ onClick, collapsed = false }) => {

@@ -165,7 +165,7 @@ const Home: FC<HomeProps> = () => {
     () => getAllVehicles(agency?.id, route?.id),
     {
       enabled: Boolean(agency) && Boolean(route),
-      refetchOnWindowFocus: true,
+      refetchOnWindowFocus: false,
       refetchInterval: 5_000,
       onSuccess(data) {
         update({ type: 'vehicles', value: data })

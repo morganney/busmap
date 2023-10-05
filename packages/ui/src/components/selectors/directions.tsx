@@ -19,7 +19,15 @@ const Directions: FC<Props> = ({
   isDisabled = Boolean(directions)
 }) => {
   const itemToString = useCallback((item: Direction | null) => {
-    return item?.title ?? (item?.shortTitle || '')
+    if (item) {
+      if (item.title) {
+        return item.title.startsWith('Unknown')
+          ? item.shortTitle ?? 'Direction N/A'
+          : item.title
+      }
+    }
+
+    return ''
   }, [])
 
   return (
