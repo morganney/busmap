@@ -42,10 +42,11 @@ aside {
   min-width: 320px;
   max-width: 450px;
   transform: translateX(0);
-  transition: transform 0.25s ease-in-out;
+  transition: transform 0.25s ease;
 }
 aside.collapsed {
   transform: translateX(100%);
+  transition-timing-function: ease;
 }
 .leaflet-container {
   background: transparent;
@@ -55,7 +56,7 @@ aside.collapsed {
   height: auto !important;
   white-space: nowrap;
   border: 1px solid black;
-  transition: transform 2.5s ease-in-out;
+  transition: transform 2.5s ease;
 }
 .busmap-vehicle::before {
   content: '';
@@ -63,11 +64,31 @@ aside.collapsed {
   height: 100%;
   display: block;
   background: black;
-  clip-path: polygon(0% 50%, 100% 35%, 100% 65%);
   position: absolute;
-  left: -10px;
-  top: -62%;
+}
+.busmap-vehicle.ne::before {
+  top: -67%;
+  left: -11px;
+  clip-path: polygon(0% 50%, 100% 35%, 100% 65%);
   transform: rotate(45deg);
+}
+.busmap-vehicle.se::before {
+  top: -67%;
+  right: -11px;
+  clip-path: polygon(0% 35%, 100% 50%, 0% 65%);
+  transform: rotate(-45deg);
+}
+.busmap-vehicle.sw::before {
+  top: 67%;
+  right: -11px;
+  clip-path: polygon(0% 35%, 100% 50%, 0% 65%);
+  transform: rotate(45deg);
+}
+.busmap-vehicle.nw::before {
+  top: 67%;
+  left: -11px;
+  clip-path: polygon(0% 50%, 100% 35%, 100% 65%);
+  transform: rotate(-45deg);
 }
 .busmap-vehicle div {
   display: flex;
@@ -79,5 +100,10 @@ aside.collapsed {
 .busmap-vehicle span {
   display: inline-block;
   font-family: Roboto;
-  padding: 3px;
+  padding: 2px 3px;
+  height: 20px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
