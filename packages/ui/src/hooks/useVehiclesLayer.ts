@@ -4,6 +4,7 @@ import L from 'leaflet'
 import type { LayerGroup, MarkerOptions, LatLng } from 'leaflet'
 import type { Vehicle, Route, Direction } from '../types.js'
 
+type Quadrant = 'ne' | 'sw' | 'se' | 'nw'
 interface UseRouteVehiclesLayer {
   direction?: Direction
   route?: Route
@@ -13,6 +14,15 @@ interface UseRouteVehiclesLayer {
 interface VehicleMarkerData {
   vehicleId: string
   directionId: string
+}
+interface Dimensions {
+  width: number
+  height: number
+}
+interface HeadingStyles {
+  dimensions: Dimensions
+  vehicle: Vehicle
+  marker: VehicleMarker
 }
 
 class VehicleMarker extends L.Marker {
@@ -45,16 +55,6 @@ const getQuadrantFromHeading = (heading: number): Quadrant => {
   }
 
   return 'nw'
-}
-type Quadrant = 'ne' | 'sw' | 'se' | 'nw'
-interface Dimensions {
-  width: number
-  height: number
-}
-interface HeadingStyles {
-  dimensions: Dimensions
-  vehicle: Vehicle
-  marker: VehicleMarker
 }
 const assignHeadingStyles = ({ dimensions, vehicle, marker }: HeadingStyles) => {
   const divIcon = marker.getElement()
