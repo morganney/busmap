@@ -40,7 +40,7 @@ const addRouteStopMarkers = (layer: LayerGroup, config: RouteStopConfig) => {
 
   route.stops.forEach(stop => {
     const direction = getDirectionForStop(stop.id, route.directions)
-    const marker: L.Marker = L.marker([stop.lat, stop.lon], { icon })
+    const marker = L.marker([stop.lat, stop.lon], { icon })
 
     marker.bindPopup(popup)
     marker.on('click', () => {

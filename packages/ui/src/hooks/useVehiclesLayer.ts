@@ -11,10 +11,6 @@ interface UseRouteVehiclesLayer {
   vehicles?: Vehicle[]
   vehiclesLayer: LayerGroup
 }
-interface VehicleMarkerData {
-  vehicleId: string
-  directionId: string
-}
 interface Dimensions {
   width: number
   height: number
@@ -26,16 +22,20 @@ interface HeadingStyles {
 }
 
 class VehicleMarker extends L.Marker {
-  #data: VehicleMarkerData = { vehicleId: '', directionId: '' }
+  #vehicle: Vehicle
 
-  constructor(latlng: LatLng, data: VehicleMarkerData, options?: MarkerOptions) {
+  constructor(latlng: LatLng, vehicle: Vehicle, options?: MarkerOptions) {
     super(latlng, options)
 
-    this.#data = data
+    this.#vehicle = vehicle
   }
 
-  get data() {
-    return this.#data
+  get vehicle() {
+    return this.#vehicle
+  }
+
+  set vehicle(value: Vehicle) {
+    this.#vehicle = value
   }
 }
 const isBetween = (value: number, range: number[]) => {
@@ -85,6 +85,26 @@ const assignHeadingStyles = ({ dimensions, vehicle, marker }: HeadingStyles) => 
     marker.setIcon(icon)
   }
 }
+const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
+  const direction = route.directions.find(dir => dir.id === vehicle.directionId)
+
+  return `
+    <dl>
+      <dt>Route</dt>
+      <dd>${route.title ?? route.shortTitle}</dd>
+      <dt>Direction</dt>
+      <dd>${direction?.title ?? 'N/A'}
+      <dt>ID</dt>
+      <dd>${vehicle.id}</dd>
+      <dt>Speed</dt>
+      <dd>${vehicle.kph} (kph)</dd>
+      <dt>Heading</dt>
+      <dd>${vehicle.heading} (deg)</dd>
+      <dt>Last Report</dt>
+      <dd>${vehicle.secsSinceReport} (sec)</dd>
+    </dl>
+  `
+}
 const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLayer) => {
   const iconDimensions = useRef<Dimensions | null>(null)
 
@@ -98,7 +118,7 @@ const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLa
       const predictable = vehicles.filter(({ predictable }) => predictable)
 
       for (const vehicle of predictable) {
-        const marker = markers.find(({ data }) => data.vehicleId === vehicle.id)
+        const marker = markers.find(m => m.vehicle.id === vehicle.id)
 
         if (marker && iconDimensions.current) {
           assignHeadingStyles({
@@ -106,6 +126,8 @@ const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLa
             vehicle,
             dimensions: iconDimensions.current
           })
+          marker.vehicle = vehicle
+          marker.getPopup()?.setContent(getVehiclePopupContent(vehicle, route))
           marker.setLatLng(L.latLng(vehicle.lat, vehicle.lon))
         } else {
           const div = document.createElement('div')
@@ -117,11 +139,24 @@ const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLa
             className: `busmap-vehicle ${quad}`,
             html: div
           })
-          const marker = new VehicleMarker(
-            L.latLng(vehicle.lat, vehicle.lon),
-            { vehicleId: vehicle.id, directionId: vehicle.directionId },
-            { icon }
-          )
+          const marker = new VehicleMarker(L.latLng(vehicle.lat, vehicle.lon), vehicle, {
+            icon
+          })
+          const popup = L.popup({
+            className: 'busmap-vehicle-popup',
+            content: getVehiclePopupContent(vehicle, route)
+          })
+
+          marker.bindPopup(popup)
+          popup.on('remove', () => {
+            popup.getElement()?.classList.remove('selected')
+          })
+          marker.on('click', () => {
+            const rect = marker.getElement()?.getBoundingClientRect()
+            console.log(rect)
+            popup.getElement()?.classList.toggle('selected')
+            popup.setContent(getVehiclePopupContent(marker.vehicle, route))
+          })
 
           title.appendChild(document.createTextNode(route.title))
           heading.appendChild(document.createTextNode('↑'))
@@ -148,7 +183,7 @@ const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLa
       }
 
       for (const m of markers) {
-        const vehicle = predictable.find(({ id }) => id === m.data.vehicleId)
+        const vehicle = predictable.find(({ id }) => id === m.vehicle.id)
 
         if (!vehicle) {
           m.remove()
