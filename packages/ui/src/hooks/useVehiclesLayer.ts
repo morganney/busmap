@@ -152,8 +152,6 @@ const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLa
             popup.getElement()?.classList.remove('selected')
           })
           marker.on('click', () => {
-            const rect = marker.getElement()?.getBoundingClientRect()
-            console.log(rect)
             popup.getElement()?.classList.toggle('selected')
             popup.setContent(getVehiclePopupContent(marker.vehicle, route))
           })
