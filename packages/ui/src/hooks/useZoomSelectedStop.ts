@@ -1,4 +1,4 @@
-import { useEffect, useContext } from 'react'
+import { useEffect, useRef, useContext } from 'react'
 import L from 'leaflet'
 
 import { Globals } from '../globals.js'
@@ -11,12 +11,19 @@ interface UseZoomSelectedStop {
 
 const useZoomSelectedStop = ({ map }: UseZoomSelectedStop) => {
   const { stop } = useContext(Globals)
+  const marker = useRef(L.marker([0, 0]).bindPopup('Your selected stop.'))
 
   useEffect(() => {
     if (stop && map) {
       const { lat, lon } = stop
+      const latLng = L.latLng(lat, lon)
 
-      map.setView(L.latLng(lat, lon), Math.max(map.getZoom(), 15))
+      map.setView(latLng, Math.max(map.getZoom(), 15))
+      marker.current.setLatLng(latLng).addTo(map)
+    }
+
+    if (!stop) {
+      marker.current.remove()
     }
   }, [stop, map])
 }

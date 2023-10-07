@@ -14,7 +14,8 @@ interface Dimensions {
   width: number
   height: number
 }
-interface HeadingStyles {
+interface DynamicStyles {
+  route: Route
   dimensions: Dimensions
   vehicle: Vehicle
   marker: VehicleMarker
@@ -55,7 +56,7 @@ const getQuadrantFromHeading = (heading: number): Quadrant => {
 
   return 'nw'
 }
-const assignHeadingStyles = ({ dimensions, vehicle, marker }: HeadingStyles) => {
+const assignDynamicStyles = ({ dimensions, vehicle, marker, route }: DynamicStyles) => {
   const divIcon = marker.getElement()
 
   if (divIcon) {
@@ -63,10 +64,23 @@ const assignHeadingStyles = ({ dimensions, vehicle, marker }: HeadingStyles) => 
     const { width, height } = dimensions
     const icon = marker.getIcon()
     const quadrant = getQuadrantFromHeading(heading)
+    const divNode = divIcon.querySelector('div') as HTMLDivElement
     const headingNode = divIcon.querySelector('span:last-child') as HTMLSpanElement
 
     icon.options.className = `busmap-vehicle ${quadrant}`
-    headingNode.style.transform = `rotate(${heading}deg)`
+    headingNode.style.transform = `rotate(${heading - 90}deg)`
+    divNode.style.color = vehicle.predictable ? route.textColor : 'white'
+    divNode.style.background = vehicle.predictable
+      ? route.color
+      : `
+      repeating-linear-gradient(
+        45deg,
+        ${route.color},
+        ${route.color} 5px,
+        black 5px,
+        black 10px
+      )
+    `
 
     /**
      * Position the anchors of the marker icon and popup.
@@ -109,6 +123,8 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
       <dd>${vehicle.kph} (kph)</dd>
       <dt>Heading</dt>
       <dd>${vehicle.heading} (deg)</dd>
+      <dt>Predictable</dt>
+      <dd>${vehicle.predictable}</dd>
       <dt>Last Report</dt>
       <dd>${vehicle.secsSinceReport} (sec)</dd>
     </dl>
@@ -125,13 +141,13 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
   useEffect(() => {
     if (Array.isArray(vehicles) && route) {
       const markers = vehiclesLayer.getLayers() as VehicleMarker[]
-      const predictable = vehicles.filter(({ predictable }) => predictable)
 
-      for (const vehicle of predictable) {
+      for (const vehicle of vehicles) {
         const marker = markers.find(m => m.vehicle.id === vehicle.id)
 
         if (marker && iconDimensions.current) {
-          assignHeadingStyles({
+          assignDynamicStyles({
+            route,
             marker,
             vehicle,
             dimensions: iconDimensions.current
@@ -167,12 +183,9 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
           })
 
           title.appendChild(document.createTextNode(route.title))
-          heading.appendChild(document.createTextNode('↑'))
+          heading.appendChild(document.createTextNode('➞'))
           div.appendChild(title)
           div.appendChild(heading)
-          heading.style.transform = `rotate(${vehicle.heading}deg)`
-          div.style.background = route.color
-          div.style.color = route.textColor
 
           vehiclesLayer.addLayer(marker)
 
@@ -182,7 +195,8 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             iconDimensions.current = { width: box.width + 2, height: box.height + 2 }
           }
 
-          assignHeadingStyles({
+          assignDynamicStyles({
+            route,
             marker,
             vehicle,
             dimensions: iconDimensions.current
@@ -191,7 +205,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
       }
 
       for (const m of markers) {
-        const vehicle = predictable.find(({ id }) => id === m.vehicle.id)
+        const vehicle = vehicles.find(({ id }) => id === m.vehicle.id)
 
         if (!vehicle) {
           m.remove()

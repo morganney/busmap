@@ -83,7 +83,6 @@ aside.collapsed {
 .busmap-vehicle {
   width: auto !important;
   height: auto !important;
-  z-index: 999 !important;
   white-space: nowrap;
   border: 1px solid black;
   transition: transform 2.5s ease;
@@ -136,4 +135,9 @@ aside.collapsed {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.busmap-vehicle span:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
