@@ -51,6 +51,35 @@ aside.collapsed {
 .leaflet-container {
   background: transparent;
 }
+.busmap-stop-icon svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  fill: red;
+  stroke: black;
+}
+.busmap-vehicle-popup dl {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  align-items: start;
+  justify-content: center;
+  row-gap: 4px;
+  column-gap: 8px;
+}
+.busmap-vehicle-popup dt {
+  text-align: right;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.busmap-vehicle-popup dt::after {
+  content: ':';
+}
+.busmap-vehicle-popup dd {
+  margin: 0;
+}
+.busmap-vehicle-popup.selected {
+  transition: transform 2.5s ease;
+}
 .busmap-vehicle {
   width: auto !important;
   height: auto !important;

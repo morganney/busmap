@@ -32,15 +32,20 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
   return directions[0]
 }
 const addRouteStopMarkers = (layer: LayerGroup, config: RouteStopConfig) => {
-  const icon = L.icon({
-    iconUrl: '../../assets/svg/circled.svg',
-    iconSize: [7, 7]
+  const divIcon = L.divIcon({
+    iconSize: [7, 7],
+    className: 'busmap-stop-icon',
+    html: `
+      <svg viewBox="0 0 100 100" width="7" height="7">
+        <circle cx="50" cy="50" r="45" stroke-width="5" />
+      </svg>
+    `
   })
   const { route, agency, popup, dispatch } = config
 
   route.stops.forEach(stop => {
     const direction = getDirectionForStop(stop.id, route.directions)
-    const marker: L.Marker = L.marker([stop.lat, stop.lon], { icon })
+    const marker = L.marker([stop.lat, stop.lon], { icon: divIcon })
 
     marker.bindPopup(popup)
     marker.on('click', () => {

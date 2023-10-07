@@ -7,7 +7,7 @@ import type { BusmapAction } from '../types.js'
 const useInitMap = (dispatch: (value: BusmapAction) => void) => {
   const [map, setMap] = useState<Map | null>(null)
   const selectionRef = useRef(document.createElement('div'))
-  const popupRef = useRef(L.popup())
+  const popupRef = useRef(L.popup({ minWidth: 200 }))
   const mapRef = useRef<Map>()
   const routeLayerRef = useRef<LayerGroup>(L.layerGroup())
   const vehiclesLayerRef = useRef<LayerGroup>(L.layerGroup())
