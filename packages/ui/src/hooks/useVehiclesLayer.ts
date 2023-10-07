@@ -1,14 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useContext } from 'react'
 import L from 'leaflet'
 
+import { Globals } from '../globals.js'
+
 import type { LayerGroup, MarkerOptions, LatLng } from 'leaflet'
-import type { Vehicle, Route, Direction } from '../types.js'
+import type { Vehicle, Route } from '../types.js'
 
 type Quadrant = 'ne' | 'sw' | 'se' | 'nw'
-interface UseRouteVehiclesLayer {
-  direction?: Direction
-  route?: Route
-  vehicles?: Vehicle[]
+interface UseVehiclesLayer {
   vehiclesLayer: LayerGroup
 }
 interface Dimensions {
@@ -103,7 +102,7 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
       <dt>Route</dt>
       <dd>${route.title ?? route.shortTitle}</dd>
       <dt>Direction</dt>
-      <dd>${direction?.title ?? 'N/A'}
+      <dd>${direction?.title ?? direction?.shortTitle ?? 'N/A'}
       <dt>ID</dt>
       <dd>${vehicle.id}</dd>
       <dt>Speed</dt>
@@ -115,7 +114,8 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
     </dl>
   `
 }
-const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLayer) => {
+const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
+  const { route, vehicles } = useContext(Globals)
   const iconDimensions = useRef<Dimensions | null>(null)
 
   useEffect(() => {
