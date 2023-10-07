@@ -51,6 +51,13 @@ aside.collapsed {
 .leaflet-container {
   background: transparent;
 }
+.busmap-stop-icon svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  fill: red;
+  stroke: black;
+}
 .busmap-vehicle-popup dl {
   display: grid;
   grid-template-columns: min-content 1fr;

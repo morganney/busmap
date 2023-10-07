@@ -61,6 +61,7 @@ const assignHeadingStyles = ({ dimensions, vehicle, marker }: HeadingStyles) => 
 
   if (divIcon) {
     const { heading } = vehicle
+    const { width, height } = dimensions
     const icon = marker.getIcon()
     const quadrant = getQuadrantFromHeading(heading)
     const headingNode = divIcon.querySelector('span:last-child') as HTMLSpanElement
@@ -68,18 +69,27 @@ const assignHeadingStyles = ({ dimensions, vehicle, marker }: HeadingStyles) => 
     icon.options.className = `busmap-vehicle ${quadrant}`
     headingNode.style.transform = `rotate(${heading}deg)`
 
+    /**
+     * Position the anchors of the marker icon and popup.
+     * The fudge factors (7,8) are related to the size of
+     * the psuedo element used for the anchor triangle.
+     */
     switch (quadrant) {
       case 'nw':
-        icon.options.iconAnchor = [-8, dimensions.height + 7]
+        icon.options.iconAnchor = [-8, height + 7]
+        icon.options.popupAnchor = [Math.round(width / 2) + 8, -(height + 7)]
         break
       case 'se':
-        icon.options.iconAnchor = [dimensions.width + 7, -7]
+        icon.options.iconAnchor = [width + 7, -7]
+        icon.options.popupAnchor = [-(Math.round(width / 2) + 7), 7]
         break
       case 'sw':
-        icon.options.iconAnchor = [dimensions.width + 7, dimensions.height + 7]
+        icon.options.iconAnchor = [width + 7, height + 7]
+        icon.options.popupAnchor = [-(Math.round(width / 2) + 7), -(height + 7)]
         break
       default: // The northeast region 'ne'
         icon.options.iconAnchor = [-8, -7]
+        icon.options.popupAnchor = [Math.round(width / 2) + 8, 7]
     }
 
     marker.setIcon(icon)
@@ -152,7 +162,7 @@ const useVehiclesLayer = ({ route, vehicles, vehiclesLayer }: UseRouteVehiclesLa
             popup.getElement()?.classList.remove('selected')
           })
           marker.on('click', () => {
-            popup.getElement()?.classList.toggle('selected')
+            popup.getElement()?.classList.add('selected')
             popup.setContent(getVehiclePopupContent(marker.vehicle, route))
           })
 
