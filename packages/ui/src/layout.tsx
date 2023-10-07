@@ -17,15 +17,14 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children }) => {
-  const { route, agency, selected, locationSettled, stop, vehicles, dispatch } =
-    useContext(Globals)
-  const { map, selectionNode, popup, routeLayer, vehiclesLayer } = useInitMap(dispatch)
+  const { selected } = useContext(Globals)
+  const { map, selectionNode, popup, routeLayer, vehiclesLayer } = useInitMap()
 
-  useLocateUser({ map, locationSettled, dispatch })
-  useRouteLayer({ routeLayer, map, agency, route, popup, dispatch })
-  useVehiclesLayer({ vehiclesLayer, vehicles, route })
-  useZoomSelectedStop({ stop, map })
-  useMarkSelectedStop({ stop, map })
+  useLocateUser({ map })
+  useRouteLayer({ routeLayer, map, popup })
+  useVehiclesLayer({ vehiclesLayer })
+  useZoomSelectedStop({ map })
+  useMarkSelectedStop({ map })
 
   if (selected) {
     return (

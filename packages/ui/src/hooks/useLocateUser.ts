@@ -1,15 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
 import L from 'leaflet'
 
+import { Globals } from '../globals.js'
+
 import type { Map } from 'leaflet'
-import type { BusmapAction } from '../types.js'
 
 interface UseLocateUser {
   map: Map | null
-  locationSettled: boolean
-  dispatch: (value: BusmapAction) => void
 }
-const useLocateUser = ({ map, locationSettled, dispatch }: UseLocateUser) => {
+const useLocateUser = ({ map }: UseLocateUser) => {
+  const { locationSettled, dispatch } = useContext(Globals)
+
   useEffect(() => {
     if (map && !locationSettled) {
       map.on('locationfound', evt => {

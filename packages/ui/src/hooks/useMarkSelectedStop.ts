@@ -1,15 +1,16 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useContext } from 'react'
 import L from 'leaflet'
 
+import { Globals } from '../globals.js'
+
 import type { Map } from 'leaflet'
-import type { Stop } from '../types.js'
 
 interface UseMarkSelectedStop {
-  stop?: Stop
   map: Map | null
 }
 
-const useMarkSelectedStop = ({ stop, map }: UseMarkSelectedStop) => {
+const useMarkSelectedStop = ({ map }: UseMarkSelectedStop) => {
+  const { stop } = useContext(Globals)
   const marker = useRef(L.marker([0, 0]))
 
   useEffect(() => {

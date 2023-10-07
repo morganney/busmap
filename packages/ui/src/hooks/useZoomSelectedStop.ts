@@ -1,15 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useContext } from 'react'
 import L from 'leaflet'
 
+import { Globals } from '../globals.js'
+
 import type { Map } from 'leaflet'
-import type { Stop } from '../types.js'
 
 interface UseZoomSelectedStop {
-  stop?: Stop
   map: Map | null
 }
 
-const useZoomSelectedStop = ({ stop, map }: UseZoomSelectedStop) => {
+const useZoomSelectedStop = ({ map }: UseZoomSelectedStop) => {
+  const { stop } = useContext(Globals)
+
   useEffect(() => {
     if (stop && map) {
       const { lat, lon } = stop
