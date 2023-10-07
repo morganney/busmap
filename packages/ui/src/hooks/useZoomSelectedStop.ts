@@ -4,19 +4,19 @@ import L from 'leaflet'
 import type { Map } from 'leaflet'
 import type { Stop } from '../types.js'
 
-interface UseZoomStopSelected {
+interface UseZoomSelectedStop {
   stop?: Stop
   map: Map | null
 }
 
-const useZoomStopSelected = ({ stop, map }: UseZoomStopSelected) => {
+const useZoomSelectedStop = ({ stop, map }: UseZoomSelectedStop) => {
   useEffect(() => {
-    if (stop) {
+    if (stop && map) {
       const { lat, lon } = stop
 
-      map?.setView(L.latLng(lat, lon), 16)
+      map.setView(L.latLng(lat, lon), Math.max(map.getZoom(), 15))
     }
   }, [stop, map])
 }
 
-export { useZoomStopSelected }
+export { useZoomSelectedStop }

@@ -103,7 +103,7 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
       <dt>Route</dt>
       <dd>${route.title ?? route.shortTitle}</dd>
       <dt>Direction</dt>
-      <dd>${direction?.title ?? 'N/A'}
+      <dd>${direction?.title ?? direction?.shortTitle ?? 'N/A'}
       <dt>ID</dt>
       <dd>${vehicle.id}</dd>
       <dt>Speed</dt>
