@@ -1,5 +1,4 @@
 import styled, { keyframes } from 'styled-components'
-import { Skeleton } from '@busmap/components/skeleton'
 import { PB50T, PB80T } from '@busmap/components/colors'
 
 import { PredictedVehiclesColors } from '../utils.js'
@@ -14,7 +13,6 @@ interface PredictionsProps {
   timestamp: number
 }
 
-const predTextSize = '20px'
 const blink = keyframes`
   10% {
     opacity: 0;
@@ -69,7 +67,7 @@ const List = styled.ul`
     time,
     em {
       line-height: 1;
-      font-size: ${predTextSize};
+      font-size: 20px;
       font-weight: 700;
 
       sup {
@@ -126,12 +124,7 @@ const AffectedByLayover = styled.details`
     border: 1px solid ${PB80T};
   }
 `
-const Predictions: FC<PredictionsProps> = ({
-  preds,
-  stop,
-  timestamp,
-  isFetching = false
-}) => {
+const Predictions: FC<PredictionsProps> = ({ preds, stop, timestamp }) => {
   if (Array.isArray(preds) && stop) {
     if (preds.length) {
       const values = preds[0].values.slice(0, 3)
@@ -146,9 +139,7 @@ const Predictions: FC<PredictionsProps> = ({
           <List>
             {values.map(({ minutes, epochTime, direction, affectedByLayover }) => (
               <li key={epochTime}>
-                {isFetching ? (
-                  <Skeleton height={predTextSize} width="25%" />
-                ) : minutes === 0 ? (
+                {minutes === 0 ? (
                   <em key={epochTime}>{event}</em>
                 ) : (
                   <time key={epochTime} dateTime={`PT${minutes}M`}>
