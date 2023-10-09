@@ -24,6 +24,7 @@ const Routes: FC<Props> = ({
         caseInsensitive
         inputBoundByItems
         size="small"
+        color="black"
         value={selected ?? undefined}
         isDisabled={isDisabled}
         placeholder={`Routes ... ${routes ? `(${routes.length})` : ''}`}

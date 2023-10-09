@@ -9,7 +9,8 @@
 }
 :root {
   --bg-color: #e0e0e0;
-  --home-bg-color: #ffffff88;
+  --home-bg-color: #ffffffaa;
+  --home-border-color: #cccccc;
 }
 *,
 *:before,
@@ -41,6 +42,8 @@ aside {
   width: 33%;
   min-width: 320px;
   max-width: 450px;
+  border-left: 1px solid var(--home-border-color);
+  border-bottom: 1px solid var(--home-border-color);
   transform: translateX(0);
   transition: transform 0.25s ease;
 }

@@ -1,12 +1,14 @@
 import { useEffect, useRef, useContext } from 'react'
 import L from 'leaflet'
 
+import { VehicleMarker } from './common.js'
+
 import { Globals } from '../globals.js'
+import { PredictedVehiclesColors } from '../utils.js'
 
-import type { LayerGroup, MarkerOptions, LatLng } from 'leaflet'
-import type { Vehicle, Route } from '../types.js'
+import type { LayerGroup } from 'leaflet'
+import type { Vehicle, Route, Pred } from '../types.js'
 
-type Quadrant = 'ne' | 'sw' | 'se' | 'nw'
 interface UseVehiclesLayer {
   vehiclesLayer: LayerGroup
 }
@@ -19,44 +21,42 @@ interface DynamicStyles {
   dimensions: Dimensions
   vehicle: Vehicle
   marker: VehicleMarker
+  preds: Pred[]
+}
+enum Quadrant {
+  NE = 'ne',
+  NW = 'nw',
+  SW = 'sw',
+  SE = 'se'
 }
 
-class VehicleMarker extends L.Marker {
-  #vehicle: Vehicle
-
-  constructor(latlng: LatLng, vehicle: Vehicle, options?: MarkerOptions) {
-    super(latlng, options)
-
-    this.#vehicle = vehicle
-  }
-
-  get vehicle() {
-    return this.#vehicle
-  }
-
-  set vehicle(value: Vehicle) {
-    this.#vehicle = value
-  }
-}
+const quadrants = Object.values(Quadrant)
+const predVehicleColors = Object.values(PredictedVehiclesColors)
 const isBetween = (value: number, range: number[]) => {
   return value <= range[1] && value >= range[0]
 }
 const getQuadrantFromHeading = (heading: number): Quadrant => {
   if (isBetween(heading, [0, 90])) {
-    return 'ne'
+    return Quadrant.NE
   }
 
   if (isBetween(heading, [91, 180])) {
-    return 'se'
+    return Quadrant.SE
   }
 
   if (isBetween(heading, [181, 270])) {
-    return 'sw'
+    return Quadrant.SW
   }
 
-  return 'nw'
+  return Quadrant.NW
 }
-const assignDynamicStyles = ({ dimensions, vehicle, marker, route }: DynamicStyles) => {
+const assignDynamicStyles = ({
+  dimensions,
+  vehicle,
+  marker,
+  route,
+  preds
+}: DynamicStyles) => {
   const divIcon = marker.getElement()
 
   if (divIcon) {
@@ -64,23 +64,8 @@ const assignDynamicStyles = ({ dimensions, vehicle, marker, route }: DynamicStyl
     const { width, height } = dimensions
     const icon = marker.getIcon()
     const quadrant = getQuadrantFromHeading(heading)
-    const divNode = divIcon.querySelector('div') as HTMLDivElement
+    const carNode = divIcon.querySelector('div') as HTMLDivElement
     const headingNode = divIcon.querySelector('span:last-child') as HTMLSpanElement
-
-    icon.options.className = `busmap-vehicle ${quadrant}`
-    headingNode.style.transform = `rotate(${heading - 90}deg)`
-    divNode.style.color = vehicle.predictable ? route.textColor : 'white'
-    divNode.style.background = vehicle.predictable
-      ? route.color
-      : `
-      repeating-linear-gradient(
-        45deg,
-        ${route.color},
-        ${route.color} 5px,
-        black 5px,
-        black 10px
-      )
-    `
 
     /**
      * Position the anchors of the marker icon and popup.
@@ -106,6 +91,43 @@ const assignDynamicStyles = ({ dimensions, vehicle, marker, route }: DynamicStyl
     }
 
     marker.setIcon(icon)
+
+    /**
+     * Note, adjust the marker's underlying icon DOM AFTER calling
+     * setIcon(), so as not to lose any previously applied values.
+     */
+
+    divIcon.classList.remove(...quadrants)
+    divIcon.classList.add(quadrant)
+    carNode.style.color = vehicle.predictable ? route.textColor : 'white'
+    carNode.style.background = vehicle.predictable
+      ? route.color
+      : `
+      repeating-linear-gradient(
+        45deg,
+        ${route.color},
+        ${route.color} 5px,
+        black 5px,
+        black 10px
+      )
+    `
+    headingNode.style.transform = `rotate(${heading - 90}deg)`
+
+    // Mark predicted vehicles
+    let found = false
+    let i = 0
+
+    while (i < preds.length && !found) {
+      if (preds[i].vehicle.id === vehicle.id) {
+        found = true
+      } else {
+        i++
+      }
+    }
+
+    if (found) {
+      carNode.style.background = predVehicleColors[i]
+    }
   }
 }
 const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
@@ -131,12 +153,19 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
   `
 }
 const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
-  const { route, vehicles } = useContext(Globals)
+  const { route, vehicles, predictions } = useContext(Globals)
   const iconDimensions = useRef<Dimensions | null>(null)
+  const preds = useRef(predictions?.length ? predictions[0].values.slice(0, 3) : [])
 
   useEffect(() => {
     iconDimensions.current = null
   }, [route])
+
+  useEffect(() => {
+    const nextPreds = predictions?.length ? predictions[0].values.slice(0, 3) : []
+
+    preds.current = nextPreds
+  }, [predictions])
 
   useEffect(() => {
     if (Array.isArray(vehicles) && route) {
@@ -150,6 +179,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             route,
             marker,
             vehicle,
+            preds: preds.current,
             dimensions: iconDimensions.current
           })
           marker.vehicle = vehicle
@@ -159,10 +189,9 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
           const div = document.createElement('div')
           const title = document.createElement('span')
           const heading = document.createElement('span')
-          const quad = getQuadrantFromHeading(vehicle.heading)
           const icon = L.divIcon({
             iconAnchor: [0, 0],
-            className: `busmap-vehicle ${quad}`,
+            className: 'busmap-vehicle',
             html: div
           })
           const marker = new VehicleMarker(L.latLng(vehicle.lat, vehicle.lon), vehicle, {
@@ -199,6 +228,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             route,
             marker,
             vehicle,
+            preds: preds.current,
             dimensions: iconDimensions.current
           })
         }

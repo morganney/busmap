@@ -18,6 +18,7 @@ const Agencies: FC<Props> = ({ agencies, isDisabled, onSelect }) => {
         caseInsensitive
         inputBoundByItems
         size="small"
+        color="black"
         isDisabled={isDisabled}
         placeholder={`Agencies ... (${agencies.length})`}
         items={agencies}

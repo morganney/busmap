@@ -117,7 +117,7 @@ interface StopChanged {
 }
 interface VehiclesChanged {
   type: 'vehicles'
-  value: Vehicle[]
+  value?: Vehicle[]
 }
 interface SelectedChanged {
   type: 'selected'

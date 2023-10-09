@@ -11,6 +11,9 @@ const Label = styled.label<{ direction: Direction }>`
   gap: ${({ direction }) => (direction === 'vertical' ? 4 : 8)}px;
   font-size: 14px;
 
+  span:first-child {
+    font-weight: 600;
+  }
   span:last-child {
     flex-grow: ${({ direction }) => (direction === 'vertical' ? 0 : 1)};
   }

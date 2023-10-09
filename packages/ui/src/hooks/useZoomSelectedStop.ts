@@ -11,7 +11,7 @@ interface UseZoomSelectedStop {
 
 const useZoomSelectedStop = ({ map }: UseZoomSelectedStop) => {
   const { stop } = useContext(Globals)
-  const marker = useRef(L.marker([0, 0]).bindPopup('Your selected stop.'))
+  const marker = useRef(L.marker([0, 0]))
 
   useEffect(() => {
     if (stop && map) {
@@ -19,6 +19,7 @@ const useZoomSelectedStop = ({ map }: UseZoomSelectedStop) => {
       const latLng = L.latLng(lat, lon)
 
       map.setView(latLng, Math.max(map.getZoom(), 15))
+      marker.current.bindPopup(stop.title ?? 'Your selected stop.')
       marker.current.setLatLng(latLng).addTo(map)
     }
 
