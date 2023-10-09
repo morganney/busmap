@@ -11,8 +11,10 @@ interface PredictionsProps {
   preds?: Prediction[]
   stop?: Stop
   isFetching: boolean
+  timestamp: number
 }
 
+const predTextSize = '20px'
 const blink = keyframes`
   10% {
     opacity: 0;
@@ -31,8 +33,13 @@ const blink = keyframes`
   }
 `
 const Title = styled.h2`
-  margin: 20px 0 10px 0;
-  font-size: 18px;
+  margin: 20px 0 0 0;
+  font-size: 22px;
+`
+const Timestamp = styled.p`
+  margin: 0;
+  text-align: center;
+  font-size: 12px;
 `
 const NoArrivals = styled.p`
   margin: 20px 0 0 0;
@@ -58,7 +65,9 @@ const List = styled.ul`
 
     time,
     em {
-      font-weight: 600;
+      line-height: 1;
+      font-size: ${predTextSize};
+      font-weight: 700;
       text-shadow:
         -0.5px 0 black,
         0 0.5px black,
@@ -73,7 +82,6 @@ const List = styled.ul`
     }
 
     span {
-      display: block;
       font-size: 11px;
     }
 
@@ -101,21 +109,27 @@ const List = styled.ul`
     }
   }
 `
-const Predictions: FC<PredictionsProps> = ({ preds, stop, isFetching = false }) => {
+const Predictions: FC<PredictionsProps> = ({
+  preds,
+  stop,
+  timestamp,
+  isFetching = false
+}) => {
   if (Array.isArray(preds) && stop) {
     if (preds.length) {
       const values = preds[0].values.slice(0, 3)
       const title = values[0].isDeparture ? 'Departures' : 'Arrrivals'
       const event = values[0].isDeparture ? 'Departing' : 'Arriving'
+      const freshness = new Date(timestamp)
 
       return (
         <>
           <Title>Next {title}</Title>
           <List>
-            {values.map(({ minutes, epochTime }) => (
+            {values.map(({ minutes, epochTime, direction }) => (
               <li key={epochTime}>
                 {isFetching ? (
-                  <Skeleton height="18.5px" width="25%" />
+                  <Skeleton height={predTextSize} width="25%" />
                 ) : minutes === 0 ? (
                   <em key={epochTime}>{event}</em>
                 ) : (
@@ -123,10 +137,16 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, isFetching = false }) 
                     {minutes} min
                   </time>
                 )}
-                <span>{stop.title}</span>
+                <span>
+                  {stop.title} &bull; {direction.title}
+                </span>
               </li>
             ))}
           </List>
+          <Timestamp>
+            Last updated: {freshness.toLocaleDateString()}{' '}
+            {freshness.toLocaleTimeString()}
+          </Timestamp>
         </>
       )
     }

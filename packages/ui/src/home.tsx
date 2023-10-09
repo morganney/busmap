@@ -22,6 +22,7 @@ import type { Agency, RouteName, Direction, Stop } from './types.js'
 interface HomeState {
   routeName?: RouteName
   collapsed: boolean
+  timestamp: number
 }
 interface RouteNameChanged {
   type: 'routeName'
@@ -31,8 +32,12 @@ interface CollapsedChanged {
   type: 'collapsed'
   value: boolean
 }
-type HomeAction = RouteNameChanged | CollapsedChanged
-const initialState: HomeState = { routeName: undefined, collapsed: false }
+interface PredTimestampChanged {
+  type: 'timestamp'
+  value: number
+}
+type HomeAction = RouteNameChanged | CollapsedChanged | PredTimestampChanged
+const initialState: HomeState = { routeName: undefined, collapsed: false, timestamp: 0 }
 const asideNode = document.querySelector('body > aside') as HTMLElement
 const reducer = (state: HomeState, action: HomeAction) => {
   switch (action.type) {
@@ -40,6 +45,8 @@ const reducer = (state: HomeState, action: HomeAction) => {
       return { ...state, routeName: action.value }
     case 'collapsed':
       return { ...state, collapsed: action.value }
+    case 'timestamp':
+      return { ...state, timestamp: action.value }
     default:
       return state
   }
@@ -126,6 +133,7 @@ const Home: FC<HomeProps> = () => {
       refetchInterval: 6_000,
       onSuccess(data) {
         update({ type: 'predictions', value: data })
+        dispatch({ type: 'timestamp', value: Date.now() })
         resetVehicles()
       }
     }
@@ -239,7 +247,12 @@ const Home: FC<HomeProps> = () => {
             isDisabled={isLoading || !agency || !route || !direction}
           />
         </Form>
-        <Predictions isFetching={isPredsFetching} stop={stop} preds={preds} />
+        <Predictions
+          isFetching={isPredsFetching}
+          stop={stop}
+          preds={preds}
+          timestamp={state.timestamp}
+        />
       </>
     ) : (
       <Loading />
