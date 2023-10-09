@@ -21,7 +21,7 @@ const Directions: FC<Props> = ({
   const itemToString = useCallback((item: Direction | null) => {
     if (item) {
       if (item.title) {
-        return item.title.startsWith('Unknown')
+        return /unknown/i.test(item.title)
           ? item.shortTitle ?? 'Direction N/A'
           : item.title
       }
@@ -37,6 +37,7 @@ const Directions: FC<Props> = ({
         caseInsensitive
         inputBoundByItems
         size="small"
+        color="black"
         itemToString={itemToString}
         value={selected ?? undefined}
         isDisabled={isDisabled}

@@ -2,6 +2,8 @@ import styled, { keyframes } from 'styled-components'
 import { Skeleton } from '@busmap/components/skeleton'
 import { PB50T } from '@busmap/components/colors'
 
+import { PredictedVehiclesColors } from '../utils.js'
+
 import type { FC } from 'react'
 import type { Prediction, Stop } from '../types.js'
 
@@ -28,8 +30,9 @@ const blink = keyframes`
     opacity: 1;
   }
 `
-const Direction = styled.p`
+const Title = styled.h2`
   margin: 20px 0 10px 0;
+  font-size: 18px;
 `
 const NoArrivals = styled.p`
   margin: 20px 0 0 0;
@@ -52,39 +55,69 @@ const List = styled.ul`
     flex-direction: column;
     justify-content: center;
     gap: 3px;
-  }
 
-  li:last-child {
-    border-bottom: none;
-  }
+    time,
+    em {
+      font-weight: 600;
+      text-shadow:
+        -0.5px 0 black,
+        0 0.5px black,
+        0.5px 0 black,
+        0 -0.5px black;
+    }
 
-  em {
-    font-style: normal;
-    opacity: 1;
-    animation: ${blink} 1.5s linear infinite;
-  }
+    em {
+      font-style: normal;
+      opacity: 1;
+      animation: ${blink} 1.5s linear infinite;
+    }
 
-  span {
-    display: block;
-    font-size: 11px;
+    span {
+      display: block;
+      font-size: 11px;
+    }
+
+    &:first-child {
+      time,
+      em {
+        color: ${PredictedVehiclesColors.green};
+      }
+    }
+
+    &:last-child {
+      border-bottom: none;
+
+      time,
+      em {
+        color: ${PredictedVehiclesColors.red};
+      }
+    }
+
+    &:nth-child(2) {
+      time,
+      em {
+        color: ${PredictedVehiclesColors.yellow};
+      }
+    }
   }
 `
 const Predictions: FC<PredictionsProps> = ({ preds, stop, isFetching = false }) => {
   if (Array.isArray(preds) && stop) {
     if (preds.length) {
       const values = preds[0].values.slice(0, 3)
-      const direction = preds[0].values[0].direction.title
+      const title = values[0].isDeparture ? 'Departures' : 'Arrrivals'
+      const event = values[0].isDeparture ? 'Departing' : 'Arriving'
 
       return (
         <>
-          <Direction>Arrivals: {direction}</Direction>
+          <Title>Next {title}</Title>
           <List>
             {values.map(({ minutes, epochTime }) => (
               <li key={epochTime}>
                 {isFetching ? (
                   <Skeleton height="18.5px" width="25%" />
                 ) : minutes === 0 ? (
-                  <em key={epochTime}>Arriving</em>
+                  <em key={epochTime}>{event}</em>
                 ) : (
                   <time key={epochTime} dateTime={`PT${minutes}M`}>
                     {minutes} min

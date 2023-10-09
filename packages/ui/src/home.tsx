@@ -65,6 +65,7 @@ const Home: FC<HomeProps> = () => {
     agency,
     route,
     direction,
+    vehicles,
     stop
   } = useContext(Globals)
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -79,6 +80,16 @@ const Home: FC<HomeProps> = () => {
 
     return []
   }, [route, direction])
+  /**
+   * Resets the vehicles state so that the plotted
+   * vehicle markers can be restyled/redrawn as needed.
+   */
+  const resetVehicles = useCallback(() => {
+    update({
+      type: 'vehicles',
+      value: Array.isArray(vehicles) ? [...vehicles] : undefined
+    })
+  }, [vehicles, update])
   const {
     data: agencies,
     error: agenciesError,
@@ -102,6 +113,7 @@ const Home: FC<HomeProps> = () => {
       enabled: Boolean(agency) && Boolean(state.routeName),
       onSuccess(data) {
         update({ type: 'route', value: data })
+        update({ type: 'direction', value: data.directions[0] })
       }
     }
   )
@@ -111,9 +123,10 @@ const Home: FC<HomeProps> = () => {
     {
       enabled: Boolean(agency) && Boolean(route) && Boolean(stop),
       refetchOnWindowFocus: true,
-      refetchInterval: 8_000,
+      refetchInterval: 6_000,
       onSuccess(data) {
         update({ type: 'predictions', value: data })
+        resetVehicles()
       }
     }
   )
@@ -141,8 +154,9 @@ const Home: FC<HomeProps> = () => {
         type: 'direction',
         value: selected
       })
+      resetVehicles()
     },
-    [update]
+    [update, resetVehicles]
   )
   const onSelectStop = useCallback(
     (selected: Stop) => {
@@ -155,10 +169,10 @@ const Home: FC<HomeProps> = () => {
   )
   const onClearStop = useCallback(() => {
     update({ type: 'stop', value: undefined })
-  }, [update])
+    resetVehicles()
+  }, [update, resetVehicles])
   const error = getFirstDataError([agenciesError, routesError, routeError])
   const isLoading = isAgenciesLoading || isRoutesLoading || isRouteLoading
-  const loopDirection = route?.directions.length === 1 ? route.directions[0] : undefined
 
   useQuery(
     ['vehicles', agency?.id, route?.id],
@@ -213,7 +227,7 @@ const Home: FC<HomeProps> = () => {
           />
           <Directions
             directions={route?.directions}
-            selected={direction ?? loopDirection}
+            selected={direction}
             onSelect={onSelectDirection}
             isDisabled={isLoading || !agency || !route}
           />
