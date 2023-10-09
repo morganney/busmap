@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 import { Skeleton } from '@busmap/components/skeleton'
-import { PB50T } from '@busmap/components/colors'
+import { PB50T, PB80T } from '@busmap/components/colors'
 
 import { PredictedVehiclesColors } from '../utils.js'
 
@@ -32,14 +32,17 @@ const blink = keyframes`
     opacity: 1;
   }
 `
+const Section = styled.section`
+  margin: 0;
+`
 const Title = styled.h2`
-  margin: 20px 0 0 0;
+  margin: 0;
   font-size: 22px;
 `
 const Timestamp = styled.p`
   margin: 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 10px;
 `
 const NoArrivals = styled.p`
   margin: 20px 0 0 0;
@@ -68,11 +71,10 @@ const List = styled.ul`
       line-height: 1;
       font-size: ${predTextSize};
       font-weight: 700;
-      text-shadow:
-        -0.5px 0 black,
-        0 0.5px black,
-        0.5px 0 black,
-        0 -0.5px black;
+
+      sup {
+        font-size: 14px;
+      }
     }
 
     em {
@@ -82,7 +84,7 @@ const List = styled.ul`
     }
 
     span {
-      font-size: 11px;
+      font-size: 12px;
     }
 
     &:first-child {
@@ -109,6 +111,21 @@ const List = styled.ul`
     }
   }
 `
+const AffectedByLayover = styled.details`
+  margin: 0 0 12px 0;
+  summary:first-of-type {
+    font-size: 12px;
+  }
+  p {
+    line-height: 1.25;
+    margin: 12px 0;
+    padding: 12px;
+    font-size: 14px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid ${PB80T};
+  }
+`
 const Predictions: FC<PredictionsProps> = ({
   preds,
   stop,
@@ -118,15 +135,16 @@ const Predictions: FC<PredictionsProps> = ({
   if (Array.isArray(preds) && stop) {
     if (preds.length) {
       const values = preds[0].values.slice(0, 3)
-      const title = values[0].isDeparture ? 'Departures' : 'Arrrivals'
+      const title = values[0].isDeparture ? 'Departures' : 'Arrivals'
       const event = values[0].isDeparture ? 'Departing' : 'Arriving'
+      const affectedByLayover = values.find(value => value.affectedByLayover)
       const freshness = new Date(timestamp)
 
       return (
-        <>
+        <Section>
           <Title>Next {title}</Title>
           <List>
-            {values.map(({ minutes, epochTime, direction }) => (
+            {values.map(({ minutes, epochTime, direction, affectedByLayover }) => (
               <li key={epochTime}>
                 {isFetching ? (
                   <Skeleton height={predTextSize} width="25%" />
@@ -134,7 +152,7 @@ const Predictions: FC<PredictionsProps> = ({
                   <em key={epochTime}>{event}</em>
                 ) : (
                   <time key={epochTime} dateTime={`PT${minutes}M`}>
-                    {minutes} min
+                    {minutes} min{affectedByLayover && <sup>*</sup>}
                   </time>
                 )}
                 <span>
@@ -143,11 +161,25 @@ const Predictions: FC<PredictionsProps> = ({
               </li>
             ))}
           </List>
+          {affectedByLayover && (
+            <AffectedByLayover>
+              <summary>
+                Affected by layover<sup>*</sup>
+              </summary>
+              <p>
+                Specifies whether the predictions are based not just on the position of
+                the vehicle and the expected travel time, but also on whether a vehicle
+                leaves a terminal at the configured layover time. This information can be
+                useful to passengers because predictions that are affected by a layover
+                will not be as accurate.
+              </p>
+            </AffectedByLayover>
+          )}
           <Timestamp>
             Last updated: {freshness.toLocaleDateString()}{' '}
             {freshness.toLocaleTimeString()}
           </Timestamp>
-        </>
+        </Section>
       )
     }
 
