@@ -37,17 +37,20 @@ aside {
   top: 0;
   right: 0;
   z-index: 999;
+  height: 100%;
+  overflow: hidden auto;
   background: var(--home-bg-color);
   padding: 34px 28px;
   width: 33%;
   min-width: 320px;
-  max-width: 450px;
+  max-width: 425px;
   border-left: 1px solid var(--home-border-color);
   border-bottom: 1px solid var(--home-border-color);
   transform: translateX(0);
   transition: transform 0.25s ease;
 }
 aside.collapsed {
+  overflow: visible;
   transform: translateX(100%);
   transition-timing-function: ease;
 }
