@@ -11,9 +11,6 @@
   --bg-color: #e0e0e0;
   --home-bg-color: #ffffffaa;
   --home-border-color: #cccccc;
-  --sg: #80bc00;
-  --sy: #fdc409;
-  --slr: #d7282f;
 }
 *,
 *:before,
@@ -131,15 +128,6 @@ aside.collapsed {
   justify-content: center;
   gap: 3px;
   position: relative;
-}
-.busmap-vehicle.pred-0 div {
-  background: var(--sg) !important;
-}
-.busmap-vehicle.pred-1 div {
-  background: var(--sy) !important;
-}
-.busmap-vehicle.pred-2 div {
-  background: var(--slr) !important;
 }
 .busmap-vehicle span {
   display: inline-block;

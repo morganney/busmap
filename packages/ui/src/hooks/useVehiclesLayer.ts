@@ -126,13 +126,7 @@ const assignDynamicStyles = ({
     }
 
     if (found) {
-      //divIcon.classList.add(`pred-${i}`)
       carNode.style.background = predVehicleColors[i]
-    }
-
-    if (!preds.length) {
-      //console.log('removing pred-* classes')
-      //divIcon.classList.remove('pred-0', 'pred-1', 'pred-2')
     }
   }
 }
