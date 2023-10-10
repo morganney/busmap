@@ -39,7 +39,7 @@ aside {
   z-index: 999;
   height: 100%;
   width: 33%;
-  min-width: 320px;
+  min-width: 290px;
   max-width: 425px;
   background: var(--home-bg-color);
   border-left: 1px solid var(--home-border-color);
@@ -143,4 +143,10 @@ aside.collapsed {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media screen and (min-width: 350px) {
+  aside {
+    min-width: 320px;
+  }
 }

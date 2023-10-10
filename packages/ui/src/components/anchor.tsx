@@ -13,7 +13,7 @@ const Button = styled.button<{ collapsed: boolean }>`
   top: 0;
   right: 100%;
   color: white;
-  background: ${PB50T}dd;
+  background: ${PB50T}ee;
   border: none;
   padding: 6px;
   display: flex;
