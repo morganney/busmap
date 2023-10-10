@@ -60,7 +60,7 @@ const getFirstDataError = (errors: (Error | unknown)[]) => {
 }
 const Form = styled.form`
   display: grid;
-  gap: 15px;
+  gap: 10px;
 `
 interface HomeProps {
   children?: ReactNode
@@ -68,6 +68,7 @@ interface HomeProps {
 const Home: FC<HomeProps> = () => {
   const {
     dispatch: update,
+    markPredictedVehicles,
     locationSettled,
     agency,
     route,
@@ -179,6 +180,9 @@ const Home: FC<HomeProps> = () => {
     update({ type: 'stop', value: undefined })
     resetVehicles()
   }, [update, resetVehicles])
+  const onTogglePredictedVehicles = useCallback(() => {
+    update({ type: 'markPredictedVehicles', value: !markPredictedVehicles })
+  }, [update, markPredictedVehicles])
   const error = getFirstDataError([agenciesError, routesError, routeError])
   const isLoading = isAgenciesLoading || isRoutesLoading || isRouteLoading
 
@@ -244,6 +248,8 @@ const Home: FC<HomeProps> = () => {
             selected={stop}
             onClear={onClearStop}
             onSelect={onSelectStop}
+            markPredictedVehicles={markPredictedVehicles}
+            onTogglePredictedVehicles={onTogglePredictedVehicles}
             isDisabled={isLoading || !agency || !route || !direction}
           />
         </Form>
@@ -251,6 +257,7 @@ const Home: FC<HomeProps> = () => {
           isFetching={isPredsFetching}
           stop={stop}
           preds={preds}
+          markPredictedVehicles={markPredictedVehicles}
           timestamp={state.timestamp}
         />
       </>

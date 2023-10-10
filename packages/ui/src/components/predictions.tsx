@@ -11,6 +11,7 @@ interface PredictionsProps {
   stop?: Stop
   isFetching: boolean
   timestamp: number
+  markPredictedVehicles: boolean
 }
 
 const blink = keyframes`
@@ -49,7 +50,7 @@ const NoArrivals = styled.p`
     text-decoration: underline;
   }
 `
-const List = styled.ul`
+const List = styled.ul<{ markPredictedVehicles: boolean }>`
   margin: 0;
   padding: 0;
   list-style: none;
@@ -57,7 +58,7 @@ const List = styled.ul`
   flex-direction: column;
 
   li {
-    padding: 12px 10px;
+    padding: 12px 0;
     border-bottom: 1px dashed ${PB50T}77;
     display: flex;
     flex-direction: column;
@@ -89,6 +90,8 @@ const List = styled.ul`
       time,
       em {
         color: ${PredictedVehiclesColors.green};
+        color: ${({ markPredictedVehicles }) =>
+          markPredictedVehicles ? PredictedVehiclesColors.green : 'inherit'};
       }
     }
 
@@ -98,6 +101,8 @@ const List = styled.ul`
       time,
       em {
         color: ${PredictedVehiclesColors.red};
+        color: ${({ markPredictedVehicles }) =>
+          markPredictedVehicles ? PredictedVehiclesColors.red : 'inherit'};
       }
     }
 
@@ -105,6 +110,8 @@ const List = styled.ul`
       time,
       em {
         color: ${PredictedVehiclesColors.yellow};
+        color: ${({ markPredictedVehicles }) =>
+          markPredictedVehicles ? PredictedVehiclesColors.yellow : 'inherit'};
       }
     }
   }
@@ -124,7 +131,12 @@ const AffectedByLayover = styled.details`
     border: 1px solid ${PB80T};
   }
 `
-const Predictions: FC<PredictionsProps> = ({ preds, stop, timestamp }) => {
+const Predictions: FC<PredictionsProps> = ({
+  preds,
+  stop,
+  timestamp,
+  markPredictedVehicles = true
+}) => {
   if (Array.isArray(preds) && stop) {
     if (preds.length) {
       const values = preds[0].values.slice(0, 3)
@@ -136,7 +148,7 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, timestamp }) => {
       return (
         <Section>
           <Title>Next {title}</Title>
-          <List>
+          <List markPredictedVehicles={markPredictedVehicles}>
             {values.map(({ minutes, epochTime, direction, affectedByLayover }) => (
               <li key={epochTime}>
                 {minutes === 0 ? (

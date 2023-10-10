@@ -22,6 +22,7 @@ interface DynamicStyles {
   vehicle: Vehicle
   marker: VehicleMarker
   preds: Pred[]
+  markPredictedVehicles: boolean
 }
 enum Quadrant {
   NE = 'ne',
@@ -51,6 +52,7 @@ const getQuadrantFromHeading = (heading: number): Quadrant => {
   return Quadrant.NW
 }
 const assignDynamicStyles = ({
+  markPredictedVehicles,
   dimensions,
   vehicle,
   marker,
@@ -114,19 +116,21 @@ const assignDynamicStyles = ({
     headingNode.style.transform = `rotate(${heading - 90}deg)`
 
     // Mark predicted vehicles
-    let found = false
-    let i = 0
+    if (markPredictedVehicles) {
+      let found = false
+      let i = 0
 
-    while (i < preds.length && !found) {
-      if (preds[i].vehicle.id === vehicle.id) {
-        found = true
-      } else {
-        i++
+      while (i < preds.length && !found) {
+        if (preds[i].vehicle.id === vehicle.id) {
+          found = true
+        } else {
+          i++
+        }
       }
-    }
 
-    if (found) {
-      carNode.style.background = predVehicleColors[i]
+      if (found) {
+        carNode.style.background = predVehicleColors[i]
+      }
     }
   }
 }
@@ -153,7 +157,7 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
   `
 }
 const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
-  const { route, vehicles, predictions } = useContext(Globals)
+  const { route, vehicles, predictions, markPredictedVehicles } = useContext(Globals)
   const iconDimensions = useRef<Dimensions | null>(null)
   const preds = useRef(predictions?.length ? predictions[0].values.slice(0, 3) : [])
 
@@ -179,6 +183,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             route,
             marker,
             vehicle,
+            markPredictedVehicles,
             preds: preds.current,
             dimensions: iconDimensions.current
           })
@@ -228,6 +233,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             route,
             marker,
             vehicle,
+            markPredictedVehicles,
             preds: preds.current,
             dimensions: iconDimensions.current
           })
@@ -244,7 +250,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
     } else {
       vehiclesLayer.clearLayers()
     }
-  }, [vehicles, vehiclesLayer, route])
+  }, [vehicles, vehiclesLayer, route, markPredictedVehicles])
 }
 
 export { useVehiclesLayer }
