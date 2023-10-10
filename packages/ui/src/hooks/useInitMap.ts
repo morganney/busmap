@@ -16,11 +16,14 @@ const useInitMap = () => {
   const predVehLayerRef = useRef<LayerGroup>(L.layerGroup())
 
   useEffect(() => {
-    mapRef.current = L.map(document.querySelector('main') as HTMLElement)
+    mapRef.current = L.map(document.querySelector('main') as HTMLElement, {
+      zoomControl: false
+    })
     popupRef.current.setContent(selectionRef.current)
     popupRef.current.on('remove', () => {
       dispatch({ type: 'selected', value: undefined })
     })
+    L.control.zoom({ position: 'bottomleft' }).addTo(mapRef.current)
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution:
