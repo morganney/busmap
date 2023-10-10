@@ -193,6 +193,7 @@ const Home: FC<HomeProps> = () => {
     update({ type: 'markPredictedVehicles', value: !markPredictedVehicles })
   }, [update, markPredictedVehicles])
   const error = getFirstDataError([agenciesError, routesError, routeError])
+  const messages = preds?.length ? preds[0].messages : []
   const isLoading = isAgenciesLoading || isRoutesLoading || isRouteLoading
 
   useQuery(
@@ -267,6 +268,7 @@ const Home: FC<HomeProps> = () => {
             isFetching={isPredsFetching}
             stop={stop}
             preds={preds}
+            messages={messages}
             markPredictedVehicles={markPredictedVehicles}
             timestamp={state.timestamp}
           />

@@ -76,11 +76,14 @@ interface Pred {
   vehicle: PredVehicle
   direction: DirectionName
 }
+interface Message {
+  text: string
+}
 interface Prediction {
   agency: Agency & { logoUrl: string | null }
   route: RouteName
   stop: StopName & { distance: number | null }
-  messages: string[]
+  messages: Message[]
   values: Pred[]
 }
 interface Selection {

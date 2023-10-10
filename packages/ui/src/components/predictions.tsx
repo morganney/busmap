@@ -11,6 +11,7 @@ interface PredictionsProps {
   stop?: Stop
   isFetching: boolean
   timestamp: number
+  messages: Prediction['messages']
   markPredictedVehicles: boolean
 }
 
@@ -86,14 +87,6 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
       font-size: 12px;
     }
 
-    &:first-child {
-      time,
-      em {
-        color: ${({ markPredictedVehicles }) =>
-          markPredictedVehicles ? PredictedVehiclesColors.green : 'inherit'};
-      }
-    }
-
     &:last-child {
       border-bottom: none;
 
@@ -101,6 +94,14 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
       em {
         color: ${({ markPredictedVehicles }) =>
           markPredictedVehicles ? PredictedVehiclesColors.red : 'inherit'};
+      }
+    }
+
+    &:first-child {
+      time,
+      em {
+        color: ${({ markPredictedVehicles }) =>
+          markPredictedVehicles ? PredictedVehiclesColors.green : 'inherit'};
       }
     }
 
@@ -128,9 +129,38 @@ const AffectedByLayover = styled.details`
     border: 1px solid ${PB80T};
   }
 `
+const Messages = styled.details`
+  margin: 12px 0 0 0;
+  summary:first-of-type {
+    font-size: 12px;
+    color: blue;
+  }
+
+  ul {
+    padding: 0;
+    margin: 12px 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid ${PB80T};
+
+    li {
+      font-size: 14px;
+      padding: 8px 8px;
+      border-bottom: 1px dotted ${PB80T};
+    }
+
+    li:last-child {
+      border-bottom: none;
+    }
+  }
+`
 const Predictions: FC<PredictionsProps> = ({
   preds,
   stop,
+  messages,
   timestamp,
   markPredictedVehicles = true
 }) => {
@@ -145,6 +175,16 @@ const Predictions: FC<PredictionsProps> = ({
       return (
         <Section>
           <Title>Next {title}</Title>
+          {messages.length > 0 && (
+            <Messages>
+              <summary>Messages 💬</summary>
+              <ul>
+                {messages.map((message, idx) => (
+                  <li key={idx}>{message.text}</li>
+                ))}
+              </ul>
+            </Messages>
+          )}
           <List markPredictedVehicles={markPredictedVehicles}>
             {values.map(({ minutes, epochTime, direction, affectedByLayover }) => (
               <li key={epochTime}>
