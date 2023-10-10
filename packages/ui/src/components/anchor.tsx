@@ -11,7 +11,7 @@ interface AnchorProps {
 const Button = styled.button<{ collapsed: boolean }>`
   position: fixed;
   top: 0;
-  right: ${({ collapsed }) => (collapsed ? '100%' : '0')};
+  right: 100%;
   color: white;
   background: ${PB50T}dd;
   border: none;

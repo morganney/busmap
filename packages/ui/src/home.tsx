@@ -62,6 +62,15 @@ const Form = styled.form`
   display: grid;
   gap: 10px;
 `
+const Wrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 34px;
+  padding: 34px 30px;
+  height: 100%;
+  overflow-y: auto;
+`
 interface HomeProps {
   children?: ReactNode
 }
@@ -221,45 +230,47 @@ const Home: FC<HomeProps> = () => {
     locationSettled && agencies ? (
       <>
         <Anchor onClick={onClickAnchor} collapsed={state.collapsed} />
-        <Form
-          onSubmit={evt => {
-            evt.preventDefault()
-          }}
-        >
-          <Agencies
-            agencies={agencies}
-            onSelect={onSelectAgency}
-            isDisabled={isLoading}
-          />
-          <Routes
-            routes={routes}
-            selected={state.routeName}
-            onSelect={onSelectRoute}
-            isDisabled={isLoading || !agency}
-          />
-          <Directions
-            directions={route?.directions}
-            selected={direction}
-            onSelect={onSelectDirection}
-            isDisabled={isLoading || !agency || !route}
-          />
-          <Stops
-            stops={stops}
-            selected={stop}
-            onClear={onClearStop}
-            onSelect={onSelectStop}
+        <Wrap>
+          <Form
+            onSubmit={evt => {
+              evt.preventDefault()
+            }}
+          >
+            <Agencies
+              agencies={agencies}
+              onSelect={onSelectAgency}
+              isDisabled={isLoading}
+            />
+            <Routes
+              routes={routes}
+              selected={state.routeName}
+              onSelect={onSelectRoute}
+              isDisabled={isLoading || !agency}
+            />
+            <Directions
+              directions={route?.directions}
+              selected={direction}
+              onSelect={onSelectDirection}
+              isDisabled={isLoading || !agency || !route}
+            />
+            <Stops
+              stops={stops}
+              selected={stop}
+              onClear={onClearStop}
+              onSelect={onSelectStop}
+              markPredictedVehicles={markPredictedVehicles}
+              onTogglePredictedVehicles={onTogglePredictedVehicles}
+              isDisabled={isLoading || !agency || !route || !direction}
+            />
+          </Form>
+          <Predictions
+            isFetching={isPredsFetching}
+            stop={stop}
+            preds={preds}
             markPredictedVehicles={markPredictedVehicles}
-            onTogglePredictedVehicles={onTogglePredictedVehicles}
-            isDisabled={isLoading || !agency || !route || !direction}
+            timestamp={state.timestamp}
           />
-        </Form>
-        <Predictions
-          isFetching={isPredsFetching}
-          stop={stop}
-          preds={preds}
-          markPredictedVehicles={markPredictedVehicles}
-          timestamp={state.timestamp}
-        />
+        </Wrap>
       </>
     ) : (
       <Loading />
