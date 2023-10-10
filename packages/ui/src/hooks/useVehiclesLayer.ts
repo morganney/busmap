@@ -129,6 +129,7 @@ const assignDynamicStyles = ({
       }
 
       if (found) {
+        carNode.style.color = 'white'
         carNode.style.background = predVehicleColors[i]
       }
     }

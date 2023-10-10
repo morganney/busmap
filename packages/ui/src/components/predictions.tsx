@@ -89,7 +89,6 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
     &:first-child {
       time,
       em {
-        color: ${PredictedVehiclesColors.green};
         color: ${({ markPredictedVehicles }) =>
           markPredictedVehicles ? PredictedVehiclesColors.green : 'inherit'};
       }
@@ -100,7 +99,6 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
 
       time,
       em {
-        color: ${PredictedVehiclesColors.red};
         color: ${({ markPredictedVehicles }) =>
           markPredictedVehicles ? PredictedVehiclesColors.red : 'inherit'};
       }
@@ -109,7 +107,6 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
     &:nth-child(2) {
       time,
       em {
-        color: ${PredictedVehiclesColors.yellow};
         color: ${({ markPredictedVehicles }) =>
           markPredictedVehicles ? PredictedVehiclesColors.yellow : 'inherit'};
       }
