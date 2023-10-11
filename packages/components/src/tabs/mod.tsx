@@ -143,5 +143,5 @@ const TabPanel: FC<TabPanelProps> = ({ children, name }) => {
   return <Content active={active}>{children}</Content>
 }
 
-export type { TabsProps }
+export type { TabsProps, TabProps, TabPanelProps }
 export { Tabs, TabList, Tab, TabPanel }

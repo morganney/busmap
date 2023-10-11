@@ -3,7 +3,7 @@ import type { StorybookConfig } from '@storybook/react-vite'
 const config: StorybookConfig = {
   stories: ['../src/**/story.tsx'],
   framework: '@storybook/react-vite',
-  addons: ['@storybook/addon-essentials'],
+  addons: ['@storybook/addon-essentials', '@storybook/addon-a11y'],
   /**
    * To use custom filenames for stories, I had to set this to `false`.
    * Otherwise, if you set it to `true` (the default) then the stories
