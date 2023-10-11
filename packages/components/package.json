@@ -31,6 +31,10 @@
       "import": "./dist/skeleton/mod.js",
       "require": "./dist/cjs/skeleton/mod.cjs"
     },
+    "./tabs": {
+      "import": "./dist/tabs/mod.js",
+      "require": "./dist/cjs/tabs/mod.cjs"
+    },
     "./colors": {
       "import": "./dist/colors.js",
       "require": "./dist/cjs/colors.cjs"
@@ -71,6 +75,7 @@
   },
   "devDependencies": {
     "@knighted/duel": "^1.0.0-rc.13",
+    "@storybook/addon-a11y": "^7.3.2",
     "@storybook/addon-essentials": "^7.3.2",
     "@storybook/builder-vite": "^7.3.2",
     "@storybook/react": "^7.3.2",
