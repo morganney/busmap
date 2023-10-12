@@ -178,8 +178,7 @@ const TabList: FC<TabListProps> = ({ children, margin = '0 0 12px 0' }) => {
       position={position}
       border={border}
       margin={margin}
-      onKeyDown={onKeyDown}
-    >
+      onKeyDown={onKeyDown}>
       {children}
     </List>
   )
@@ -258,8 +257,7 @@ const Tab: FC<TabProps> = ({ label, name }) => {
       background={background}
       border={border}
       borderRadius={borderRadius}
-      onClick={onClick}
-    >
+      onClick={onClick}>
       {label}
     </Button>
   )
@@ -288,8 +286,7 @@ const TabPanel: FC<TabPanelProps> = ({ children, name }) => {
       role="tabpanel"
       tabIndex={0}
       aria-labelledby={`tab-${name}`}
-      hidden={active ? false : true}
-    >
+      hidden={active ? false : true}>
       {children}
     </Content>
   )

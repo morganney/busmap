@@ -109,8 +109,7 @@ const FormItem: FC<FormItemProps> = ({
       grow={grow}
       justifyContent={justifyContent}
       fontWeight={fontWeight}
-      fontSize={fontSize}
-    >
+      fontSize={fontSize}>
       <span>{label ?? ''}</span>
       <span>{children}</span>
     </Label>

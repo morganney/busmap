@@ -45,8 +45,7 @@ const Stops: FC<Props> = ({
         justifyContent="flex-end"
         fontWeight="normal"
         fontSize="12px"
-        grow={0}
-      >
+        grow={0}>
         <input
           type="checkbox"
           checked={markPredictedVehicles}
