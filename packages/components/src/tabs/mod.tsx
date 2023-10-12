@@ -8,7 +8,16 @@ import {
   useEffect
 } from 'react'
 
-import type { FC, ReactNode, Dispatch, SetStateAction, MouseEvent } from 'react'
+import { SLB30T } from '../colors.js'
+
+import type {
+  FC,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+  MouseEvent,
+  KeyboardEvent
+} from 'react'
 
 type Position = 'start' | 'end'
 interface TabsContext {
@@ -90,10 +99,40 @@ const List = styled.div<{ position: Position; border: string }>`
     position === 'start' ? 'flex-start' : 'flex-end'};
 `
 const TabList: FC<TabsListProps> = ({ children }) => {
-  const { label, position, border } = useContext(Context)
+  const { label, position, border, setSelected } = useContext(Context)
+  const onKeyDown = useCallback(
+    (evt: KeyboardEvent<HTMLDivElement>) => {
+      if (evt.key === 'ArrowRight' || evt.key === 'ArrowLeft') {
+        const tabs = Array.from(evt.currentTarget.querySelectorAll('button'))
+        const selectedIdx = tabs.findIndex(
+          tab => tab.getAttribute('aria-selected') === 'true'
+        )
+        const lastIdx = tabs.length - 1
+        let next = selectedIdx
+
+        if (evt.key === 'ArrowRight') {
+          next = selectedIdx === lastIdx ? 0 : selectedIdx + 1
+        }
+
+        if (evt.key === 'ArrowLeft') {
+          next = selectedIdx === 0 ? lastIdx : selectedIdx - 1
+        }
+
+        setSelected(tabs[next].dataset.name ?? '')
+        tabs[next].focus()
+      }
+    },
+    [setSelected]
+  )
 
   return (
-    <List position={position} border={border} role="tablist" aria-label={label}>
+    <List
+      role="tablist"
+      aria-label={label}
+      position={position}
+      border={border}
+      onKeyDown={onKeyDown}
+    >
       {children}
     </List>
   )
@@ -114,6 +153,11 @@ const Button = styled.button<{ active: boolean; background: string; border: stri
   border: ${({ active, border }) => (active ? border : '1px solid transparent')};
   border-bottom: none;
   background: ${({ active, background }) => (active ? background : 'transparent')};
+
+  &:focus-visible {
+    outline: none;
+    border-color: ${SLB30T};
+  }
 `
 const Tab: FC<TabProps> = ({ label, name }) => {
   const { background, border, selected, setSelected, onSelect } = useContext(Context)

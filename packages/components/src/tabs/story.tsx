@@ -18,12 +18,16 @@ const Primary: StoryFn<typeof Tabs> = args => {
       <TabList>
         <Tab name="foo" label="Foo" />
         <Tab name="bar" label="Bar" />
+        <Tab name="baz" label="Baz" />
       </TabList>
       <TabPanel name="foo">
         <p>This is Foo content.</p>
       </TabPanel>
       <TabPanel name="bar">
         <p>This is Bar content.</p>
+      </TabPanel>
+      <TabPanel name="baz">
+        <p>This is Baz content.</p>
       </TabPanel>
     </Tabs>
   )
