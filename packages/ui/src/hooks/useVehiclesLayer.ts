@@ -135,6 +135,13 @@ const assignDynamicStyles = ({
     }
   }
 }
+/**
+ * @NOTE: Some agencies, like sfmuni-sandbox, will return directionId's
+ * for vehicles that correspond to no directionId from a route config.
+ *
+ * The outcome is a 'N/A' in the vehicle poupup, despite the selector form
+ * showing the correct direction. Basically a config error from the API source.
+ */
 const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
   const direction = route.directions.find(dir => dir.id === vehicle.directionId)
 

@@ -102,6 +102,7 @@ export default {
     initialTab: 'foo',
     position: 'start',
     color: 'black',
+    fluid: false,
     fontSize: '14px',
     border: '1px solid #cccccc',
     borderRadius: '0',
