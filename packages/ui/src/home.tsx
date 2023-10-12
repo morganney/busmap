@@ -1,6 +1,7 @@
 import { useContext, useReducer, useCallback, useMemo, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { createPortal } from 'react-dom'
+import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import styled from 'styled-components'
 
 import { Globals } from './globals.js'
@@ -66,8 +67,8 @@ const Wrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 34px;
-  padding: 34px 30px;
+  gap: 30px;
+  padding: 15px 30px 30px 30px;
   height: 100%;
   overflow-y: auto;
 `
@@ -232,38 +233,45 @@ const Home: FC<HomeProps> = () => {
       <>
         <Anchor onClick={onClickAnchor} collapsed={state.collapsed} />
         <Wrap>
-          <Form
-            onSubmit={evt => {
-              evt.preventDefault()
-            }}
-          >
-            <Agencies
-              agencies={agencies}
-              onSelect={onSelectAgency}
-              isDisabled={isLoading}
-            />
-            <Routes
-              routes={routes}
-              selected={state.routeName}
-              onSelect={onSelectRoute}
-              isDisabled={isLoading || !agency}
-            />
-            <Directions
-              directions={route?.directions}
-              selected={direction}
-              onSelect={onSelectDirection}
-              isDisabled={isLoading || !agency || !route}
-            />
-            <Stops
-              stops={stops}
-              selected={stop}
-              onClear={onClearStop}
-              onSelect={onSelectStop}
-              markPredictedVehicles={markPredictedVehicles}
-              onTogglePredictedVehicles={onTogglePredictedVehicles}
-              isDisabled={isLoading || !agency || !route || !direction}
-            />
-          </Form>
+          <Tabs initialTab="select" position="end" fontSize="12px">
+            <TabList>
+              <Tab name="select" label="Select" />
+            </TabList>
+            <TabPanel name="select">
+              <Form
+                onSubmit={evt => {
+                  evt.preventDefault()
+                }}
+              >
+                <Agencies
+                  agencies={agencies}
+                  onSelect={onSelectAgency}
+                  isDisabled={isLoading}
+                />
+                <Routes
+                  routes={routes}
+                  selected={state.routeName}
+                  onSelect={onSelectRoute}
+                  isDisabled={isLoading || !agency}
+                />
+                <Directions
+                  directions={route?.directions}
+                  selected={direction}
+                  onSelect={onSelectDirection}
+                  isDisabled={isLoading || !agency || !route}
+                />
+                <Stops
+                  stops={stops}
+                  selected={stop}
+                  onClear={onClearStop}
+                  onSelect={onSelectStop}
+                  markPredictedVehicles={markPredictedVehicles}
+                  onTogglePredictedVehicles={onTogglePredictedVehicles}
+                  isDisabled={isLoading || !agency || !route || !direction}
+                />
+              </Form>
+            </TabPanel>
+          </Tabs>
           <Predictions
             isFetching={isPredsFetching}
             stop={stop}

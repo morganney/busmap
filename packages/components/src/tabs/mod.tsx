@@ -8,7 +8,7 @@ import {
   useEffect
 } from 'react'
 
-import { SLB30T } from '../colors.js'
+import { SLB30T, PB80T } from '../colors.js'
 
 import type {
   FC,
@@ -24,16 +24,22 @@ interface TabsContext {
   label: string
   selected: string
   position: Position
+  color: string
   border: string
+  borderRadius: string
   background: string
+  fontSize: string
   setSelected: Dispatch<SetStateAction<string>>
   onSelect?: (selectedName: string) => void
 }
 const Context = createContext<TabsContext>({
   label: '',
   selected: '',
-  border: '1px solid black',
-  background: 'transparent',
+  color: 'inherit',
+  border: `1px solid ${PB80T}`,
+  borderRadius: '0',
+  background: 'white',
+  fontSize: 'inherit',
   position: 'start',
   setSelected: () => {},
   onSelect: () => {}
@@ -41,7 +47,20 @@ const Context = createContext<TabsContext>({
 
 interface TabsProps {
   children: ReactNode
+  className?: string
+  fontSize?: string
+  /**
+   * Color of the tab text when active.
+   */
+  color?: string
+  /**
+   * Border of the active tab.
+   */
   border?: string
+  borderRadius?: string
+  /**
+   * Background of the active tab.
+   */
   background?: string
   /**
    * Sets the initial visible tab.
@@ -64,17 +83,42 @@ interface TabsProps {
 const Wrap = styled.div``
 const Tabs: FC<TabsProps> = ({
   children,
+  className,
   onSelect,
-  border = '1px solid black',
-  background = 'transparent',
+  color = 'inherit',
+  fontSize = 'inherit',
+  border = `1px solid ${PB80T}`,
+  borderRadius = '0',
+  background = 'white',
   position = 'start',
   label = 'Content Tabs',
   initialTab = ''
 }) => {
   const [selected, setSelected] = useState(initialTab)
   const context = useMemo(
-    () => ({ label, position, border, background, selected, setSelected, onSelect }),
-    [label, position, border, background, selected, onSelect]
+    () => ({
+      label,
+      position,
+      color,
+      fontSize,
+      border,
+      borderRadius,
+      background,
+      selected,
+      setSelected,
+      onSelect
+    }),
+    [
+      label,
+      position,
+      color,
+      fontSize,
+      border,
+      borderRadius,
+      background,
+      selected,
+      onSelect
+    ]
   )
 
   useEffect(() => {
@@ -82,23 +126,25 @@ const Tabs: FC<TabsProps> = ({
   }, [initialTab])
 
   return (
-    <Wrap>
+    <Wrap className={className}>
       <Context.Provider value={context}>{children}</Context.Provider>
     </Wrap>
   )
 }
 
-interface TabsListProps {
+interface TabListProps {
   children: ReactNode
+  margin?: string
 }
-const List = styled.div<{ position: Position; border: string }>`
+const List = styled.div<{ position: Position; border: string; margin: string }>`
+  margin: ${({ margin }) => margin};
   border-bottom: ${({ border }) => border};
   display: flex;
   align-items: center;
   justify-content: ${({ position }) =>
     position === 'start' ? 'flex-start' : 'flex-end'};
 `
-const TabList: FC<TabsListProps> = ({ children }) => {
+const TabList: FC<TabListProps> = ({ children, margin = '0 0 12px 0' }) => {
   const { label, position, border, setSelected } = useContext(Context)
   const onKeyDown = useCallback(
     (evt: KeyboardEvent<HTMLDivElement>) => {
@@ -131,6 +177,7 @@ const TabList: FC<TabsListProps> = ({ children }) => {
       aria-label={label}
       position={position}
       border={border}
+      margin={margin}
       onKeyDown={onKeyDown}
     >
       {children}
@@ -147,10 +194,21 @@ interface TabProps {
    */
   name: string
 }
-const Button = styled.button<{ active: boolean; background: string; border: string }>`
+const Button = styled.button<{
+  active: boolean
+  fontSize: string
+  color: string
+  background: string
+  border: string
+  borderRadius: string
+}>`
   cursor: pointer;
   padding: 4px 6px;
+  color: ${({ active, color }) => (active ? color : 'inherit')};
+  font-size: ${({ fontSize }) => fontSize};
+  font-family: inherit;
   border: ${({ active, border }) => (active ? border : '1px solid transparent')};
+  border-radius: ${({ borderRadius }) => borderRadius};
   border-bottom: none;
   background: ${({ active, background }) => (active ? background : 'transparent')};
 
@@ -160,7 +218,16 @@ const Button = styled.button<{ active: boolean; background: string; border: stri
   }
 `
 const Tab: FC<TabProps> = ({ label, name }) => {
-  const { background, border, selected, setSelected, onSelect } = useContext(Context)
+  const {
+    color,
+    fontSize,
+    background,
+    border,
+    borderRadius,
+    selected,
+    setSelected,
+    onSelect
+  } = useContext(Context)
   const onClick = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
       const selected = evt.currentTarget.dataset.name
@@ -186,8 +253,11 @@ const Tab: FC<TabProps> = ({ label, name }) => {
       tabIndex={active ? 0 : -1}
       data-name={name}
       active={active}
+      color={color}
+      fontSize={fontSize}
       background={background}
       border={border}
+      borderRadius={borderRadius}
       onClick={onClick}
     >
       {label}
