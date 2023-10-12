@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { useReducer } from 'react'
+import { useReducer, useMemo } from 'react'
 
 import defaults, { Globals, reducer } from './globals.js'
 
@@ -15,7 +15,7 @@ const queryClient = new QueryClient({
 })
 const Providers: FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, defaults)
-  const context = { ...state, dispatch }
+  const context = useMemo(() => ({ ...state, dispatch }), [state, dispatch])
 
   return (
     <Globals.Provider value={context}>

@@ -8,10 +8,20 @@ import {
   useEffect
 } from 'react'
 
-import type { FC, ReactNode, Dispatch, SetStateAction, MouseEvent } from 'react'
+import { SLB30T } from '../colors.js'
+
+import type {
+  FC,
+  ReactNode,
+  Dispatch,
+  SetStateAction,
+  MouseEvent,
+  KeyboardEvent
+} from 'react'
 
 type Position = 'start' | 'end'
 interface TabsContext {
+  label: string
   selected: string
   position: Position
   border: string
@@ -20,6 +30,7 @@ interface TabsContext {
   onSelect?: (selectedName: string) => void
 }
 const Context = createContext<TabsContext>({
+  label: '',
   selected: '',
   border: '1px solid black',
   background: 'transparent',
@@ -30,41 +41,57 @@ const Context = createContext<TabsContext>({
 
 interface TabsProps {
   children: ReactNode
-  initialTab?: string
-  position?: Position
   border?: string
   background?: string
+  /**
+   * Sets the initial visible tab.
+   */
+  initialTab?: string
+  /**
+   * Sets how the tabs are positioned relative to their layout (horizontal).
+   */
+  position?: Position
+  /**
+   * Sets the aria-label attribute value.
+   */
+  label?: string
+  /**
+   * Callback when the visible tab is changed.
+   * Passed the selected tabs `name`.
+   */
   onSelect?: (selectedName: string) => void
 }
+const Wrap = styled.div``
 const Tabs: FC<TabsProps> = ({
   children,
   onSelect,
   border = '1px solid black',
   background = 'transparent',
   position = 'start',
+  label = 'Content Tabs',
   initialTab = ''
 }) => {
   const [selected, setSelected] = useState(initialTab)
   const context = useMemo(
-    () => ({ position, border, background, selected, setSelected, onSelect }),
-    [position, border, background, selected, onSelect]
+    () => ({ label, position, border, background, selected, setSelected, onSelect }),
+    [label, position, border, background, selected, onSelect]
   )
 
   useEffect(() => {
     setSelected(initialTab)
   }, [initialTab])
 
-  return <Context.Provider value={context}>{children}</Context.Provider>
+  return (
+    <Wrap>
+      <Context.Provider value={context}>{children}</Context.Provider>
+    </Wrap>
+  )
 }
 
 interface TabsListProps {
   children: ReactNode
 }
-const List = styled.ul<{ position: Position; border: string }>`
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  box-sizing: border-box;
+const List = styled.div<{ position: Position; border: string }>`
   border-bottom: ${({ border }) => border};
   display: flex;
   align-items: center;
@@ -72,10 +99,40 @@ const List = styled.ul<{ position: Position; border: string }>`
     position === 'start' ? 'flex-start' : 'flex-end'};
 `
 const TabList: FC<TabsListProps> = ({ children }) => {
-  const { position, border } = useContext(Context)
+  const { label, position, border, setSelected } = useContext(Context)
+  const onKeyDown = useCallback(
+    (evt: KeyboardEvent<HTMLDivElement>) => {
+      if (evt.key === 'ArrowRight' || evt.key === 'ArrowLeft') {
+        const tabs = Array.from(evt.currentTarget.querySelectorAll('button'))
+        const selectedIdx = tabs.findIndex(
+          tab => tab.getAttribute('aria-selected') === 'true'
+        )
+        const lastIdx = tabs.length - 1
+        let next = selectedIdx
+
+        if (evt.key === 'ArrowRight') {
+          next = selectedIdx === lastIdx ? 0 : selectedIdx + 1
+        }
+
+        if (evt.key === 'ArrowLeft') {
+          next = selectedIdx === 0 ? lastIdx : selectedIdx - 1
+        }
+
+        setSelected(tabs[next].dataset.name ?? '')
+        tabs[next].focus()
+      }
+    },
+    [setSelected]
+  )
 
   return (
-    <List position={position} border={border}>
+    <List
+      role="tablist"
+      aria-label={label}
+      position={position}
+      border={border}
+      onKeyDown={onKeyDown}
+    >
       {children}
     </List>
   )
@@ -83,25 +140,29 @@ const TabList: FC<TabsListProps> = ({ children }) => {
 
 interface TabProps {
   label: string
+  /**
+   * Identifies the tab and associates it with
+   * the corresponding panel. Should be unique
+   * per Tabs component per page.
+   */
   name: string
 }
-const Item = styled.li<{ active: boolean; background: string; border: string }>`
+const Button = styled.button<{ active: boolean; background: string; border: string }>`
   cursor: pointer;
-  padding: 3px 5px;
-  border: ${({ active, border }) => (active ? border : 'none')};
+  padding: 4px 6px;
+  border: ${({ active, border }) => (active ? border : '1px solid transparent')};
   border-bottom: none;
   background: ${({ active, background }) => (active ? background : 'transparent')};
 
-  button {
-    background: none;
-    border: none;
-    cursor: pointer;
+  &:focus-visible {
+    outline: none;
+    border-color: ${SLB30T};
   }
 `
 const Tab: FC<TabProps> = ({ label, name }) => {
   const { background, border, selected, setSelected, onSelect } = useContext(Context)
   const onClick = useCallback(
-    (evt: MouseEvent<HTMLLIElement>) => {
+    (evt: MouseEvent<HTMLButtonElement>) => {
       const selected = evt.currentTarget.dataset.name
 
       if (selected) {
@@ -117,20 +178,30 @@ const Tab: FC<TabProps> = ({ label, name }) => {
   const active = selected === name
 
   return (
-    <Item
+    <Button
+      id={`tab-${name}`}
+      role="tab"
+      aria-selected={active}
+      arial-controls={name}
+      tabIndex={active ? 0 : -1}
       data-name={name}
-      onClick={onClick}
       active={active}
       background={background}
       border={border}
+      onClick={onClick}
     >
-      <button>{label}</button>
-    </Item>
+      {label}
+    </Button>
   )
 }
 
 interface TabPanelProps {
   children: ReactNode
+  /**
+   * Identifies the panel and associates it with
+   * the corresponding tab. Should be unique per
+   * Tabs component per page.
+   */
   name: string
 }
 const Content = styled.div<{ active: boolean }>`
@@ -140,7 +211,18 @@ const TabPanel: FC<TabPanelProps> = ({ children, name }) => {
   const { selected } = useContext(Context)
   const active = selected === name
 
-  return <Content active={active}>{children}</Content>
+  return (
+    <Content
+      active={active}
+      id={name}
+      role="tabpanel"
+      tabIndex={0}
+      aria-labelledby={`tab-${name}`}
+      hidden={active ? false : true}
+    >
+      {children}
+    </Content>
+  )
 }
 
 export type { TabsProps, TabProps, TabPanelProps }
