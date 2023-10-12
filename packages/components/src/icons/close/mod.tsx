@@ -33,8 +33,7 @@ const Close: FC<IconProps> = ({
       onClick={handleOnClick}
       onKeyDown={onKeyDown}
       className={className}
-      tabIndex={tabIndex}
-    >
+      tabIndex={tabIndex}>
       <svg viewBox="0 0 24 24">
         <path
           fillRule="evenodd"

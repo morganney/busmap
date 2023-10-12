@@ -446,8 +446,7 @@ const AutoSuggest = <U,>({
           type="button"
           size={size}
           disabled={isDisabled}
-          aria-label="toggle menu"
-        >
+          aria-label="toggle menu">
           <ChevronDown className={isOpen ? 'isOpen' : undefined} />
         </ToggleMenuButton>
       </Combobox>
@@ -460,8 +459,7 @@ const AutoSuggest = <U,>({
                 key={index}
                 size={size}
                 color={color}
-                className={highlightedIndex === index ? 'highlighted' : ''}
-              >
+                className={highlightedIndex === index ? 'highlighted' : ''}>
                 {render(item)}
               </SelectItem>
             ))}

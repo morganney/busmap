@@ -241,8 +241,7 @@ const Home: FC<HomeProps> = () => {
               <Form
                 onSubmit={evt => {
                   evt.preventDefault()
-                }}
-              >
+                }}>
                 <Agencies
                   agencies={agencies}
                   onSelect={onSelectAgency}
