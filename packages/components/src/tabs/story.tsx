@@ -32,7 +32,31 @@ const Primary: StoryFn<typeof Tabs> = args => {
     </Tabs>
   )
 }
-
+const CustomTabs = styled(Tabs)`
+  button[aria-selected='true'] {
+    font-style: italic;
+  }
+`
+const Custom: StoryFn<typeof Tabs> = args => {
+  return (
+    <CustomTabs initialTab="foo" {...args}>
+      <TabList>
+        <Tab name="foo" label="Foo" />
+        <Tab name="bar" label="Bar" />
+        <Tab name="baz" label="Baz" />
+      </TabList>
+      <TabPanel name="foo">
+        <p>This is Foo content.</p>
+      </TabPanel>
+      <TabPanel name="bar">
+        <p>This is Bar content.</p>
+      </TabPanel>
+      <TabPanel name="baz">
+        <p>This is Baz content.</p>
+      </TabPanel>
+    </CustomTabs>
+  )
+}
 const Multiple: StoryFn<typeof Tabs> = args => {
   return (
     <Grid>
@@ -69,7 +93,7 @@ Multiple.parameters = {
   }
 }
 
-export { Primary, Multiple }
+export { Primary, Custom, Multiple }
 export default {
   title: 'Tabs',
   component: Tabs,
@@ -77,8 +101,11 @@ export default {
     label: 'Tabs content',
     initialTab: 'foo',
     position: 'start',
-    border: '1px solid gray',
-    background: 'transparent'
+    color: 'black',
+    fontSize: '14px',
+    border: '1px solid #cccccc',
+    borderRadius: '0',
+    background: 'white'
   },
   argTypes: {
     initialTab: {
@@ -96,7 +123,10 @@ export default {
       control: 'text'
     },
     background: {
-      control: 'text'
+      control: 'color'
+    },
+    color: {
+      control: 'color'
     }
   }
 }
