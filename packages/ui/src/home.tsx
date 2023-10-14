@@ -141,7 +141,7 @@ const Home: FC<HomeProps> = () => {
     {
       enabled: Boolean(agency) && Boolean(route) && Boolean(stop),
       refetchOnWindowFocus: true,
-      refetchInterval: 6_000,
+      refetchInterval: 10_000,
       onSuccess(data) {
         update({ type: 'predictions', value: data })
         dispatch({ type: 'timestamp', value: Date.now() })
@@ -233,9 +233,17 @@ const Home: FC<HomeProps> = () => {
       <>
         <Anchor onClick={onClickAnchor} collapsed={state.collapsed} />
         <Wrap>
-          <Tabs initialTab="select" position="end" fontSize="12px">
-            <TabList>
-              <Tab name="select" label="Select" />
+          <Tabs
+            initialTab="select"
+            position="end"
+            fontSize="12px"
+            borderRadius="5px 5px 0 0">
+            <TabList margin="0 0 16px 0">
+              <Tab name="select" label="🚌" />
+              <Tab name="other" label="ℹ️" />
+              <Tab name="settings" label="⚙️" />
+              <Tab name="profile" label="👤" />
+              <Tab name="login" label="Sign In" />
             </TabList>
             <TabPanel name="select">
               <Form
@@ -269,6 +277,20 @@ const Home: FC<HomeProps> = () => {
                   isDisabled={isLoading || !agency || !route || !direction}
                 />
               </Form>
+            </TabPanel>
+            <TabPanel name="other">
+              <p>Other</p>
+            </TabPanel>
+            <TabPanel name="settings">
+              <p>Settings</p>
+            </TabPanel>
+            <TabPanel name="profile">
+              <p>Profile</p>
+            </TabPanel>
+            <TabPanel name="login">
+              <form>
+                <p>Sign In</p>
+              </form>
             </TabPanel>
           </Tabs>
           <Predictions

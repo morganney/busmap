@@ -148,6 +148,7 @@ const Messages = styled.details`
 
     li {
       font-size: 14px;
+      line-height: 1.25;
       padding: 8px 8px;
       border-bottom: 1px dotted ${PB80T};
     }

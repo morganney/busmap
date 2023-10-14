@@ -83,7 +83,7 @@ const Selection: FC<SelectionProps> = ({ stop, agency, route, direction, popup }
     () => getForStop(agency.id, route.id, stop.id),
     {
       refetchOnWindowFocus: true,
-      refetchInterval: 6_000
+      refetchInterval: 10_000
     }
   )
   const arrivals = !data?.length

@@ -24,6 +24,7 @@ interface TabsContext {
   label: string
   selected: string
   position: Position
+  fluid: boolean
   color: string
   border: string
   borderRadius: string
@@ -35,6 +36,7 @@ interface TabsContext {
 const Context = createContext<TabsContext>({
   label: '',
   selected: '',
+  fluid: true,
   color: 'inherit',
   border: `1px solid ${PB80T}`,
   borderRadius: '0',
@@ -49,6 +51,12 @@ interface TabsProps {
   children: ReactNode
   className?: string
   fontSize?: string
+  /**
+   * Whether the Tabs remove the bottom border
+   * when they are active/visible. Requires a
+   * `background` color other than `transparent`.
+   */
+  fluid?: boolean
   /**
    * Color of the tab text when active.
    */
@@ -85,6 +93,7 @@ const Tabs: FC<TabsProps> = ({
   children,
   className,
   onSelect,
+  fluid = false,
   color = 'inherit',
   fontSize = 'inherit',
   border = `1px solid ${PB80T}`,
@@ -100,6 +109,7 @@ const Tabs: FC<TabsProps> = ({
       label,
       position,
       color,
+      fluid,
       fontSize,
       border,
       borderRadius,
@@ -112,6 +122,7 @@ const Tabs: FC<TabsProps> = ({
       label,
       position,
       color,
+      fluid,
       fontSize,
       border,
       borderRadius,
@@ -136,15 +147,15 @@ interface TabListProps {
   children: ReactNode
   margin?: string
 }
-const List = styled.div<{ position: Position; border: string; margin: string }>`
-  margin: ${({ margin }) => margin};
+const List = styled.div<{ position: Position; border: string; margin?: string }>`
+  margin: ${({ margin }) => margin ?? 0};
   border-bottom: ${({ border }) => border};
   display: flex;
   align-items: center;
   justify-content: ${({ position }) =>
     position === 'start' ? 'flex-start' : 'flex-end'};
 `
-const TabList: FC<TabListProps> = ({ children, margin = '0 0 12px 0' }) => {
+const TabList: FC<TabListProps> = ({ children, margin }) => {
   const { label, position, border, setSelected } = useContext(Context)
   const onKeyDown = useCallback(
     (evt: KeyboardEvent<HTMLDivElement>) => {
@@ -195,6 +206,7 @@ interface TabProps {
 }
 const Button = styled.button<{
   active: boolean
+  fluid: boolean
   fontSize: string
   color: string
   background: string
@@ -202,7 +214,9 @@ const Button = styled.button<{
   borderRadius: string
 }>`
   cursor: pointer;
-  padding: 4px 6px;
+  line-height: 1;
+  margin: ${({ fluid }) => (fluid ? '0 0 -1px 0' : 0)};
+  padding: 7px 11px;
   color: ${({ active, color }) => (active ? color : 'inherit')};
   font-size: ${({ fontSize }) => fontSize};
   font-family: inherit;
@@ -219,6 +233,7 @@ const Button = styled.button<{
 const Tab: FC<TabProps> = ({ label, name }) => {
   const {
     color,
+    fluid,
     fontSize,
     background,
     border,
@@ -253,6 +268,7 @@ const Tab: FC<TabProps> = ({ label, name }) => {
       data-name={name}
       active={active}
       color={color}
+      fluid={fluid}
       fontSize={fontSize}
       background={background}
       border={border}
