@@ -1,30 +1,30 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { useReducer, useMemo } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { RouterProvider } from 'react-router-dom'
 
-import { Providers } from './providers.js'
-import { Layout } from './layout.js'
-import { Home } from './home.js'
-import { ErrorBoundary } from './components/errorBoundary.js'
+import defaults, { Globals, reducer } from './globals.js'
+import { router } from './router.js'
 
 import type { FC } from 'react'
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false
+    }
+  }
+})
 const BusMap: FC = () => {
+  const [state, dispatch] = useReducer(reducer, defaults)
+  const context = useMemo(() => ({ ...state, dispatch }), [state, dispatch])
+
   return (
-    <Providers>
-      <ErrorBoundary>
-        <Layout>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Home />}>
-                <Route
-                  path="/bus/:agency?/:route?/:direction?/:stop?"
-                  element={<Home />}
-                />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </Layout>
-      </ErrorBoundary>
-    </Providers>
+    <QueryClientProvider client={queryClient}>
+      <Globals.Provider value={context}>
+        <RouterProvider router={router} />
+      </Globals.Provider>
+    </QueryClientProvider>
   )
 }
 

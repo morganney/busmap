@@ -1,4 +1,4 @@
-import { createContext } from 'react'
+import { createContext, useContext } from 'react'
 
 import type { BusmapGlobals, BusmapAction } from './types.js'
 
@@ -68,6 +68,9 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
       return { ...defaultGlobals, ...state }
   }
 }
+const useGlobals = () => {
+  return useContext(Globals)
+}
 
 export default defaultGlobals
-export { Globals, reducer }
+export { Globals, reducer, useGlobals }

@@ -1,7 +1,6 @@
-import { useContext } from 'react'
 import { createPortal } from 'react-dom'
 
-import { Globals } from './globals.js'
+import { useGlobals } from './globals.js'
 import { Selection } from './components/selection.js'
 import { useInitMap } from './hooks/useInitMap.js'
 import { useLocateUser } from './hooks/useLocateUser.js'
@@ -16,7 +15,7 @@ interface LayoutProps {
 }
 
 const Layout: FC<LayoutProps> = ({ children }) => {
-  const { selected } = useContext(Globals)
+  const { selected } = useGlobals()
   const { map, selectionNode, popup, routeLayer, vehiclesLayer } = useInitMap()
 
   useLocateUser({ map })

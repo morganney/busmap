@@ -15,6 +15,7 @@ const Button = styled.button<{ collapsed: boolean }>`
   color: white;
   background: ${PB50T}ee;
   border: none;
+  border-bottom-left-radius: 5px;
   padding: 6px;
   display: flex;
   align-items: center;
