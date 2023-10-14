@@ -1,10 +1,11 @@
-import { useContext, useReducer, useCallback, useMemo, useEffect } from 'react'
+import { useReducer, useCallback, useMemo, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { createPortal } from 'react-dom'
+import { useNavigate } from 'react-router-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import styled from 'styled-components'
 
-import { Globals } from './globals.js'
+import { useGlobals } from './globals.js'
 import { Agencies } from './components/selectors/agencies.js'
 import { Routes } from './components/selectors/routes.js'
 import { Directions } from './components/selectors/directions.js'
@@ -76,6 +77,7 @@ interface HomeProps {
   children?: ReactNode
 }
 const Home: FC<HomeProps> = () => {
+  const navigate = useNavigate()
   const {
     dispatch: update,
     markPredictedVehicles,
@@ -85,7 +87,7 @@ const Home: FC<HomeProps> = () => {
     direction,
     vehicles,
     stop
-  } = useContext(Globals)
+  } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
   const stops = useMemo(() => {
     if (direction && route) {
@@ -158,15 +160,20 @@ const Home: FC<HomeProps> = () => {
         type: 'agency',
         value: selected
       })
+      navigate(`/bus/${selected.id}`, { replace: true })
     },
-    [update]
+    [update, navigate]
   )
-  const onSelectRoute = useCallback((selected: RouteName) => {
-    dispatch({
-      type: 'routeName',
-      value: selected
-    })
-  }, [])
+  const onSelectRoute = useCallback(
+    (selected: RouteName) => {
+      dispatch({
+        type: 'routeName',
+        value: selected
+      })
+      navigate(`${window.location.pathname}/${selected.id}`)
+    },
+    [navigate]
+  )
   const onSelectDirection = useCallback(
     (selected: Direction) => {
       update({
