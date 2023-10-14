@@ -15,12 +15,17 @@ RUN npm run build -w @busmap/components
 RUN npm run build -w ui
 
 FROM nginx:1.25.2 AS dev
-# core nginx conf
 COPY packages/web/nginx.local.conf /etc/nginx/nginx.conf
-# dir nginx confs
-COPY packages/web/conf.d/ /etc/nginx/conf.d/
-# ssl certs
 COPY packages/web/certs/ /etc/nginx/certs/
+COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
+
+FROM nginx:1.25.2 as stage
+COPY packages/web/certs/ /etc/nginx/certs/
+COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
+# Set stage.local.conf as the default server block in the container
+COPY packages/web/conf.d/stage.local.conf /etc/nginx/conf.d/default.conf
+COPY packages/web/nginx.conf /etc/nginx/nginx.conf
+COPY --from=uibuild /app/packages/ui/dist /var/www/busmap.localhost
 
 FROM nginx:1.25.2 AS web
 # core nginx conf

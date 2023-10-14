@@ -14,7 +14,12 @@ const BusMap: FC = () => {
         <Layout>
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home />}>
+                <Route
+                  path="/bus/:agency?/:route?/:direction?/:stop?"
+                  element={<Home />}
+                />
+              </Route>
             </Routes>
           </BrowserRouter>
         </Layout>

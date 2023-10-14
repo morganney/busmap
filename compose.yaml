@@ -63,9 +63,21 @@ services:
     ports:
       - "80:80"
       - "443:443"
+  stage:
+    depends_on:
+      - api
+    build:
+      context: .
+      target: stage
+    container_name: stage
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./packages/ui/dist:/var/www/busmap.localhost
   web:
     depends_on:
-      - ui
+      - api
     build:
       context: .
       target: web
