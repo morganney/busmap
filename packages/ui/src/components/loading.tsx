@@ -1,5 +1,11 @@
 import styled from 'styled-components'
 
+import type { FC } from 'react'
+
+interface LoadingProps {
+  text: string
+}
+
 const Text = styled.p`
   z-index: 999;
   position: relative;
@@ -12,10 +18,10 @@ const Text = styled.p`
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 1rem;
 `
-const Loading = () => {
+const Loading: FC<LoadingProps> = ({ text }) => {
   return (
     <Text>
-      <span>Attempting to locate your position...</span>
+      <span>{text}</span>
     </Text>
   )
 }
