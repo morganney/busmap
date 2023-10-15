@@ -1,7 +1,7 @@
-import { useEffect, useContext } from 'react'
+import { useEffect } from 'react'
 import L from 'leaflet'
 
-import { Globals } from '../globals.js'
+import { useGlobals } from '../globals.js'
 
 import type { Map, LayerGroup, Popup } from 'leaflet'
 import type { Agency, BusmapAction, Route, Direction } from '../types.js'
@@ -63,7 +63,7 @@ const addRoutePolyline = (layer: LayerGroup, route: Route) => {
   layer.addLayer(L.polyline(polylines, { color: route.color }))
 }
 const useRouteLayer = ({ routeLayer, map, popup }: UseRouteLayer) => {
-  const { agency, route, dispatch } = useContext(Globals)
+  const { agency, route, dispatch } = useGlobals()
 
   // Create a route layer group for each combination of (agency, route) selected
   useEffect(() => {

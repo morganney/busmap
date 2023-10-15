@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState, useContext } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 
-import { Globals } from '../globals.js'
+import { useGlobals } from '../globals.js'
 
 import type { Map, LayerGroup } from 'leaflet'
 
 const useInitMap = () => {
-  const { dispatch } = useContext(Globals)
+  const { dispatch } = useGlobals()
   const [map, setMap] = useState<Map | null>(null)
   const selectionRef = useRef(document.createElement('div'))
   const popupRef = useRef(L.popup({ minWidth: 200 }))
