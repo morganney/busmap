@@ -1,6 +1,6 @@
-import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
+import { useState, useCallback, useMemo, memo, useEffect } from 'react'
 import { useQuery } from 'react-query'
-import { useNavigate, generatePath, useParams } from 'react-router-dom'
+import { useNavigate, generatePath } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Agencies } from './selectors/agencies.js'
@@ -10,6 +10,7 @@ import { Stops } from './selectors/stops.js'
 
 import { useGlobals } from '../globals.js'
 import { useVehiclesDispatch } from '../contexts/vehicles.js'
+import { useBusSelectorBookmark } from '../hooks/useBusSelectorBookmarks.js'
 import { getAll as getAllRoutes, get as getRoute } from '../api/rb/route.js'
 
 import type { Agency, RouteName, Direction, Stop } from '../types.js'
@@ -30,8 +31,8 @@ const Form = styled.form`
   gap: 10px;
 `
 const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
-  const bookmark = useRef<Record<string, string | undefined>>({ ...useParams() })
   const navigate = useNavigate()
+  const bookmark = useBusSelectorBookmark()
   const [routeName, setRouteName] = useState<RouteName>()
   const { dispatch, markPredictedVehicles, agency, route, direction, stop } = useGlobals()
   const vehiclesDispatch = useVehiclesDispatch()
@@ -53,14 +54,14 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   } = useQuery(['routes', agency?.id], () => getAllRoutes(agency?.id), {
     enabled: Boolean(agency),
     onSuccess(data) {
-      if (bookmark.current.route) {
-        const route = data.find(({ id }) => id === bookmark.current.route)
+      if (bookmark.route) {
+        const route = data.find(({ id }) => id === bookmark.route)
 
         if (route) {
           setRouteName(route)
         }
 
-        bookmark.current.route = undefined
+        delete bookmark.route
       } else {
         // When agency changes, use the first route as the default
         setRouteName(data[0])
@@ -75,25 +76,23 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
       onSuccess(data) {
         dispatch({ type: 'route', value: data })
 
-        if (bookmark.current.direction) {
-          const direction = data.directions.find(
-            ({ id }) => id === bookmark.current.direction
-          )
+        if (bookmark.direction) {
+          const direction = data.directions.find(({ id }) => id === bookmark.direction)
 
           if (direction) {
             dispatch({ type: 'direction', value: direction })
           }
 
-          bookmark.current.direction = undefined
+          delete bookmark.direction
 
-          if (bookmark.current.stop) {
-            const stop = data.stops.find(({ id }) => id === bookmark.current.stop)
+          if (bookmark.stop) {
+            const stop = data.stops.find(({ id }) => id === bookmark.stop)
 
             if (stop) {
               dispatch({ type: 'stop', value: stop })
             }
 
-            bookmark.current.stop = undefined
+            delete bookmark.stop
           }
         } else {
           dispatch({ type: 'direction', value: data.directions[0] })
@@ -185,16 +184,16 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const isLoading = isRoutesLoading || isRouteLoading
 
   useEffect(() => {
-    if (bookmark.current.agency) {
-      const agency = agencies.find(({ id }) => id === bookmark.current.agency)
+    if (bookmark.agency) {
+      const agency = agencies.find(({ id }) => id === bookmark.agency)
 
       if (agency) {
         dispatch({ type: 'agency', value: agency })
       }
 
-      bookmark.current.agency = undefined
+      delete bookmark.agency
     }
-  }, [agencies, dispatch])
+  }, [agencies, bookmark.agency, dispatch])
 
   if (error instanceof Error) {
     return (
