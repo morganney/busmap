@@ -130,10 +130,6 @@ interface LocationSettled {
   type: 'locationSettled'
   value: boolean
 }
-interface MarkPredictedVehiclesChanged {
-  type: 'markPredictedVehicles'
-  value: boolean
-}
 type BusmapAction =
   | BoundsChanged
   | CenterChanged
@@ -144,7 +140,6 @@ type BusmapAction =
   | PredictionsChanged
   | SelectedChanged
   | LocationSettled
-  | MarkPredictedVehiclesChanged
 interface BusmapGlobals {
   dispatch: Dispatch<BusmapAction>
   center: Point
@@ -156,7 +151,6 @@ interface BusmapGlobals {
   predictions?: Prediction[]
   selected?: Selection
   locationSettled: boolean
-  markPredictedVehicles: boolean
 }
 
 export type {

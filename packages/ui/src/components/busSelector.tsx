@@ -34,7 +34,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const navigate = useNavigate()
   const bookmark = useBusSelectorBookmark()
   const [routeName, setRouteName] = useState<RouteName>()
-  const { dispatch, markPredictedVehicles, agency, route, direction, stop } = useGlobals()
+  const { dispatch, agency, route, direction, stop } = useGlobals()
   const vehiclesDispatch = useVehiclesDispatch()
   const stops = useMemo(() => {
     if (direction && route) {
@@ -177,9 +177,6 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
       )
     }
   }, [dispatch, vehiclesDispatch, navigate, agency, route, direction])
-  const onTogglePredictedVehicles = useCallback(() => {
-    dispatch({ type: 'markPredictedVehicles', value: !markPredictedVehicles })
-  }, [dispatch, markPredictedVehicles])
   const error = getFirstDataError([routesError, routeError])
   const isLoading = isRoutesLoading || isRouteLoading
 
@@ -232,8 +229,6 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
         selected={stop}
         onClear={onClearStop}
         onSelect={onSelectStop}
-        markPredictedVehicles={markPredictedVehicles}
-        onTogglePredictedVehicles={onTogglePredictedVehicles}
         isDisabled={isLoading || !agency || !route || !direction}
       />
     </Form>

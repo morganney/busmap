@@ -8,6 +8,7 @@ import { useGlobals } from './globals.js'
 import { useVehiclesDispatch } from './contexts/vehicles.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
+import { Settings } from './components/settings.js'
 import { Predictions } from './components/predictions.js'
 import { Anchor } from './components/anchor.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
@@ -55,14 +56,7 @@ interface HomeProps {
 }
 const Home: FC<HomeProps> = () => {
   const vehiclesDispatch = useVehiclesDispatch()
-  const {
-    dispatch: update,
-    markPredictedVehicles,
-    locationSettled,
-    agency,
-    route,
-    stop
-  } = useGlobals()
+  const { dispatch: update, locationSettled, agency, route, stop } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
   const { data: agencies, error: agenciesError } = useQuery('agencies', getAllAgencies)
   const { data: preds, isFetching: isPredsFetching } = useQuery(
@@ -128,7 +122,7 @@ const Home: FC<HomeProps> = () => {
             borderRadius="5px 5px 0 0">
             <TabList margin="0 0 16px 0">
               <Tab name="select" label="🚌" />
-              <Tab name="other" label="ℹ️" />
+              <Tab name="info" label="ℹ️" />
               <Tab name="settings" label="⚙️" />
               <Tab name="profile" label="👤" />
               <Tab name="login" label="Sign In" />
@@ -136,11 +130,11 @@ const Home: FC<HomeProps> = () => {
             <TabPanel name="select">
               <BusSelector agencies={agencies} />
             </TabPanel>
-            <TabPanel name="other">
-              <p>Other</p>
+            <TabPanel name="info">
+              <p>Info</p>
             </TabPanel>
             <TabPanel name="settings">
-              <p>Settings</p>
+              <Settings />
             </TabPanel>
             <TabPanel name="profile">
               <p>Profile</p>
@@ -156,7 +150,6 @@ const Home: FC<HomeProps> = () => {
             stop={stop}
             preds={preds}
             messages={messages}
-            markPredictedVehicles={markPredictedVehicles}
             timestamp={state.timestamp}
           />
         </Wrap>
