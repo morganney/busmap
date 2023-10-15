@@ -1,9 +1,9 @@
-import { useEffect, useRef, useContext } from 'react'
+import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 
 import { VehicleMarker } from './common.js'
 
-import { Globals } from '../globals.js'
+import { useGlobals } from '../globals.js'
 import { PredictedVehiclesColors } from '../utils.js'
 
 import type { LayerGroup } from 'leaflet'
@@ -165,7 +165,7 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
   `
 }
 const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
-  const { route, vehicles, predictions, markPredictedVehicles } = useContext(Globals)
+  const { route, vehicles, predictions, markPredictedVehicles } = useGlobals()
   const iconDimensions = useRef<Dimensions | null>(null)
   const preds = useRef(predictions?.length ? predictions[0].values.slice(0, 3) : [])
 

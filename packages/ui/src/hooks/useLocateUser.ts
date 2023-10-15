@@ -1,7 +1,7 @@
-import { useEffect, useContext } from 'react'
+import { useEffect } from 'react'
 import L from 'leaflet'
 
-import { Globals } from '../globals.js'
+import { useGlobals } from '../globals.js'
 
 import type { Map } from 'leaflet'
 
@@ -9,7 +9,7 @@ interface UseLocateUser {
   map: Map | null
 }
 const useLocateUser = ({ map }: UseLocateUser) => {
-  const { locationSettled, dispatch } = useContext(Globals)
+  const { locationSettled, dispatch } = useGlobals()
 
   useEffect(() => {
     if (map && !locationSettled) {

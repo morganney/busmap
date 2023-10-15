@@ -1,7 +1,7 @@
-import { useEffect, useRef, useContext } from 'react'
+import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 
-import { Globals } from '../globals.js'
+import { useGlobals } from '../globals.js'
 
 import type { Map } from 'leaflet'
 
@@ -10,7 +10,7 @@ interface UseZoomSelectedStop {
 }
 
 const useZoomSelectedStop = ({ map }: UseZoomSelectedStop) => {
-  const { stop } = useContext(Globals)
+  const { stop } = useGlobals()
   const marker = useRef(L.marker([0, 0]))
 
   useEffect(() => {
