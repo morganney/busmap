@@ -1,5 +1,6 @@
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useReducer, useMemo } from 'react'
 
+import type { FC, ReactNode } from 'react'
 import type { BusmapGlobals, BusmapAction } from './types.js'
 
 type BusmapState = Omit<BusmapGlobals, 'dispatch'>
@@ -30,7 +31,6 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
         ...state,
         agency: action.value,
         route: undefined,
-        vehicles: undefined,
         direction: undefined,
         stop: undefined,
         selected: undefined
@@ -39,7 +39,6 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
       return {
         ...state,
         route: action.value,
-        vehicles: undefined,
         direction: undefined,
         stop: undefined,
         selected: undefined
@@ -54,8 +53,6 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
       }
     case 'stop':
       return { ...state, stop: action.value, predictions: undefined }
-    case 'vehicles':
-      return { ...state, vehicles: action.value }
     case 'locationSettled':
       return { ...state, locationSettled: action.value }
     case 'markPredictedVehicles':
@@ -68,9 +65,14 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
       return { ...defaultGlobals, ...state }
   }
 }
+const GlobalsProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const [globals, dispatch] = useReducer(reducer, defaultGlobals)
+  const context = useMemo(() => ({ ...globals, dispatch }), [globals, dispatch])
+
+  return <Globals.Provider value={context}>{children}</Globals.Provider>
+}
 const useGlobals = () => {
   return useContext(Globals)
 }
 
-export default defaultGlobals
-export { Globals, reducer, useGlobals }
+export { GlobalsProvider, useGlobals }

@@ -5,7 +5,7 @@ import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import styled from 'styled-components'
 
 import { useGlobals } from './globals.js'
-import { useResetVehicles } from './hooks/useResetVehicles.js'
+import { useVehiclesDispatch } from './contexts/vehicles.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
 import { Predictions } from './components/predictions.js'
@@ -54,6 +54,7 @@ interface HomeProps {
   children?: ReactNode
 }
 const Home: FC<HomeProps> = () => {
+  const vehiclesDispatch = useVehiclesDispatch()
   const {
     dispatch: update,
     markPredictedVehicles,
@@ -63,7 +64,6 @@ const Home: FC<HomeProps> = () => {
     stop
   } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
-  const resetVehicles = useResetVehicles()
   const { data: agencies, error: agenciesError } = useQuery('agencies', getAllAgencies)
   const { data: preds, isFetching: isPredsFetching } = useQuery(
     ['preds', agency?.id, route?.id, stop?.id],
@@ -74,8 +74,9 @@ const Home: FC<HomeProps> = () => {
       refetchInterval: 10_000,
       onSuccess(data) {
         update({ type: 'predictions', value: data })
+        // Reset vehicles based on changed predicted vehicles
+        vehiclesDispatch({ type: 'reset' })
         dispatch({ type: 'timestamp', value: Date.now() })
-        resetVehicles()
       }
     }
   )
@@ -92,7 +93,7 @@ const Home: FC<HomeProps> = () => {
       refetchOnWindowFocus: false,
       refetchInterval: 5_000,
       onSuccess(data) {
-        update({ type: 'vehicles', value: data })
+        vehiclesDispatch({ type: 'set', value: data })
       }
     }
   )

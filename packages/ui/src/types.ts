@@ -118,10 +118,6 @@ interface StopChanged {
   type: 'stop'
   value?: Stop
 }
-interface VehiclesChanged {
-  type: 'vehicles'
-  value?: Vehicle[]
-}
 interface SelectedChanged {
   type: 'selected'
   value?: Selection
@@ -146,7 +142,6 @@ type BusmapAction =
   | DirectionChanged
   | StopChanged
   | PredictionsChanged
-  | VehiclesChanged
   | SelectedChanged
   | LocationSettled
   | MarkPredictedVehiclesChanged
@@ -156,7 +151,6 @@ interface BusmapGlobals {
   bounds: Bounds
   agency?: Agency
   route?: Route
-  vehicles?: Vehicle[]
   direction?: Direction
   stop?: Stop
   predictions?: Prediction[]

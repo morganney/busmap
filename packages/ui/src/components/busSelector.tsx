@@ -9,9 +9,8 @@ import { Directions } from './selectors/directions.js'
 import { Stops } from './selectors/stops.js'
 
 import { useGlobals } from '../globals.js'
-import { useResetVehicles } from '../hooks/useResetVehicles.js'
+import { useVehiclesDispatch } from '../contexts/vehicles.js'
 import { getAll as getAllRoutes, get as getRoute } from '../api/rb/route.js'
-import { getAll as getAllVehicles } from '../api/rb/vehicles.js'
 
 import type { Agency, RouteName, Direction, Stop } from '../types.js'
 
@@ -34,7 +33,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const navigate = useNavigate()
   const [routeName, setRouteName] = useState<RouteName>()
   const { dispatch, markPredictedVehicles, agency, route, direction, stop } = useGlobals()
-  const resetVehicles = useResetVehicles()
+  const vehiclesDispatch = useVehiclesDispatch()
   const stops = useMemo(() => {
     if (direction && route) {
       return route.stops.filter(({ id }) => direction.stops.includes(id))
@@ -98,7 +97,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           type: 'direction',
           value: selected
         })
-        resetVehicles()
+        vehiclesDispatch({ type: 'reset' })
         navigate(
           generatePath('/bus/:agency/:route/:direction', {
             agency: agency.id,
@@ -109,7 +108,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
         )
       }
     },
-    [dispatch, resetVehicles, navigate, agency, route]
+    [dispatch, vehiclesDispatch, navigate, agency, route]
   )
   const onSelectStop = useCallback(
     (selected: Stop) => {
@@ -134,7 +133,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const onClearStop = useCallback(() => {
     if (agency && route && direction) {
       dispatch({ type: 'stop', value: undefined })
-      resetVehicles()
+      vehiclesDispatch({ type: 'reset' })
       navigate(
         generatePath('/bus/:agency/:route/:direction', {
           agency: agency.id,
@@ -144,25 +143,12 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
         { replace: true }
       )
     }
-  }, [dispatch, resetVehicles, navigate, agency, route, direction])
+  }, [dispatch, vehiclesDispatch, navigate, agency, route, direction])
   const onTogglePredictedVehicles = useCallback(() => {
     dispatch({ type: 'markPredictedVehicles', value: !markPredictedVehicles })
   }, [dispatch, markPredictedVehicles])
   const error = getFirstDataError([routesError, routeError])
   const isLoading = isRoutesLoading || isRouteLoading
-
-  useQuery(
-    ['vehicles', agency?.id, route?.id],
-    () => getAllVehicles(agency?.id, route?.id),
-    {
-      enabled: Boolean(agency) && Boolean(route),
-      refetchOnWindowFocus: false,
-      refetchInterval: 5_000,
-      onSuccess(data) {
-        dispatch({ type: 'vehicles', value: data })
-      }
-    }
-  )
 
   if (error instanceof Error) {
     return (
