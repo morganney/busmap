@@ -8,7 +8,6 @@ type BusmapState = Omit<BusmapGlobals, 'dispatch'>
 const defaultGlobals = {
   dispatch: () => {},
   locationSettled: false,
-  markPredictedVehicles: true,
   center: { lat: 37.7775, lon: -122.416389 },
   bounds: {
     sw: {
@@ -55,8 +54,6 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
       return { ...state, stop: action.value, predictions: undefined }
     case 'locationSettled':
       return { ...state, locationSettled: action.value }
-    case 'markPredictedVehicles':
-      return { ...state, markPredictedVehicles: action.value }
     case 'predictions':
       return { ...state, predictions: action.value }
     case 'selected':

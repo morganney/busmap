@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router-dom'
 
 import { GlobalsProvider } from './globals.js'
 import { VehiclesProvider } from './contexts/vehicles.js'
+import { SettingsProvider } from './contexts/settings/index.js'
 import { router } from './router.js'
 
 import type { FC } from 'react'
@@ -19,9 +20,11 @@ const BusMap: FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <GlobalsProvider>
-        <VehiclesProvider>
-          <RouterProvider router={router} />
-        </VehiclesProvider>
+        <SettingsProvider>
+          <VehiclesProvider>
+            <RouterProvider router={router} />
+          </VehiclesProvider>
+        </SettingsProvider>
       </GlobalsProvider>
     </QueryClientProvider>
   )

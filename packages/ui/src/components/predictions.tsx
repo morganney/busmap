@@ -2,6 +2,7 @@ import styled, { keyframes } from 'styled-components'
 import { PB50T, PB80T } from '@busmap/components/colors'
 
 import { PredictedVehiclesColors } from '../utils.js'
+import { useVehicleSettings } from '../contexts/settings/vehicle.js'
 
 import type { FC } from 'react'
 import type { Prediction, Stop } from '../types.js'
@@ -12,7 +13,6 @@ interface PredictionsProps {
   isFetching: boolean
   timestamp: number
   messages: Prediction['messages']
-  markPredictedVehicles: boolean
 }
 
 const blink = keyframes`
@@ -115,9 +115,11 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
   }
 `
 const AffectedByLayover = styled.details`
+  display: inline-block;
   margin: 0 0 12px 0;
   summary:first-of-type {
     font-size: 12px;
+    cursor: pointer;
   }
   p {
     line-height: 1.25;
@@ -130,10 +132,12 @@ const AffectedByLayover = styled.details`
   }
 `
 const Messages = styled.details`
+  display: inline-block;
   margin: 12px 0 0 0;
   summary:first-of-type {
     font-size: 12px;
     color: blue;
+    cursor: pointer;
   }
 
   ul {
@@ -158,13 +162,9 @@ const Messages = styled.details`
     }
   }
 `
-const Predictions: FC<PredictionsProps> = ({
-  preds,
-  stop,
-  messages,
-  timestamp,
-  markPredictedVehicles = true
-}) => {
+const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp }) => {
+  const { markPredictedVehicles } = useVehicleSettings()
+
   if (Array.isArray(preds) && stop) {
     if (preds.length) {
       const values = preds[0].values.slice(0, 3)
