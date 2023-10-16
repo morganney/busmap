@@ -144,8 +144,10 @@ const assignDynamicStyles = ({
  * The outcome is a 'N/A' in the vehicle poupup, despite the selector form
  * showing the correct direction. Basically a config error from the API source.
  */
-const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
+const getVehiclePopupContent = (marker: VehicleMarker, route: Route) => {
+  const { vehicle, speedUnit } = marker
   const direction = route.directions.find(dir => dir.id === vehicle.directionId)
+  const speed = speedUnit === 'mph' ? Math.round(vehicle.kph / 1.609) : vehicle.kph
 
   return `
     <dl>
@@ -156,7 +158,7 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
       <dt>ID</dt>
       <dd>${vehicle.id}</dd>
       <dt>Speed</dt>
-      <dd>${vehicle.kph} (kph)</dd>
+      <dd>${speed} (${speedUnit})</dd>
       <dt>Heading</dt>
       <dd>${vehicle.heading} (deg)</dd>
       <dt>Predictable</dt>
@@ -169,7 +171,8 @@ const getVehiclePopupContent = (vehicle: Vehicle, route: Route) => {
 const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
   const vehicles = useVehicles()
   const { route, predictions } = useGlobals()
-  const { markPredictedVehicles } = useVehicleSettings()
+  const { markPredictedVehicles, speedUnit } = useVehicleSettings()
+
   const iconDimensions = useRef<Dimensions | null>(null)
   const preds = useRef(predictions?.length ? predictions[0].values.slice(0, 3) : [])
 
@@ -200,7 +203,8 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             dimensions: iconDimensions.current
           })
           marker.vehicle = vehicle
-          marker.getPopup()?.setContent(getVehiclePopupContent(vehicle, route))
+          marker.speedUnit = speedUnit
+          marker.getPopup()?.setContent(getVehiclePopupContent(marker, route))
           marker.setLatLng(L.latLng(vehicle.lat, vehicle.lon))
         } else {
           const div = document.createElement('div')
@@ -211,12 +215,17 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             className: 'busmap-vehicle',
             html: div
           })
-          const marker = new VehicleMarker(L.latLng(vehicle.lat, vehicle.lon), vehicle, {
-            icon
-          })
+          const marker = new VehicleMarker(
+            L.latLng(vehicle.lat, vehicle.lon),
+            vehicle,
+            speedUnit,
+            {
+              icon
+            }
+          )
           const popup = L.popup({
             className: 'busmap-vehicle-popup',
-            content: getVehiclePopupContent(vehicle, route)
+            content: getVehiclePopupContent(marker, route)
           })
 
           marker.bindPopup(popup)
@@ -225,7 +234,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
           })
           marker.on('click', () => {
             popup.getElement()?.classList.add('selected')
-            popup.setContent(getVehiclePopupContent(marker.vehicle, route))
+            popup.setContent(getVehiclePopupContent(marker, route))
           })
 
           title.appendChild(document.createTextNode(route.title))
@@ -262,7 +271,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
     } else {
       vehiclesLayer.clearLayers()
     }
-  }, [vehicles, vehiclesLayer, route, markPredictedVehicles])
+  }, [vehicles, vehiclesLayer, route, markPredictedVehicles, speedUnit])
 }
 
 export { useVehiclesLayer }

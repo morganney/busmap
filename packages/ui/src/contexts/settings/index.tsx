@@ -11,3 +11,4 @@ const useSettings = () => {
   }
 }
 export { SettingsProvider, useSettings }
+export type { SpeedUnit } from './vehicle.js'
