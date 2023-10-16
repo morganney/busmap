@@ -5,6 +5,8 @@
   "type": "module",
   "main": "dist",
   "scripts": {
+    "check-types": "tsc --noEmit",
+    "cycles": "madge --circular --warning --exclude node_modules --ts-config ./tsconfig.json --extensions ts,tsx src",
     "prettier": "prettier -w .",
     "dev": "vite",
     "dev:node": "tsx devServer.ts",
