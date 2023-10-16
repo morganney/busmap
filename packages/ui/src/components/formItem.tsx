@@ -73,6 +73,9 @@ const Label = styled.label<LabelProps>`
   gap: ${getGap};
   font-size: ${({ fontSize }) => fontSize};
 
+  span {
+    display: inline-flex;
+  }
   span:first-child {
     font-weight: ${({ fontWeight }) => fontWeight ?? 600};
   }

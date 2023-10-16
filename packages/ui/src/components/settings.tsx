@@ -12,13 +12,12 @@ const Form = styled.form`
   fieldset {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 10px;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 5px;
   }
-
   fieldset.row {
     flex-direction: row;
-    gap: 10px;
   }
   legend {
     font-size: 14px;
@@ -42,6 +41,12 @@ const Settings: FC = () => {
     },
     [settings.vehicle]
   )
+  const onChangeVisible = useCallback(() => {
+    settings.vehicle.dispatch({
+      type: 'visibile',
+      value: !settings.vehicle.visible
+    })
+  }, [settings.vehicle])
 
   return (
     <Form
@@ -50,6 +55,18 @@ const Settings: FC = () => {
       }}>
       <fieldset>
         <legend>Vehicles</legend>
+        <FormItem
+          label="Visible"
+          direction="horizontal-rev"
+          justifyContent="flex-end"
+          fontWeight="normal"
+          grow={0}>
+          <input
+            type="checkbox"
+            checked={settings.vehicle.visible}
+            onChange={onChangeVisible}
+          />
+        </FormItem>
         <FormItem
           label="Color predicted"
           direction="horizontal-rev"
