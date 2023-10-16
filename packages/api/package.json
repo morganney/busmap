@@ -5,6 +5,8 @@
   "type": "module",
   "main": "src/index.js",
   "scripts": {
+    "check-types": "tsc --noEmit",
+    "cycles": "madge --circular --warning --exclude node_modules --ts-config ./tsconfig.json --extensions ts,tsx src",
     "prettier": "prettier -w .",
     "lint": "eslint . src --ext .ts,.tsx --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
