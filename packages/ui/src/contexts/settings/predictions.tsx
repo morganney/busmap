@@ -12,6 +12,7 @@ interface FormatChanged {
   value: PredictionFormat
 }
 type PredictionsSettingsAction = FormatChanged
+
 const defaultState: PredictionsSettingsState = {
   dispatch: () => {},
   format: 'minutes'

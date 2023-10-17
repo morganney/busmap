@@ -22,6 +22,7 @@ interface VisibileChanged {
   value: boolean
 }
 type VehicleSettingsAction = VisibileChanged | SpeedUnitChanged | MarkPredictedVehicles
+
 const defaultState: VehicleSettingsState = {
   dispatch: () => {},
   speedUnit: 'kph',

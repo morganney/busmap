@@ -15,6 +15,11 @@ interface PredictionsProps {
   timestamp: number
   messages: Prediction['messages']
 }
+interface FormatProps {
+  epochTime: number
+  affectedByLayover: boolean
+  minutes: number
+}
 
 const blink = keyframes`
   10% {
@@ -167,11 +172,6 @@ const Messages = styled.details`
     }
   }
 `
-interface FormatProps {
-  epochTime: number
-  affectedByLayover: boolean
-  minutes: number
-}
 const Time: FC<FormatProps> = ({ epochTime, affectedByLayover }) => {
   const date = new Date(epochTime)
   const dateTime = date.toISOString()
