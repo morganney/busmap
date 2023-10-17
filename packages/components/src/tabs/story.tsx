@@ -59,7 +59,7 @@ const Custom: StoryFn<typeof Tabs> = args => {
 }
 const Vertical: StoryFn<typeof Tabs> = args => {
   return (
-    <Tabs {...args} initialTab="one">
+    <Tabs {...args} direction="column">
       <TabList>
         <Tab name="one" label="One" />
         <Tab name="two" label="Two" />
@@ -76,6 +76,19 @@ const Vertical: StoryFn<typeof Tabs> = args => {
       </TabPanel>
     </Tabs>
   )
+}
+Vertical.args = {
+  initialTab: 'two',
+  fluid: true
+}
+Vertical.argTypes = {
+  direction: {
+    control: false
+  },
+  initialTab: {
+    control: 'select',
+    options: ['one', 'two', 'three']
+  }
 }
 const Multiple: StoryFn<typeof Tabs> = args => {
   return (

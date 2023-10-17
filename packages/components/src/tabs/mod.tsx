@@ -363,6 +363,7 @@ interface TabPanelProps {
 }
 const Content = styled.div<{ active: boolean }>`
   display: ${({ active }) => (active ? 'block' : 'none')};
+  width: 100%;
 `
 const TabPanel: FC<TabPanelProps> = ({ children, name }) => {
   const { selected } = useContext(Context)
@@ -371,7 +372,7 @@ const TabPanel: FC<TabPanelProps> = ({ children, name }) => {
   return (
     <Content
       active={active}
-      id={name}
+      id={`panel-${name}`}
       role="tabpanel"
       tabIndex={0}
       aria-labelledby={`tab-${name}`}

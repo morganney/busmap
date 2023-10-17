@@ -8,7 +8,7 @@ import { useGlobals } from './globals.js'
 import { useVehiclesDispatch } from './contexts/vehicles.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
-import { Settings } from './components/settings.js'
+import { Settings } from './components/settings/index.js'
 import { Predictions } from './components/predictions.js'
 import { Anchor } from './components/anchor.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
@@ -119,8 +119,9 @@ const Home: FC<HomeProps> = () => {
             initialTab="select"
             position="end"
             fontSize="12px"
+            gap="16px"
             borderRadius="5px 5px 0 0">
-            <TabList margin="0 0 16px 0">
+            <TabList>
               <Tab name="select" label="🚌" />
               <Tab name="info" label="ℹ️" />
               <Tab name="settings" label="⚙️" />
