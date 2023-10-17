@@ -39,6 +39,12 @@ const VehicleSettings: FC = () => {
       value: !vehicle.markPredictedVehicles
     })
   }, [vehicle])
+  const onToggleHideOtherDirections = useCallback(() => {
+    vehicle.dispatch({
+      type: 'hideOtherDirections',
+      value: !vehicle.hideOtherDirections
+    })
+  }, [vehicle])
   const onChangeSpeedUnit = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       vehicle.dispatch({
@@ -64,21 +70,31 @@ const VehicleSettings: FC = () => {
         label="Visible"
         direction="horizontal-rev"
         justifyContent="flex-end"
-        fontWeight="normal"
-        grow={0}>
+        fontWeight="normal">
         <input type="checkbox" checked={vehicle.visible} onChange={onChangeVisible} />
       </FormItem>
       <FormItem
         label="Color predicted"
         direction="horizontal-rev"
         justifyContent="flex-end"
-        fontWeight="normal"
-        grow={0}>
+        fontWeight="normal">
         <input
           type="checkbox"
           disabled={!vehicle.visible}
           checked={vehicle.markPredictedVehicles}
           onChange={onTogglePredictedVehicles}
+        />
+      </FormItem>
+      <FormItem
+        label="Hide other directions"
+        direction="horizontal-rev"
+        justifyContent="flex-end"
+        fontWeight="normal">
+        <input
+          type="checkbox"
+          disabled={!vehicle.visible}
+          checked={vehicle.hideOtherDirections}
+          onChange={onToggleHideOtherDirections}
         />
       </FormItem>
       <fieldset className="row">
