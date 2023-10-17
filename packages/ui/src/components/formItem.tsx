@@ -77,6 +77,7 @@ const Label = styled.label<LabelProps>`
     font-weight: ${({ fontWeight }) => fontWeight ?? 600};
   }
   span:last-child {
+    display: flex;
     flex-grow: ${getGrow};
   }
 `

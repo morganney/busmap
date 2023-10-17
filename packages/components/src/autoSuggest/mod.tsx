@@ -197,7 +197,7 @@ const AutoSuggest = <U,>({
   labelledBy,
   renderItem,
   color = PB40T,
-  width = 'auto',
+  width = '100%',
   size = 'medium',
   placeholder = '',
   isDisabled = false,

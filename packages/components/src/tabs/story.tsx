@@ -57,6 +57,39 @@ const Custom: StoryFn<typeof Tabs> = args => {
     </CustomTabs>
   )
 }
+const Vertical: StoryFn<typeof Tabs> = args => {
+  return (
+    <Tabs {...args} direction="column">
+      <TabList>
+        <Tab name="one" label="One" />
+        <Tab name="two" label="Two" />
+        <Tab name="three" label="Three" />
+      </TabList>
+      <TabPanel name="one">
+        <span>One</span>
+      </TabPanel>
+      <TabPanel name="two">
+        <span>Two</span>
+      </TabPanel>
+      <TabPanel name="three">
+        <span>Three</span>
+      </TabPanel>
+    </Tabs>
+  )
+}
+Vertical.args = {
+  initialTab: 'two',
+  fluid: true
+}
+Vertical.argTypes = {
+  direction: {
+    control: false
+  },
+  initialTab: {
+    control: 'select',
+    options: ['one', 'two', 'three']
+  }
+}
 const Multiple: StoryFn<typeof Tabs> = args => {
   return (
     <Grid>
@@ -93,14 +126,17 @@ Multiple.parameters = {
   }
 }
 
-export { Primary, Custom, Multiple }
+export { Primary, Custom, Multiple, Vertical }
 export default {
   title: 'Tabs',
   component: Tabs,
   args: {
     label: 'Tabs content',
     initialTab: 'foo',
+    direction: 'row',
     position: 'start',
+    gap: '15px',
+    minHeight: 'auto',
     color: 'black',
     fluid: false,
     fontSize: '14px',
@@ -116,6 +152,10 @@ export default {
     position: {
       control: 'select',
       options: ['start', 'end']
+    },
+    direction: {
+      control: 'select',
+      options: ['row', 'column']
     },
     onSelect: {
       action: 'onSelect'

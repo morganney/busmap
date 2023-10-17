@@ -75,6 +75,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
       enabled: Boolean(agency) && Boolean(routeName),
       onSuccess(data) {
         dispatch({ type: 'route', value: data })
+        vehiclesDispatch({ type: 'set', value: undefined })
 
         if (bookmark.direction) {
           const direction = data.directions.find(({ id }) => id === bookmark.direction)

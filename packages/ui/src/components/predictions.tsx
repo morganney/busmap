@@ -3,6 +3,7 @@ import { PB50T, PB80T } from '@busmap/components/colors'
 
 import { PredictedVehiclesColors } from '../utils.js'
 import { useVehicleSettings } from '../contexts/settings/vehicle.js'
+import { usePredictionsSettings } from '../contexts/settings/predictions.js'
 
 import type { FC } from 'react'
 import type { Prediction, Stop } from '../types.js'
@@ -13,6 +14,11 @@ interface PredictionsProps {
   isFetching: boolean
   timestamp: number
   messages: Prediction['messages']
+}
+interface FormatProps {
+  epochTime: number
+  affectedByLayover: boolean
+  minutes: number
 }
 
 const blink = keyframes`
@@ -65,6 +71,10 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
     flex-direction: column;
     justify-content: center;
     gap: 3px;
+
+    time {
+      text-transform: lowercase;
+    }
 
     time,
     em {
@@ -162,8 +172,29 @@ const Messages = styled.details`
     }
   }
 `
+const Time: FC<FormatProps> = ({ epochTime, affectedByLayover }) => {
+  const date = new Date(epochTime)
+  const dateTime = date.toISOString()
+  const time = date.toLocaleTimeString([], { timeStyle: 'short' })
+
+  return (
+    <time key={epochTime} dateTime={dateTime}>
+      {time}
+      {affectedByLayover && <sup>*</sup>}
+    </time>
+  )
+}
+const Minutes: FC<FormatProps> = ({ epochTime, minutes, affectedByLayover }) => {
+  return (
+    <time key={epochTime} dateTime={`PT${minutes}M`}>
+      {minutes} min{affectedByLayover && <sup>*</sup>}
+    </time>
+  )
+}
 const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp }) => {
+  const { format } = usePredictionsSettings()
   const { markPredictedVehicles } = useVehicleSettings()
+  const Format = format === 'minutes' ? Minutes : Time
 
   if (Array.isArray(preds) && stop) {
     if (preds.length) {
@@ -192,9 +223,12 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
                 {minutes === 0 ? (
                   <em key={epochTime}>{event}</em>
                 ) : (
-                  <time key={epochTime} dateTime={`PT${minutes}M`}>
-                    {minutes} min{affectedByLayover && <sup>*</sup>}
-                  </time>
+                  <Format
+                    key={epochTime}
+                    minutes={minutes}
+                    epochTime={epochTime}
+                    affectedByLayover={affectedByLayover}
+                  />
                 )}
                 <span>
                   {stop.title} &bull; {direction.title}

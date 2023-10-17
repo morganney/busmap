@@ -171,7 +171,7 @@ const getVehiclePopupContent = (marker: VehicleMarker, route: Route) => {
 const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
   const vehicles = useVehicles()
   const { route, predictions } = useGlobals()
-  const { markPredictedVehicles, speedUnit } = useVehicleSettings()
+  const { visible, markPredictedVehicles, speedUnit } = useVehicleSettings()
 
   const iconDimensions = useRef<Dimensions | null>(null)
   const preds = useRef(predictions?.length ? predictions[0].values.slice(0, 3) : [])
@@ -187,7 +187,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
   }, [predictions])
 
   useEffect(() => {
-    if (Array.isArray(vehicles) && route) {
+    if (visible && Array.isArray(vehicles) && route) {
       const markers = vehiclesLayer.getLayers() as VehicleMarker[]
 
       for (const vehicle of vehicles) {
@@ -271,7 +271,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
     } else {
       vehiclesLayer.clearLayers()
     }
-  }, [vehicles, vehiclesLayer, route, markPredictedVehicles, speedUnit])
+  }, [visible, vehicles, vehiclesLayer, route, markPredictedVehicles, speedUnit])
 }
 
 export { useVehiclesLayer }
