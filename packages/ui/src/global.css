@@ -122,6 +122,9 @@ aside.collapsed {
   clip-path: polygon(0% 50%, 100% 35%, 100% 65%);
   transform: rotate(-45deg);
 }
+.busmap-vehicle.hidden {
+  display: none;
+}
 .busmap-vehicle div {
   display: flex;
   align-items: center;

@@ -101,8 +101,13 @@ const assignDynamicStyles = ({
      * setIcon(), so as not to lose any previously applied values.
      */
 
-    divIcon.classList.remove(...quadrants)
+    divIcon.classList.remove(...quadrants, 'hidden')
     divIcon.classList.add(quadrant)
+
+    if (marker.hidden) {
+      divIcon.classList.add('hidden')
+    }
+
     carNode.style.color = vehicle.predictable ? route.textColor : 'white'
     carNode.style.background = vehicle.predictable
       ? route.color
@@ -170,8 +175,9 @@ const getVehiclePopupContent = (marker: VehicleMarker, route: Route) => {
 }
 const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
   const vehicles = useVehicles()
-  const { route, predictions } = useGlobals()
-  const { visible, markPredictedVehicles, speedUnit } = useVehicleSettings()
+  const { route, direction, predictions } = useGlobals()
+  const { visible, hideOtherDirections, markPredictedVehicles, speedUnit } =
+    useVehicleSettings()
 
   const iconDimensions = useRef<Dimensions | null>(null)
   const preds = useRef(predictions?.length ? predictions[0].values.slice(0, 3) : [])
@@ -194,6 +200,12 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
         const marker = markers.find(m => m.vehicle.id === vehicle.id)
 
         if (marker && iconDimensions.current) {
+          marker.vehicle = vehicle
+          marker.speedUnit = speedUnit
+          marker.hidden =
+            hideOtherDirections &&
+            Boolean(direction) &&
+            vehicle.directionId !== direction?.id
           assignDynamicStyles({
             route,
             marker,
@@ -202,8 +214,6 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             preds: preds.current,
             dimensions: iconDimensions.current
           })
-          marker.vehicle = vehicle
-          marker.speedUnit = speedUnit
           marker.getPopup()?.setContent(getVehiclePopupContent(marker, route))
           marker.setLatLng(L.latLng(vehicle.lat, vehicle.lon))
         } else {
@@ -217,8 +227,14 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
           })
           const marker = new VehicleMarker(
             L.latLng(vehicle.lat, vehicle.lon),
-            vehicle,
-            speedUnit,
+            {
+              vehicle,
+              speedUnit,
+              hidden:
+                hideOtherDirections &&
+                Boolean(direction) &&
+                vehicle.directionId !== direction?.id
+            },
             {
               icon
             }
@@ -261,6 +277,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
         }
       }
 
+      // Remove stale vehicle markers
       for (const m of markers) {
         const vehicle = vehicles.find(({ id }) => id === m.vehicle.id)
 
@@ -271,7 +288,16 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
     } else {
       vehiclesLayer.clearLayers()
     }
-  }, [visible, vehicles, vehiclesLayer, route, markPredictedVehicles, speedUnit])
+  }, [
+    visible,
+    hideOtherDirections,
+    markPredictedVehicles,
+    speedUnit,
+    vehicles,
+    vehiclesLayer,
+    route,
+    direction
+  ])
 }
 
 export { useVehiclesLayer }

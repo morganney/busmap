@@ -9,6 +9,7 @@ interface LabelProps {
   grow: number
   gap: string
   justifyContent: string
+  alignItems: string
   fontSize: string
   fontWeight: FontWeight
 }
@@ -25,12 +26,12 @@ const getFlexDirection = ({ direction }: LabelProps) => {
       return 'column'
   }
 }
-const getAlignItems = ({ direction }: LabelProps) => {
-  if (direction === 'vertical') {
-    return 'normal'
+const getAlignItems = ({ alignItems }: LabelProps) => {
+  if (alignItems) {
+    return alignItems
   }
 
-  return 'center'
+  return 'normal'
 }
 const getGap = ({ direction, gap }: LabelProps) => {
   if (gap) {
@@ -89,6 +90,7 @@ interface FormItemProps {
   gap?: string
   grow?: number
   justifyContent?: string
+  alignItems?: string
   fontWeight?: FontWeight
   fontSize?: string
 }
@@ -100,6 +102,7 @@ const FormItem: FC<FormItemProps> = ({
   gap = '4px',
   grow = 0,
   justifyContent = 'normal',
+  alignItems = 'normal',
   fontWeight = 'bold',
   fontSize = '14px'
 }) => {
@@ -109,6 +112,7 @@ const FormItem: FC<FormItemProps> = ({
       gap={gap}
       grow={grow}
       justifyContent={justifyContent}
+      alignItems={alignItems}
       fontWeight={fontWeight}
       fontSize={fontSize}>
       <span>{label ?? ''}</span>

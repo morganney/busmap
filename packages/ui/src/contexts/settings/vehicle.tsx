@@ -5,6 +5,7 @@ import type { FC, ReactNode, Dispatch } from 'react'
 type SpeedUnit = 'kph' | 'mph'
 interface VehicleSettingsState {
   visible: boolean
+  hideOtherDirections: boolean
   markPredictedVehicles: boolean
   speedUnit: SpeedUnit
   dispatch: Dispatch<VehicleSettingsAction>
@@ -21,12 +22,21 @@ interface VisibileChanged {
   type: 'visibile'
   value: boolean
 }
-type VehicleSettingsAction = VisibileChanged | SpeedUnitChanged | MarkPredictedVehicles
+interface HideOtherDirectionsChanged {
+  type: 'hideOtherDirections'
+  value: boolean
+}
+type VehicleSettingsAction =
+  | VisibileChanged
+  | SpeedUnitChanged
+  | MarkPredictedVehicles
+  | HideOtherDirectionsChanged
 
 const defaultState: VehicleSettingsState = {
   dispatch: () => {},
   speedUnit: 'kph',
   visible: true,
+  hideOtherDirections: false,
   markPredictedVehicles: true
 }
 const VehicleSettings = createContext<VehicleSettingsState>(defaultState)
@@ -34,6 +44,8 @@ const reducer = (state: VehicleSettingsState, action: VehicleSettingsAction) => 
   switch (action.type) {
     case 'visibile':
       return { ...state, visible: action.value }
+    case 'hideOtherDirections':
+      return { ...state, hideOtherDirections: action.value }
     case 'speedUnit':
       return { ...state, speedUnit: action.value }
     case 'markPredictedVehicles':

@@ -4,36 +4,51 @@ import type { MarkerOptions, LatLng } from 'leaflet'
 import type { Vehicle } from '../types.js'
 import type { SpeedUnit } from '../contexts/settings/vehicle.js'
 
-class VehicleMarker extends Marker {
-  #vehicle: Vehicle
-  #speedUnit: SpeedUnit
+interface VehicleMarkerConfig {
+  vehicle: Vehicle
+  speedUnit: SpeedUnit
+  hidden: boolean
+}
 
-  constructor(
-    latlng: LatLng,
-    vehicle: Vehicle,
-    speedUnit: SpeedUnit,
-    options?: MarkerOptions
-  ) {
+class VehicleMarker extends Marker {
+  #config: VehicleMarkerConfig
+
+  constructor(latlng: LatLng, config: VehicleMarkerConfig, options?: MarkerOptions) {
     super(latlng, options)
 
-    this.#vehicle = vehicle
-    this.#speedUnit = speedUnit
+    this.#config = config
+  }
+
+  set config(value: VehicleMarkerConfig) {
+    this.#config = value
+  }
+
+  get config() {
+    return this.#config
   }
 
   get vehicle() {
-    return this.#vehicle
+    return this.#config.vehicle
   }
 
   set vehicle(value: Vehicle) {
-    this.#vehicle = value
+    this.#config.vehicle = value
   }
 
   get speedUnit() {
-    return this.#speedUnit
+    return this.#config.speedUnit
   }
 
   set speedUnit(value: SpeedUnit) {
-    this.#speedUnit = value
+    this.#config.speedUnit = value
+  }
+
+  set hidden(value: boolean) {
+    this.#config.hidden = value
+  }
+
+  get hidden() {
+    return this.#config.hidden
   }
 }
 
