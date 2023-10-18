@@ -2,6 +2,7 @@ import { useReducer, useCallback, useEffect } from 'react'
 import { useQuery } from 'react-query'
 import { createPortal } from 'react-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
+import { toast } from '@busmap/components/toast'
 import styled from 'styled-components'
 
 import { useGlobals } from './globals.js'
@@ -88,6 +89,13 @@ const Home: FC<HomeProps> = () => {
       refetchInterval: 5_000,
       onSuccess(data) {
         vehiclesDispatch({ type: 'set', value: data })
+
+        if (!data.length) {
+          toast({
+            type: 'info',
+            message: 'No vehicles running'
+          })
+        }
       }
     }
   )

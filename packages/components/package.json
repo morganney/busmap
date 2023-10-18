@@ -35,6 +35,14 @@
       "import": "./dist/tabs/mod.js",
       "require": "./dist/cjs/tabs/mod.cjs"
     },
+    "./alert": {
+      "import": "./dist/alert/mod.js",
+      "require": "./dist/cjs/alert/mod.cjs"
+    },
+    "./toast": {
+      "import": "./dist/toast/mod.js",
+      "require": "./dist/cjs/toast/mod.cjs"
+    },
     "./colors": {
       "import": "./dist/colors.js",
       "require": "./dist/cjs/colors.cjs"
@@ -70,6 +78,9 @@
     "styled-components": "^5.3.11"
   },
   "dependencies": {
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.14",
+    "@mui/styled-engine-sc": "^5.14.12",
     "downshift": "^8.1.0",
     "hex-rgb": "^5.0.0",
     "lodash.debounce": "^4.0.8",
