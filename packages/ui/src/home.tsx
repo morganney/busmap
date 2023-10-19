@@ -69,9 +69,9 @@ const Home: FC<HomeProps> = () => {
       refetchInterval: 10_000,
       onSuccess(data) {
         update({ type: 'predictions', value: data })
+        dispatch({ type: 'timestamp', value: Date.now() })
         // Reset vehicles based on changed predicted vehicles
         vehiclesDispatch({ type: 'reset' })
-        dispatch({ type: 'timestamp', value: Date.now() })
       }
     }
   )
@@ -90,10 +90,12 @@ const Home: FC<HomeProps> = () => {
       onSuccess(data) {
         vehiclesDispatch({ type: 'set', value: data })
 
-        if (!data.length) {
+        if (!data.filter(({ predictable }) => predictable).length) {
           toast({
             type: 'info',
-            message: 'No vehicles running'
+            message: 'No vehicles on route.',
+            // Keep open until the user closes
+            timeout: undefined
           })
         }
       }
