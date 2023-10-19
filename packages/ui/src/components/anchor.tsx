@@ -29,7 +29,6 @@ const Button = styled.button<{ collapsed: boolean }>`
     0 -1px ${PB50T};
 
   span {
-    font-family: 'Roboto';
     font-size: 18px;
     font-weight: 700;
     transform: ${({ collapsed }) => (collapsed ? 'rotate(180deg)' : 'rotate(0deg)')};
@@ -39,7 +38,7 @@ const Button = styled.button<{ collapsed: boolean }>`
 const Anchor: FC<AnchorProps> = ({ onClick, collapsed = false }) => {
   return (
     <Button onClick={onClick} collapsed={collapsed}>
-      <span>→</span>
+      <span>➞</span>
     </Button>
   )
 }
