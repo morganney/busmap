@@ -44,17 +44,6 @@ const getGap = ({ direction, gap }: LabelProps) => {
 
   return '8px'
 }
-const getGrow = ({ direction, grow }: LabelProps) => {
-  if (typeof grow === 'number') {
-    return grow
-  }
-
-  if (direction === 'vertical') {
-    return 0
-  }
-
-  return 1
-}
 const getJustifyContent = ({ direction, justifyContent }: LabelProps) => {
   if (justifyContent) {
     return justifyContent
@@ -79,7 +68,6 @@ const Label = styled.label<LabelProps>`
   }
   span:last-child {
     display: flex;
-    flex-grow: ${getGrow};
   }
 `
 

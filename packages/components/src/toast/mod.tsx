@@ -15,15 +15,14 @@ type Positions =
   | 'botom right'
 type Variant = 'filled' | 'standard' | 'outlined'
 interface ToasterProps {
-  type: 'info' | 'success' | 'warning' | 'error'
-  message: string
+  type?: 'info' | 'success' | 'warning' | 'error'
+  message?: string
   position?: Positions
   variant?: Variant
   timeout?: number
+  open?: boolean
 }
-interface ToasterState extends ToasterProps {
-  open: boolean
-}
+type ToasterState = ToasterProps
 
 const defaultState: ToasterState = {
   open: false,
@@ -54,27 +53,27 @@ const Toaster: FC<{ anchor?: Positions; kind?: Variant }> = ({ anchor, kind }) =
   const pos = { vertical, horizontal } as SnackbarOrigin
 
   useEffect(() => {
-    const onOpen = (evt: CustomEvent) => {
+    const onToast = (evt: CustomEvent) => {
       setState(prev => ({
         ...prev,
         ...evt.detail,
-        open: true
+        open: evt.detail.open ?? true
       }))
     }
 
-    window.addEventListener(EVENT_NAME, onOpen as EventListener)
+    window.addEventListener(EVENT_NAME, onToast as EventListener)
 
     return () => {
-      window.removeEventListener(EVENT_NAME, onOpen as EventListener)
+      window.removeEventListener(EVENT_NAME, onToast as EventListener)
     }
   }, [])
 
   return (
     <Snackbar open={open} autoHideDuration={timeout} anchorOrigin={pos} onClose={onClose}>
       <Alert
-        type={type}
+        type={type ?? 'info'}
         variant={variant ?? kind ?? 'standard'}
-        message={message}
+        message={message ?? ''}
         onClose={onClose}
       />
     </Snackbar>
