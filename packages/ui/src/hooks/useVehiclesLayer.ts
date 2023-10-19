@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 
-import { VehicleMarker } from './common.js'
+import { VehicleMarker, VEHICLE_PANE } from './common.js'
 
 import { useGlobals } from '../globals.js'
 import { useVehicles } from '../contexts/vehicles.js'
@@ -236,7 +236,8 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
                 vehicle.directionId !== direction?.id
             },
             {
-              icon
+              icon,
+              pane: VEHICLE_PANE
             }
           )
           const popup = L.popup({

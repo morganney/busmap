@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 
+import { VEHICLE_PANE } from './common.js'
+
 import { useGlobals } from '../globals.js'
 
 import type { Map, LayerGroup } from 'leaflet'
@@ -19,6 +21,7 @@ const useInitMap = () => {
     mapRef.current = L.map(document.querySelector('main') as HTMLElement, {
       zoomControl: false
     })
+    mapRef.current.createPane(VEHICLE_PANE).style.zIndex = '700'
     popupRef.current.setContent(selectionRef.current)
     popupRef.current.on('remove', () => {
       dispatch({ type: 'selected', value: undefined })

@@ -52,4 +52,5 @@ class VehicleMarker extends Marker {
   }
 }
 
+export const VEHICLE_PANE = 'busmap-vehicle-pane'
 export { VehicleMarker }
