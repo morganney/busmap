@@ -10,6 +10,7 @@ import { useVehiclesDispatch } from './contexts/vehicles.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
 import { Settings } from './components/settings/index.js'
+import { Info } from './components/info.js'
 import { Predictions } from './components/predictions.js'
 import { Anchor } from './components/anchor.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
@@ -142,7 +143,7 @@ const Home: FC<HomeProps> = () => {
               <BusSelector agencies={agencies} />
             </TabPanel>
             <TabPanel name="info">
-              <p>Info</p>
+              <Info />
             </TabPanel>
             <TabPanel name="settings">
               <Settings />
