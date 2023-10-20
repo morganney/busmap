@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { forwardRef } from 'react'
 
 import type { FC, ReactNode } from 'react'
 
@@ -12,6 +13,17 @@ interface LabelProps {
   alignItems: string
   fontSize: string
   fontWeight: FontWeight
+}
+interface FormItemProps {
+  children: ReactNode
+  label?: string
+  direction?: Direction
+  gap?: string
+  grow?: number
+  justifyContent?: string
+  alignItems?: string
+  fontWeight?: FontWeight
+  fontSize?: string
 }
 
 const getFlexDirection = ({ direction }: LabelProps) => {
@@ -70,43 +82,36 @@ const Label = styled.label<LabelProps>`
     display: flex;
   }
 `
-
-interface FormItemProps {
-  children: ReactNode
-  label?: string
-  direction?: Direction
-  gap?: string
-  grow?: number
-  justifyContent?: string
-  alignItems?: string
-  fontWeight?: FontWeight
-  fontSize?: string
-}
-
-const FormItem: FC<FormItemProps> = ({
-  children,
-  label,
-  direction = 'vertical',
-  gap = '4px',
-  grow = 0,
-  justifyContent = 'normal',
-  alignItems = 'normal',
-  fontWeight = 'bold',
-  fontSize = '14px'
-}) => {
-  return (
-    <Label
-      direction={direction}
-      gap={gap}
-      grow={grow}
-      justifyContent={justifyContent}
-      alignItems={alignItems}
-      fontWeight={fontWeight}
-      fontSize={fontSize}>
-      <span>{label ?? ''}</span>
-      <span>{children}</span>
-    </Label>
-  )
-}
+const FormItem: FC<FormItemProps> = forwardRef<HTMLLabelElement, FormItemProps>(
+  function FormItem(
+    {
+      children,
+      label,
+      direction = 'vertical',
+      gap = '4px',
+      grow = 0,
+      justifyContent = 'normal',
+      alignItems = 'normal',
+      fontWeight = 'bold',
+      fontSize = '14px'
+    },
+    ref
+  ) {
+    return (
+      <Label
+        ref={ref}
+        direction={direction}
+        gap={gap}
+        grow={grow}
+        justifyContent={justifyContent}
+        alignItems={alignItems}
+        fontWeight={fontWeight}
+        fontSize={fontSize}>
+        <span>{label ?? ''}</span>
+        <span>{children}</span>
+      </Label>
+    )
+  }
+)
 
 export { FormItem }
