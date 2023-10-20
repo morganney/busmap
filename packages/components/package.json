@@ -43,6 +43,10 @@
       "import": "./dist/toast/mod.js",
       "require": "./dist/cjs/toast/mod.cjs"
     },
+    "./tooltip": {
+      "import": "./dist/tooltip/mod.js",
+      "require": "./dist/cjs/tooltip/mod.cjs"
+    },
     "./colors": {
       "import": "./dist/colors.js",
       "require": "./dist/cjs/colors.cjs"
@@ -87,7 +91,7 @@
     "match-sorter": "^6.3.1"
   },
   "devDependencies": {
-    "@knighted/duel": "^1.0.0-rc.13",
+    "@knighted/duel": "^1.0.1",
     "@storybook/addon-a11y": "^7.3.2",
     "@storybook/addon-essentials": "^7.3.2",
     "@storybook/builder-vite": "^7.3.2",

@@ -11,7 +11,7 @@ const List = styled.div`
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   font-size: 14px;
 
   figure {
@@ -28,6 +28,8 @@ const List = styled.div`
 
   figcaption {
     line-height: 1.25;
+    position: relative;
+    margin-top: -3px;
   }
 `
 const OtsVehicle = styled.span`
@@ -68,18 +70,12 @@ const Info: FC = () => {
         <svg viewBox="0 0 30 12" width="30px" height="12px">
           <rect width="30" height="12" fill={color} />
         </svg>
-        <figcaption>A route plotted by its paths and associated color.</figcaption>
+        <figcaption>Route plotted by its color and paths.</figcaption>
       </figure>
       <figure>
         <img src={circleSvg} alt="stop marker icon" height="12px" />
         <figcaption>
-          A stop on a route. Click or tap to obtain real-time arrival predictions.
-        </figcaption>
-      </figure>
-      <figure>
-        <OtsVehicle />
-        <figcaption>
-          An unpredictable vehicle. Either out of service, or no GPS signal.
+          Route stop. Click or tap to get real-time arrival predictions.
         </figcaption>
       </figure>
       <figure>
@@ -88,7 +84,14 @@ const Info: FC = () => {
           <span>➞</span>
         </RouteVehicle>
         <figcaption>
-          A vehicle labeled by route name and heading. Click or tap to get more details.
+          Vehicle labeled by route name and heading. Click or tap to get more details.
+        </figcaption>
+      </figure>
+      <figure>
+        <OtsVehicle />
+        <figcaption>
+          Unpredictable vehicle, either out of service, or no GPS signal. The heading may
+          be incorrect.
         </figcaption>
       </figure>
     </List>

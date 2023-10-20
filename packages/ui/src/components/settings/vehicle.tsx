@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
+import { Tooltip } from '@busmap/components/tooltip'
 
 import { FormItem } from '../formItem.js'
 import { useSettings } from '../../contexts/settings/index.js'
@@ -85,18 +86,20 @@ const VehicleSettings: FC = () => {
           onChange={onTogglePredictedVehicles}
         />
       </FormItem>
-      <FormItem
-        label="Hide other directions"
-        direction="horizontal-rev"
-        justifyContent="flex-end"
-        fontWeight="normal">
-        <input
-          type="checkbox"
-          disabled={!vehicle.visible}
-          checked={vehicle.hideOtherDirections}
-          onChange={onToggleHideOtherDirections}
-        />
-      </FormItem>
+      <Tooltip title="Depends on accuracy of agency/gps data.">
+        <FormItem
+          label="Hide other directions"
+          direction="horizontal-rev"
+          justifyContent="flex-end"
+          fontWeight="normal">
+          <input
+            type="checkbox"
+            disabled={!vehicle.visible}
+            checked={vehicle.hideOtherDirections}
+            onChange={onToggleHideOtherDirections}
+          />
+        </FormItem>
+      </Tooltip>
       <fieldset className="row">
         <legend>Speed units</legend>
         <FormItem label="kph" fontWeight="normal" direction="horizontal-rev">

@@ -21,7 +21,7 @@ const useInitMap = () => {
     mapRef.current = L.map(document.querySelector('main') as HTMLElement, {
       zoomControl: false
     })
-    mapRef.current.createPane(VEHICLE_PANE).style.zIndex = '700'
+    mapRef.current.createPane(VEHICLE_PANE).style.zIndex = '650'
     popupRef.current.setContent(selectionRef.current)
     popupRef.current.on('remove', () => {
       dispatch({ type: 'selected', value: undefined })
