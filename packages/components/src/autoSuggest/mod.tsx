@@ -48,6 +48,7 @@ interface AutoSuggestProps<T> {
   placeholder?: string
   labelledBy?: string
   id?: string
+  name?: string
 }
 interface Label {
   label: string
@@ -186,6 +187,7 @@ const getChangeEvt = (value?: string | null): ChangeEvent<HTMLInputElement> => {
 }
 const AutoSuggest = <U,>({
   id,
+  name,
   items,
   value,
   onBlur,
@@ -433,6 +435,7 @@ const AutoSuggest = <U,>({
             }
           })}
           id={id}
+          name={name}
           color={color}
           size={size}
           fontSize={sizing[size].fontSize}

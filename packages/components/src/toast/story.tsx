@@ -35,7 +35,7 @@ export default {
     type: 'info',
     variant: 'standard',
     message: 'A toast message',
-    position: 'bottom left',
+    position: 'top center',
     timeout: 6_000
   },
   argTypes: {

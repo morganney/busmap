@@ -18,6 +18,7 @@ const Agencies: FC<Props> = ({ agencies, selected, isDisabled, onSelect }) => {
         onClear
         caseInsensitive
         inputBoundByItems
+        name="agencies"
         size="small"
         color="black"
         value={selected ?? undefined}

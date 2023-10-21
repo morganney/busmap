@@ -9,6 +9,7 @@
     "cycles": "madge --circular --warning --exclude node_modules --ts-config ./tsconfig.json --extensions ts,tsx src",
     "prettier": "prettier -w .",
     "dev": "vite",
+    "dev:local": "RESTBUS_HOST=http://localhost:3000 vite",
     "dev:node": "tsx devServer.ts",
     "lint": "eslint . src --ext .ts,.tsx --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",

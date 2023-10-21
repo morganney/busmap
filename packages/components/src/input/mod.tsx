@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useState, useRef } from 'react'
+import { forwardRef, useCallback, useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { Close as CloseIcon } from '../icons/close/mod.js'
@@ -9,6 +9,7 @@ import type { Size } from '../types.js'
 
 interface InputProps {
   id?: string
+  name?: string
   size?: Size
   labelledBy?: string
   list?: string
@@ -77,6 +78,7 @@ const StyledInput = styled.input<{
 const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     id,
+    name,
     list,
     labelledBy,
     value,
@@ -97,10 +99,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 ) {
   const wrapper = useRef<HTMLSpanElement>(null)
   const isClearable = typeof onClear === 'function'
-  const [hasFocus, setHasFocus] = useState(false)
+  const [showClearIcon, setShowClearIcon] = useState(false)
   const handleOnFocus = useCallback(
     (evt: FocusEvent) => {
-      setHasFocus(true)
+      setShowClearIcon(true)
 
       if (typeof onFocus === 'function') {
         onFocus(evt)
@@ -110,7 +112,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   )
   const handleOnBlur = useCallback((evt: FocusEvent) => {
     if (!evt.currentTarget.contains(evt.relatedTarget)) {
-      setHasFocus(false)
+      setShowClearIcon(false)
     }
   }, [])
   const handleOnClear = useCallback(() => {
@@ -121,10 +123,32 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     }
   }, [onClear])
 
+  useEffect(() => {
+    /**
+     * When the AutoSuggest changes values, either from
+     * user interaction or dynamic scripting, specifically
+     * when `onSelectedItemChanged` is invoked, the blur
+     * event can not fire and the state to hide the clear icon
+     * does not update correctly.
+     *
+     * This corrects for that by resetting the state whenever
+     * the input state says to show the clear icon while the
+     * <input /> is not the activeElement.
+     */
+    if (
+      showClearIcon &&
+      wrapper.current?.querySelector('input') !== document.activeElement
+    ) {
+      setShowClearIcon(false)
+    }
+  }, [value, showClearIcon])
+
   return (
     <Wrapper ref={wrapper} onBlur={handleOnBlur}>
       <StyledInput
         id={id}
+        name={name ?? id}
+        title={value?.toString() || undefined}
         ref={ref}
         list={list}
         type={type}
@@ -142,7 +166,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         borderColor={borderColor}
         aria-labelledby={labelledBy}
       />
-      {value && !isDisabled && isClearable && hasFocus && (
+      {value && !isDisabled && isClearable && showClearIcon && (
         <Close onClick={handleOnClear} tabIndex={0} size="small" />
       )}
     </Wrapper>

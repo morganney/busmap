@@ -38,6 +38,7 @@ const Directions: FC<Props> = ({
         inputBoundByItems
         size="small"
         color="black"
+        name="directions"
         itemToString={itemToString}
         value={selected ?? undefined}
         isDisabled={isDisabled}
