@@ -26,6 +26,7 @@ const Stops: FC<Props> = ({
         inputBoundByItems
         size="small"
         color="black"
+        name="stops"
         value={selected ?? undefined}
         isDisabled={isDisabled}
         placeholder={`Stops ... ${stops.length ? `(${stops.length})` : ''}`}

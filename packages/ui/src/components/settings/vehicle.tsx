@@ -72,7 +72,12 @@ const VehicleSettings: FC = () => {
         direction="horizontal-rev"
         justifyContent="flex-end"
         fontWeight="normal">
-        <input type="checkbox" checked={vehicle.visible} onChange={onChangeVisible} />
+        <input
+          type="checkbox"
+          name="visible"
+          checked={vehicle.visible}
+          onChange={onChangeVisible}
+        />
       </FormItem>
       <FormItem
         label="Color predicted"
@@ -81,6 +86,7 @@ const VehicleSettings: FC = () => {
         fontWeight="normal">
         <input
           type="checkbox"
+          name="colorPredicted"
           disabled={!vehicle.visible}
           checked={vehicle.markPredictedVehicles}
           onChange={onTogglePredictedVehicles}
@@ -94,6 +100,7 @@ const VehicleSettings: FC = () => {
           fontWeight="normal">
           <input
             type="checkbox"
+            name="hideOther"
             disabled={!vehicle.visible}
             checked={vehicle.hideOtherDirections}
             onChange={onToggleHideOtherDirections}
