@@ -15,7 +15,7 @@ const Text = styled.p`
   margin: 0;
   align-items: center;
   justify-content: center;
-  font-family: 'Roboto', Arial, sans-serif;
+  font-family: Roboto, Arial, sans-serif;
   font-size: 1rem;
 `
 const Loading: FC<LoadingProps> = ({ text }) => {

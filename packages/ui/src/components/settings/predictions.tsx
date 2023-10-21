@@ -20,10 +20,11 @@ const Form = styled.form`
     border-width: 1px;
     margin: 0;
   }
+
   fieldset.row {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
   }
+
   legend {
     font-size: 14px;
     line-height: 1;
