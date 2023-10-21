@@ -9,7 +9,7 @@ const Grid = styled.div`
   gap: 40px;
 
   p {
-    margin: 20px 0 0 0;
+    margin: 20px 0 0;
   }
 `
 const Primary: StoryFn<typeof Tabs> = args => {

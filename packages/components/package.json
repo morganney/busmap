@@ -66,6 +66,7 @@
     "lint": "npm run lint:js && npm run lint:css",
     "lint:js": "eslint . src --ext .ts,.tsx --max-warnings 0",
     "lint:css": "stylelint src",
+    "lint:css:fix": "stylelint --fix src",
     "lint:fix": "npm run lint -- --fix",
     "storybook": "storybook dev -p 9000",
     "build": "duel",

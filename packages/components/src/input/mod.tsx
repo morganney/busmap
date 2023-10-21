@@ -54,8 +54,6 @@ const StyledInput = styled.input<{
 }>`
   color: ${({ color }) => color};
   box-sizing: border-box;
-  padding: 0;
-  border: 0;
   margin: 0;
   padding: ${getPadding};
   width: 100%;
@@ -69,10 +67,10 @@ const StyledInput = styled.input<{
   text-overflow: ellipsis;
 
   &:focus {
-    border-color: rgb(96, 192, 233);
+    border-color: rgb(96 192 233);
     box-shadow:
-      rgba(0, 0, 0, 0.08) 0px 1px 1px inset,
-      rgba(102, 175, 233, 0.6) 0px 0px 8px;
+      rgb(0 0 0 / 8%) 0 1px 1px inset,
+      rgb(102 175 233 / 60%) 0 0 8px;
   }
 `
 const Input = forwardRef<HTMLInputElement, InputProps>(function Input(

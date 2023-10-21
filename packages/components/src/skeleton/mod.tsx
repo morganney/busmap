@@ -44,10 +44,7 @@ const Box = styled.span<Required<SkeletonProps>>`
   &::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     transform: translateX(-100%);
     ${getAnimation};
   }

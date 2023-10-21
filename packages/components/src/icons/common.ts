@@ -32,7 +32,7 @@ const Icon = styled.span<{ size: Size; color: string }>`
   cursor: pointer;
 
   svg {
-    fill: currentColor;
+    fill: currentcolor;
   }
 
   &:focus-visible {
