@@ -43,13 +43,13 @@ const SelectToggleButton = styled.button<CoreProps>`
   &[aria-expanded='true'] {
     ${focusedStyles};
     ${getToggleDirectionStyles};
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: rgb(0 0 0 / 8%);
   }
 
   &:disabled {
     color: ${PB40T};
     cursor: not-allowed;
-    background-color: rgba(0, 0, 0, 0.08);
+    background-color: rgb(0 0 0 / 8%);
   }
 `
 const SelectMenu = styled.ul`
@@ -90,6 +90,7 @@ const SelectItem = styled.li<CoreProps>`
   color: ${({ color }) => color};
   font-size: ${({ size }) => sizing[size ?? 'medium'].fontSize};
   padding: ${({ size }) => sizing[size ?? 'medium'].padding};
+
   &.highlighted {
     background-color: ${SLB30T};
     color: white;

@@ -49,7 +49,7 @@ const Wrap = styled.div`
   flex-direction: column;
   justify-content: space-between;
   gap: 30px;
-  padding: 15px 30px 30px 30px;
+  padding: 15px 30px 30px;
   height: 100%;
   overflow-y: auto;
 `

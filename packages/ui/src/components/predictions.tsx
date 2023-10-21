@@ -51,7 +51,7 @@ const Timestamp = styled.p`
   font-size: 10px;
 `
 const NoArrivals = styled.p`
-  margin: 20px 0 0 0;
+  margin: 20px 0 0;
 
   em {
     text-decoration: underline;
@@ -126,11 +126,13 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
 `
 const AffectedByLayover = styled.details`
   display: inline-block;
-  margin: 0 0 12px 0;
+  margin: 0 0 12px;
+
   summary:first-of-type {
     font-size: 12px;
     cursor: pointer;
   }
+
   p {
     line-height: 1.25;
     margin: 12px 0;
@@ -143,7 +145,8 @@ const AffectedByLayover = styled.details`
 `
 const Messages = styled.details`
   display: inline-block;
-  margin: 12px 0 0 0;
+  margin: 12px 0 0;
+
   summary:first-of-type {
     font-size: 12px;
     color: blue;
@@ -163,7 +166,7 @@ const Messages = styled.details`
     li {
       font-size: 14px;
       line-height: 1.25;
-      padding: 8px 8px;
+      padding: 8px;
       border-bottom: 1px dotted ${PB80T};
     }
 

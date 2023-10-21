@@ -64,13 +64,13 @@ const Definition = styled.dl`
     gap: 5px;
     align-items: center;
     white-space: nowrap;
-  }
-  dd:last-child {
+
     em {
       font-style: normal;
       opacity: 1;
       animation: ${blink} 1.5s linear infinite;
     }
+
     em:not(:last-child)::after,
     time:not(:last-child)::after {
       content: ',';

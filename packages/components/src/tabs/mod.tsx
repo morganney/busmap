@@ -282,7 +282,6 @@ const getPadding = ({ fluid, direction }: ButtonProps) => {
   return '7px 11px'
 }
 const Button = styled.button<ButtonProps>`
-  border: none;
   cursor: pointer;
   line-height: 1;
   width: ${({ direction }) => (direction === 'row' ? 'auto' : '100%')};
