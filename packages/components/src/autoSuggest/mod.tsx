@@ -7,7 +7,7 @@ import styled from 'styled-components'
 import { SelectWrap, SelectMenuWrap, SelectMenu, SelectItem } from '../core.js'
 import { focusedStyles, sizing } from '../styles.js'
 import { Input } from '../input/mod.js'
-import { PB40T, SLB30T } from '../colors.js'
+import { PB40T, PB50T, SLB30T } from '../colors.js'
 import { ChevronDown as ChevronDownIcon } from '../icons/chevronDown/mod.js'
 
 import type { ChangeEvent, ReactNode, Dispatch, SetStateAction } from 'react'
@@ -46,6 +46,8 @@ interface AutoSuggestProps<T> {
   color?: string
   size?: Size
   placeholder?: string
+  placeholderColor?: string
+  background?: string
   labelledBy?: string
   id?: string
   name?: string
@@ -202,10 +204,13 @@ const AutoSuggest = <U,>({
   width = '100%',
   size = 'medium',
   placeholder = '',
+  placeholderColor = PB50T,
+  background = '#ffffff',
   isDisabled = false,
   caseInsensitive = false,
   inputBoundByItems = false,
   selectOnTextMatch = false,
+
   itemToString = itemToStringDefault
 }: AutoSuggestProps<U>) => {
   const initialLoadedItems = useRef<U[]>([])
@@ -442,7 +447,9 @@ const AutoSuggest = <U,>({
           onClear={handleOnClear}
           labelledBy={labelledBy}
           isDisabled={isDisabled}
+          background={background}
           placeholder={placeholder}
+          placeholderColor={placeholderColor}
         />
         <ToggleMenuButton
           {...getToggleButtonProps()}
@@ -454,7 +461,7 @@ const AutoSuggest = <U,>({
         </ToggleMenuButton>
       </Combobox>
       <ComboMenuWrap className={isOpen && inputItems.length ? 'isOpen' : undefined}>
-        <ComboMenu {...getMenuProps()} data-select-menu="true">
+        <ComboMenu {...getMenuProps()} data-select-menu="true" background={background}>
           {isOpen &&
             inputItems.map((item, index) => (
               <SelectItem

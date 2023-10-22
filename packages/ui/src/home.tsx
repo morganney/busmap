@@ -3,10 +3,12 @@ import { useQuery } from 'react-query'
 import { createPortal } from 'react-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import { toast } from '@busmap/components/toast'
+import { PB50T, PB90T } from '@busmap/components/colors'
 import styled from 'styled-components'
 
 import { useGlobals } from './globals.js'
 import { useVehiclesDispatch } from './contexts/vehicles.js'
+import { useTheme } from './contexts/settings/theme.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
 import { Settings } from './components/settings/index.js'
@@ -57,6 +59,7 @@ interface HomeProps {
   children?: ReactNode
 }
 const Home: FC<HomeProps> = () => {
+  const { mode } = useTheme()
   const vehiclesDispatch = useVehiclesDispatch()
   const { dispatch: update, locationSettled, agency, route, stop } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -80,6 +83,8 @@ const Home: FC<HomeProps> = () => {
     dispatch({ type: 'collapsed', value: !state.collapsed })
   }, [state.collapsed])
   const messages = preds?.length ? preds[0].messages : []
+  const tabsBackground = mode === 'dark' ? PB50T : undefined
+  const tabsColor = mode === 'dark' ? PB90T : undefined
 
   useQuery(
     ['vehicles', agency?.id, route?.id],
@@ -131,7 +136,9 @@ const Home: FC<HomeProps> = () => {
             position="end"
             fontSize="12px"
             gap="16px"
-            borderRadius="5px 5px 0 0">
+            borderRadius="5px 5px 0 0"
+            color={tabsColor}
+            background={tabsBackground}>
             <TabList>
               <Tab name="select" label="🚌" />
               <Tab name="info" label="ℹ️" />

@@ -1,5 +1,7 @@
 import { AutoSuggest } from '@busmap/components/autoSuggest'
 
+import { useSelectorProps } from './useSelectorProps.js'
+
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
@@ -12,16 +14,12 @@ interface Props {
   onSelect: (selected: Agency) => void
 }
 const Agencies: FC<Props> = ({ agencies, selected, isDisabled, onSelect }) => {
+  const props = useSelectorProps<Agency>({ selected })
+
   return (
     <FormItem label="Agency">
       <AutoSuggest
-        onClear
-        caseInsensitive
-        inputBoundByItems
-        name="agencies"
-        size="small"
-        color="black"
-        value={selected ?? undefined}
+        {...props}
         isDisabled={isDisabled}
         placeholder={`Agencies ... (${agencies.length})`}
         items={agencies}

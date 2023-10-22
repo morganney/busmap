@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import {
   sizing,
@@ -15,6 +15,8 @@ interface CoreProps {
   menuDirection?: MenuDirection
   width?: string
   size?: 'small' | 'medium' | 'large'
+  color?: string
+  background?: string
 }
 const SelectWrap = styled.div<CoreProps>`
   width: ${({ width }) => width ?? 'auto'};
@@ -52,7 +54,7 @@ const SelectToggleButton = styled.button<CoreProps>`
     background-color: rgb(0 0 0 / 8%);
   }
 `
-const SelectMenu = styled.ul`
+const menuStyles = css<CoreProps>`
   margin: 0;
   padding: 0;
   line-height: normal;
@@ -66,11 +68,14 @@ const SelectMenu = styled.ul`
   width: 100%;
   z-index: 1000;
   outline: 0;
-  background-color: white;
+  background-color: ${({ background }) => background ?? 'white'};
   border: 1px solid transparent;
   border-radius: 5px;
   cursor: pointer;
   ${getMenuDirectionStyles};
+`
+const SelectMenu = styled.ul`
+  ${menuStyles};
 `
 const SelectMenuWrap = styled.div<CoreProps>`
   position: relative;
@@ -86,8 +91,8 @@ const SelectMenuWrap = styled.div<CoreProps>`
     }
   }
 `
-const SelectItem = styled.li<CoreProps>`
-  color: ${({ color }) => color};
+const itemStyles = css<CoreProps>`
+  color: ${({ color }) => color ?? 'black'};
   font-size: ${({ size }) => sizing[size ?? 'medium'].fontSize};
   padding: ${({ size }) => sizing[size ?? 'medium'].padding};
 
@@ -95,6 +100,9 @@ const SelectItem = styled.li<CoreProps>`
     background-color: ${SLB30T};
     color: white;
   }
+`
+const SelectItem = styled.li`
+  ${itemStyles};
 `
 const SelectPlaceholder = styled.span`
   ${placeholderStyles};

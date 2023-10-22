@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react'
 
 import { AutoSuggest } from './mod.js'
 
+import { PB50T } from '../colors.js'
+
 import type { StoryFn } from '@storybook/react'
 import type { SetInputText } from './mod.js'
 
@@ -170,7 +172,9 @@ export default {
     inputBoundByItems: false,
     isDisabled: false,
     color: '#000000',
-    placeholder: 'type to search...'
+    placeholder: 'type to search...',
+    placeholderColor: PB50T,
+    background: '#ffffff'
   },
   argTypes: {
     items: {
@@ -181,6 +185,12 @@ export default {
     },
     placeholder: {
       control: 'text'
+    },
+    placeholderColor: {
+      control: 'color'
+    },
+    background: {
+      control: 'color'
     },
     onChange: {
       action: 'onChange'

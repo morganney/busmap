@@ -53,7 +53,7 @@ const sizing = {
     }
   }
 }
-const focusedStyles = css`
+const focusedStyles = `
   border-color: ${SLB30T};
   box-shadow:
     inset 0 1px 1px rgb(0 0 0 / 8%),
@@ -64,7 +64,7 @@ const borderOutlineStyles = css`
   border: 1px solid ${({ borderColor }: { borderColor: string }) => borderColor ?? PB80T};
   border-radius: 5px;
 `
-const placeholderStyles = css`
+const placeholderStyles = `
   color: ${PB40T};
 `
 const getToggleDirectionStyles = ({
@@ -73,14 +73,14 @@ const getToggleDirectionStyles = ({
   menuDirection?: MenuDirection
 }) => {
   if (menuDirection !== 'up') {
-    return css`
+    return `
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
       border-bottom-color: transparent;
     `
   }
 
-  return css`
+  return `
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     border-top-color: transparent;
@@ -88,7 +88,7 @@ const getToggleDirectionStyles = ({
 }
 const getMenuDirectionStyles = ({ menuDirection }: { menuDirection?: MenuDirection }) => {
   if (menuDirection === 'up') {
-    return css`
+    return `
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0;
       border-bottom: none;
@@ -97,7 +97,7 @@ const getMenuDirectionStyles = ({ menuDirection }: { menuDirection?: MenuDirecti
     `
   }
 
-  return css`
+  return `
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     border-top: none;

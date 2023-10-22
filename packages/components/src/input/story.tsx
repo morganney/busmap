@@ -2,6 +2,8 @@ import { useState, useCallback, useRef } from 'react'
 
 import { Input } from './mod.js'
 
+import { PB50T } from '../colors.js'
+
 import type { StoryFn } from '@storybook/react'
 import type { ChangeEvent } from 'react'
 
@@ -36,7 +38,9 @@ export default {
   component: Input,
   args: {
     size: 'medium',
-    placeholder: 'placeholder'
+    placeholder: 'placeholder',
+    placeholderColor: PB50T,
+    background: '#ffffff'
   },
   argTypes: {
     id: {
@@ -67,6 +71,9 @@ export default {
     color: {
       control: 'color'
     },
+    background: {
+      control: 'color'
+    },
     borderColor: {
       control: 'color'
     },
@@ -76,8 +83,14 @@ export default {
     placeholder: {
       control: 'text'
     },
+    placeholderColor: {
+      control: 'color'
+    },
     onChange: {
       action: 'onChange'
+    },
+    name: {
+      control: false
     }
   }
 }
