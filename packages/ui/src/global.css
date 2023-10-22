@@ -8,9 +8,17 @@
   }
 }
 :root {
-  --bg-color: #e0e0e0;
-  --home-bg-color: #ffffffcc;
-  --home-border-color: #cccccc;
+  --color-light: #000000;
+  --field-bg-color-light: #ffffff;
+  --home-bg-color-light: #ffffffcc;
+  --home-border-color-light: #cccccc;
+
+  --color-dark: #e5e5e5;
+  --field-bg-color-dark: #3b3b3b;
+  --home-bg-color-dark: #191919cc;
+  --home-border-color-dark: #cccccc;
+
+  color-scheme: light dark;
 }
 *,
 *:before,
@@ -24,13 +32,20 @@ html {
   box-sizing: border-box;
 }
 body {
+  color: var(--color-light);
   position: relative;
   display: grid;
   margin: 0;
-  background-color: var(--bg-color);
+  background: #e0e0e0cc;
   font-family: 'Roboto', Arial, sans-serif;
   font-weight: 400;
   font-style: normal;
+}
+body.busmap-light {
+  color: var(--color-light);
+}
+body.busmap-dark {
+  color: var(--color-dark);
 }
 aside {
   position: fixed;
@@ -41,15 +56,20 @@ aside {
   width: 33%;
   min-width: 290px;
   max-width: 425px;
-  background: var(--home-bg-color);
-  border-left: 1px solid var(--home-border-color);
-  border-bottom: 1px solid var(--home-border-color);
+  background: var(--home-bg-color-light);
+  border-left: 1px solid var(--home-border-color-light);
+  border-bottom: 1px solid var(--home-border-color-light);
   transform: translateX(0);
   transition: transform 0.25s ease;
 }
 aside.collapsed {
   transform: translateX(100%);
   transition-timing-function: ease;
+}
+body.busmap-dark aside {
+  background: var(--home-bg-color-dark);
+  border-left: 1px solid var(--home-border-color-dark);
+  border-bottom: 1px solid var(--home-border-color-dark);
 }
 .leaflet-container {
   background: transparent;
@@ -89,6 +109,9 @@ aside.collapsed {
   white-space: nowrap;
   border: 1px solid black;
   transition: transform 2.5s ease;
+}
+.busmap-vehicle:hover {
+  z-index: 999 !important;
 }
 .busmap-vehicle::before {
   content: '';

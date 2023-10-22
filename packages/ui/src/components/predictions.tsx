@@ -2,11 +2,13 @@ import styled, { keyframes } from 'styled-components'
 import { PB50T, PB80T } from '@busmap/components/colors'
 
 import { PredictedVehiclesColors } from '../utils.js'
+import { useTheme } from '../contexts/settings/theme.js'
 import { useVehicleSettings } from '../contexts/settings/vehicle.js'
 import { usePredictionsSettings } from '../contexts/settings/predictions.js'
 
 import type { FC } from 'react'
 import type { Prediction, Stop } from '../types.js'
+import type { Mode } from '../contexts/settings/theme.js'
 
 interface PredictionsProps {
   preds?: Prediction[]
@@ -124,7 +126,7 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
     }
   }
 `
-const AffectedByLayover = styled.details`
+const AffectedByLayover = styled.details<{ mode: Mode }>`
   display: inline-block;
   margin: 0 0 12px;
 
@@ -138,18 +140,18 @@ const AffectedByLayover = styled.details`
     margin: 12px 0;
     padding: 12px;
     font-size: 14px;
-    background: white;
+    background: ${({ mode }) => (mode === 'light' ? 'white' : PB50T)};
     border-radius: 4px;
     border: 1px solid ${PB80T};
   }
 `
-const Messages = styled.details`
+const Messages = styled.details<{ mode: Mode }>`
   display: inline-block;
   margin: 12px 0 0;
 
   summary:first-of-type {
     font-size: 12px;
-    color: blue;
+    color: ${({ mode }) => (mode === 'light' ? 'blue' : 'orange')};
     cursor: pointer;
   }
 
@@ -159,7 +161,7 @@ const Messages = styled.details`
     list-style: none;
     display: flex;
     flex-direction: column;
-    background: white;
+    background: ${({ mode }) => (mode === 'light' ? 'white' : PB50T)};
     border-radius: 4px;
     border: 1px solid ${PB80T};
 
@@ -195,6 +197,7 @@ const Minutes: FC<FormatProps> = ({ epochTime, minutes, affectedByLayover }) => 
   )
 }
 const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp }) => {
+  const { mode } = useTheme()
   const { format } = usePredictionsSettings()
   const { markPredictedVehicles } = useVehicleSettings()
   const Format = format === 'minutes' ? Minutes : Time
@@ -211,7 +214,7 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
         <Section>
           <Title>Next {title}</Title>
           {messages.length > 0 && (
-            <Messages>
+            <Messages mode={mode}>
               <summary>Messages 💬</summary>
               <ul>
                 {messages.map((message, idx) => (
@@ -240,7 +243,7 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
             ))}
           </List>
           {affectedByLayover && (
-            <AffectedByLayover>
+            <AffectedByLayover mode={mode}>
               <summary>
                 Affected by layover<sup>*</sup>
               </summary>

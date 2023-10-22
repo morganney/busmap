@@ -1,5 +1,7 @@
 import { AutoSuggest } from '@busmap/components/autoSuggest'
 
+import { useSelectorProps } from './useSelectorProps.js'
+
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
@@ -19,15 +21,12 @@ const Stops: FC<Props> = ({
   onClear,
   isDisabled = Boolean(stops)
 }) => {
+  const props = useSelectorProps<Stop>({ selected })
+
   return (
     <FormItem label="Stop">
       <AutoSuggest
-        caseInsensitive
-        inputBoundByItems
-        size="small"
-        color="black"
-        name="stops"
-        value={selected ?? undefined}
+        {...props}
         isDisabled={isDisabled}
         placeholder={`Stops ... ${stops.length ? `(${stops.length})` : ''}`}
         items={stops ?? []}

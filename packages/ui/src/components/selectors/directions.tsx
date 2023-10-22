@@ -1,6 +1,8 @@
 import { AutoSuggest } from '@busmap/components/autoSuggest'
 import { useCallback } from 'react'
 
+import { useSelectorProps } from './useSelectorProps.js'
+
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
@@ -18,6 +20,7 @@ const Directions: FC<Props> = ({
   onSelect,
   isDisabled = Boolean(directions)
 }) => {
+  const props = useSelectorProps<Direction>({ selected })
   const itemToString = useCallback((item: Direction | null) => {
     if (item) {
       if (item.title) {
@@ -33,14 +36,8 @@ const Directions: FC<Props> = ({
   return (
     <FormItem label="Direction">
       <AutoSuggest
-        onClear
-        caseInsensitive
-        inputBoundByItems
-        size="small"
-        color="black"
-        name="directions"
+        {...props}
         itemToString={itemToString}
-        value={selected ?? undefined}
         isDisabled={isDisabled}
         placeholder={`Directions ... ${directions ? `(${directions.length})` : ''}`}
         items={directions ?? []}

@@ -77,6 +77,7 @@ export const PB70T = '#B2B2B2'
 export const PB80T = '#CCCCCC'
 export const PB90T = '#E5E5E5'
 export const PB97T = '#F7F7F7'
+export const DARK_MODE_FIELD = '#3B3B3B'
 
 // Secondary Greens
 export const SG90S = '#0D1300'

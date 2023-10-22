@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { Close as CloseIcon } from '../icons/close/mod.js'
 import { sizing } from '../styles.js'
+import { PB50T } from '../colors.js'
 
 import type { KeyboardEvent, ChangeEvent, ForwardedRef, FocusEvent } from 'react'
 import type { Size } from '../types.js'
@@ -22,8 +23,10 @@ interface InputProps {
   onKeyDown?: (evt: KeyboardEvent<HTMLInputElement>) => void
   isDisabled?: boolean
   color?: string
+  background?: string
   fontSize?: string
   placeholder?: string
+  placeholderColor?: string
   borderColor?: string
 }
 
@@ -45,19 +48,22 @@ const Close = styled(CloseIcon)`
   right: 10px;
 `
 const StyledInput = styled.input<{
-  color: string
+  $color: string
   $size: Size
   $fontSize: string
+  placeholderColor: string
   borderColor: string
+  background: string
   isClearable: boolean
   ref: ForwardedRef<HTMLInputElement>
 }>`
-  color: ${({ color }) => color};
+  color: ${({ $color }) => $color};
   box-sizing: border-box;
   margin: 0;
   padding: ${getPadding};
   width: 100%;
   outline: none;
+  background: ${({ background }) => background};
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: ${({ $fontSize }) => $fontSize};
@@ -71,6 +77,10 @@ const StyledInput = styled.input<{
     box-shadow:
       rgb(0 0 0 / 8%) 0 1px 1px inset,
       rgb(102 175 233 / 60%) 0 0 8px;
+  }
+
+  &::placeholder {
+    color: ${({ placeholderColor }) => placeholderColor};
   }
 `
 const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -90,7 +100,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     fontSize = '16px',
     color = 'black',
     placeholder = '',
+    placeholderColor = PB50T,
     borderColor = 'black',
+    background = '#ffffff',
     isDisabled = false
   },
   ref
@@ -159,8 +171,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         onBlur={onBlur}
         onFocus={handleOnFocus}
         onKeyDown={onKeyDown}
-        color={color}
+        $color={color}
+        background={background}
         placeholder={placeholder}
+        placeholderColor={placeholderColor}
         borderColor={borderColor}
         aria-labelledby={labelledBy}
       />
