@@ -55,6 +55,12 @@ body.busmap-dark .leaflet-control-zoom-out,
 body.busmap-dark .leaflet-control-attribution {
   filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
+body.busmap-dark .leaflet-layer,
+body.busmap-dark .leaflet-control-zoom-in,
+body.busmap-dark .leaflet-control-zoom-out,
+body.busmap-dark .leaflet-control-attribution {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
 aside {
   position: fixed;
   top: 0;
