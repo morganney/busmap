@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import L from 'leaflet'
+import { map as lMap, popup, layerGroup, tileLayer, control } from 'leaflet'
 
 import { VEHICLE_PANE } from './common.js'
 
@@ -11,14 +11,14 @@ const useInitMap = () => {
   const { dispatch } = useGlobals()
   const [map, setMap] = useState<Map | null>(null)
   const selectionRef = useRef(document.createElement('div'))
-  const popupRef = useRef(L.popup({ minWidth: 200 }))
+  const popupRef = useRef(popup({ minWidth: 200 }))
   const mapRef = useRef<Map>()
-  const routeLayerRef = useRef<LayerGroup>(L.layerGroup())
-  const vehiclesLayerRef = useRef<LayerGroup>(L.layerGroup())
-  const predVehLayerRef = useRef<LayerGroup>(L.layerGroup())
+  const routeLayerRef = useRef<LayerGroup>(layerGroup())
+  const vehiclesLayerRef = useRef<LayerGroup>(layerGroup())
+  const predVehLayerRef = useRef<LayerGroup>(layerGroup())
 
   useEffect(() => {
-    mapRef.current = L.map(document.querySelector('main') as HTMLElement, {
+    mapRef.current = lMap(document.querySelector('main') as HTMLElement, {
       zoomControl: false
     })
     mapRef.current.createPane(VEHICLE_PANE).style.zIndex = '650'
@@ -26,8 +26,8 @@ const useInitMap = () => {
     popupRef.current.on('remove', () => {
       dispatch({ type: 'selected', value: undefined })
     })
-    L.control.zoom({ position: 'bottomleft' }).addTo(mapRef.current)
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    control.zoom({ position: 'bottomleft' }).addTo(mapRef.current)
+    tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution:
         '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'

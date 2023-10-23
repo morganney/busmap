@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import L from 'leaflet'
+import { marker, latLng, latLngBounds } from 'leaflet'
 
 import { useBusSelectorBookmark } from './useBusSelectorBookmarks.js'
 
@@ -18,7 +18,7 @@ const useLocateUser = ({ map }: UseLocateUser) => {
     if (map && !locationSettled) {
       if (!Object.keys(bookmark).length) {
         map.on('locationfound', evt => {
-          L.marker(evt.latlng)
+          marker(evt.latlng)
             .addTo(map)
             .bindPopup(
               `Your location within ${Intl.NumberFormat().format(evt.accuracy)} meters.`
@@ -28,10 +28,7 @@ const useLocateUser = ({ map }: UseLocateUser) => {
         map.on('locationerror', () => {
           // Roughly North America (USA, Cananda, Mexico)
           map.fitBounds(
-            L.latLngBounds(
-              L.latLng(6.089467, -128.009169),
-              L.latLng(73.28682, -78.506175)
-            )
+            latLngBounds(latLng(6.089467, -128.009169), latLng(73.28682, -78.506175))
           )
           dispatch({ type: 'locationSettled', value: true })
         })

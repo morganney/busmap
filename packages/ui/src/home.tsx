@@ -99,7 +99,7 @@ const Home: FC<HomeProps> = () => {
         if (!data.filter(({ predictable }) => predictable).length) {
           toast({
             type: 'info',
-            message: 'No vehicles on route.',
+            message: `No ${data.length ? 'predictable ' : ''}vehicles on route.`,
             // Keep open until the user closes
             timeout: undefined
           })

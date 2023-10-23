@@ -91,7 +91,8 @@ const Info: FC = () => {
       <figure>
         <OtsVehicle />
         <figcaption>
-          Unpredictable vehicle, possibly out of service. The heading may be incorrect.
+          Unpredictable vehicle, possibly out of service or lost GPS signal. The heading
+          may be incorrect.
         </figcaption>
       </figure>
     </List>
