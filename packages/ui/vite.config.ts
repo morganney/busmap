@@ -13,6 +13,15 @@ export default defineConfig(() => {
       }
 
   return {
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            leaflet: ['leaflet']
+          }
+        }
+      }
+    },
     plugins: [
       react({
         babel: {
