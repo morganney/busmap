@@ -4,6 +4,14 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig(() => {
+  const proxy = !env.RESTBUS_HOST
+    ? undefined
+    : {
+        '/restbus': {
+          target: env.RESTBUS_HOST
+        }
+      }
+
   return {
     plugins: [
       react({
@@ -15,14 +23,9 @@ export default defineConfig(() => {
       })
     ],
     server: {
-      host: true,
-      proxy: !env.RESTBUS_HOST
-        ? undefined
-        : {
-            '/restbus': {
-              target: env.RESTBUS_HOST
-            }
-          }
-    }
+      proxy,
+      host: true
+    },
+    preview: { proxy }
   }
 })
