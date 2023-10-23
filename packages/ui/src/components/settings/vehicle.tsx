@@ -4,9 +4,10 @@ import { Tooltip } from '@busmap/components/tooltip'
 
 import { FormItem } from '../formItem.js'
 import { useSettings } from '../../contexts/settings/index.js'
+import { isASpeedUnit } from '../../contexts/settings/vehicle.js'
+import { STORAGE_KEYS } from '../../common.js'
 
 import type { FC, ChangeEvent } from 'react'
-import type { SpeedUnit } from '../../contexts/settings/index.js'
 
 const Form = styled.form`
   display: flex;
@@ -36,9 +37,12 @@ const Form = styled.form`
 const VehicleSettings: FC = () => {
   const { vehicle } = useSettings()
   const onTogglePredictedVehicles = useCallback(() => {
+    const value = !vehicle.markPredictedVehicles
+
+    localStorage.setItem(STORAGE_KEYS.vehicleColorPredicted, value.toString())
     vehicle.dispatch({
-      type: 'markPredictedVehicles',
-      value: !vehicle.markPredictedVehicles
+      value,
+      type: 'markPredictedVehicles'
     })
   }, [vehicle])
   const onToggleHideOtherDirections = useCallback(() => {
@@ -49,10 +53,15 @@ const VehicleSettings: FC = () => {
   }, [vehicle])
   const onChangeSpeedUnit = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
-      vehicle.dispatch({
-        type: 'speedUnit',
-        value: evt.currentTarget.value as SpeedUnit
-      })
+      const { value } = evt.currentTarget
+
+      if (isASpeedUnit(value)) {
+        localStorage.setItem(STORAGE_KEYS.vehicleSpeedUnit, value)
+        vehicle.dispatch({
+          value,
+          type: 'speedUnit'
+        })
+      }
     },
     [vehicle]
   )

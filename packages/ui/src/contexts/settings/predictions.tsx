@@ -13,6 +13,13 @@ interface FormatChanged {
 }
 type PredictionsSettingsAction = FormatChanged
 
+const isAPredictionFormat = (x: unknown): x is PredictionFormat => {
+  if (x && typeof x === 'string' && ['time', 'minutes'].includes(x)) {
+    return true
+  }
+
+  return false
+}
 const defaultState: PredictionsSettingsState = {
   dispatch: () => {},
   format: 'minutes'
@@ -43,5 +50,5 @@ const usePredictionsSettings = () => {
   return useContext(PredictionsSettings)
 }
 
-export { PredictionsSettingsProvider, usePredictionsSettings }
+export { PredictionsSettingsProvider, usePredictionsSettings, isAPredictionFormat }
 export type { PredictionFormat }

@@ -32,6 +32,13 @@ type VehicleSettingsAction =
   | MarkPredictedVehicles
   | HideOtherDirectionsChanged
 
+const isASpeedUnit = (x: unknown): x is SpeedUnit => {
+  if (x && typeof x === 'string' && ['kph', 'mph'].includes(x)) {
+    return true
+  }
+
+  return false
+}
 const defaultState: VehicleSettingsState = {
   dispatch: () => {},
   speedUnit: 'kph',
@@ -67,5 +74,5 @@ const useVehicleSettings = () => {
   return useContext(VehicleSettings)
 }
 
-export { VehicleSettingsProvider, useVehicleSettings }
+export { VehicleSettingsProvider, useVehicleSettings, isASpeedUnit }
 export type { SpeedUnit }

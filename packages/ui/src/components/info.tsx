@@ -53,6 +53,7 @@ const RouteVehicle = styled.div`
   background: ${color};
 
   span {
+    color: black;
     font-size: 10px;
   }
 
@@ -67,10 +68,10 @@ const Info: FC = () => {
   return (
     <List>
       <figure>
-        <svg viewBox="0 0 30 12" width="30px" height="12px">
-          <rect width="30" height="12" fill={color} />
+        <svg viewBox="0 0 30 6" width="30px" height="6px">
+          <rect width="30" height="6" fill={color} />
         </svg>
-        <figcaption>Route plotted by its color and paths.</figcaption>
+        <figcaption>Route plotted by its color.</figcaption>
       </figure>
       <figure>
         <img src={circleSvg} alt="stop marker icon" height="12px" />
@@ -90,8 +91,7 @@ const Info: FC = () => {
       <figure>
         <OtsVehicle />
         <figcaption>
-          Unpredictable vehicle, either out of service, or no GPS signal. The heading may
-          be incorrect.
+          Unpredictable vehicle, possibly out of service. The heading may be incorrect.
         </figcaption>
       </figure>
     </List>

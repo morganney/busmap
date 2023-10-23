@@ -12,6 +12,13 @@ interface ThemeState {
   dispatch: Dispatch<ThemeAction>
 }
 
+const isAMode = (x: unknown): x is Mode => {
+  if (x && typeof x === 'string' && ['dark', 'light'].includes(x)) {
+    return true
+  }
+
+  return false
+}
 const defaultState: ThemeState = {
   mode: 'light',
   dispatch: () => {}
@@ -35,5 +42,5 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return <ThemeContext.Provider value={context}>{children}</ThemeContext.Provider>
 }
 
-export { ThemeProvider, useTheme }
+export { ThemeProvider, useTheme, isAMode }
 export type { Mode }
