@@ -6,7 +6,7 @@ import { VehicleMarker, VEHICLE_PANE } from './common.js'
 import { useGlobals } from '../globals.js'
 import { useVehicles } from '../contexts/vehicles.js'
 import { useVehicleSettings } from '../contexts/settings/vehicle.js'
-import { PredictedVehiclesColors } from '../utils.js'
+import { PredictedVehiclesColors } from '../common.js'
 
 import type { LayerGroup } from 'leaflet'
 import type { Vehicle, Route, Pred } from '../types.js'

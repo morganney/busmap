@@ -3,9 +3,10 @@ import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
 import { useSettings } from '../../contexts/settings/index.js'
+import { isAMode } from '../../contexts/settings/theme.js'
+import { STORAGE_KEYS } from '../../common.js'
 
 import type { FC, ChangeEvent } from 'react'
-import type { Mode } from '../../contexts/settings/index.js'
 
 const Form = styled.form`
   display: flex;
@@ -35,10 +36,15 @@ const ThemeSettings: FC = () => {
   const { theme } = useSettings()
   const onChangeMode = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
-      theme.dispatch({
-        type: 'mode',
-        value: evt.currentTarget.value as Mode
-      })
+      const { value } = evt.currentTarget
+
+      if (isAMode(value)) {
+        localStorage.setItem(STORAGE_KEYS.themeMode, value)
+        theme.dispatch({
+          value,
+          type: 'mode'
+        })
+      }
     },
     [theme]
   )

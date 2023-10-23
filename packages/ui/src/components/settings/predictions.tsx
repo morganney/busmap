@@ -3,9 +3,10 @@ import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
 import { useSettings } from '../../contexts/settings/index.js'
+import { isAPredictionFormat } from '../../contexts/settings/predictions.js'
+import { STORAGE_KEYS } from '../../common.js'
 
 import type { FC, ChangeEvent } from 'react'
-import type { PredictionFormat } from '../../contexts/settings/index.js'
 
 const Form = styled.form`
   display: flex;
@@ -35,10 +36,15 @@ const PredictionsSettings: FC = () => {
   const { predictions } = useSettings()
   const onChangeFormat = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
-      predictions.dispatch({
-        type: 'format',
-        value: evt.currentTarget.value as PredictionFormat
-      })
+      const { value } = evt.currentTarget
+
+      if (isAPredictionFormat(value)) {
+        localStorage.setItem(STORAGE_KEYS.predictionsFormat, value)
+        predictions.dispatch({
+          value,
+          type: 'format'
+        })
+      }
     },
     [predictions]
   )

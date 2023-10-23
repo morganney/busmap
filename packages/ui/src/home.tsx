@@ -134,7 +134,7 @@ const Home: FC<HomeProps> = () => {
           <Tabs
             initialTab="select"
             position="end"
-            fontSize="12px"
+            fontSize="14px"
             gap="16px"
             borderRadius="5px 5px 0 0"
             color={tabsColor}

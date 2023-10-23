@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components'
 import { PB50T, PB80T } from '@busmap/components/colors'
 
-import { PredictedVehiclesColors } from '../utils.js'
+import { PredictedVehiclesColors } from '../common.js'
 import { useTheme } from '../contexts/settings/theme.js'
 import { useVehicleSettings } from '../contexts/settings/vehicle.js'
 import { usePredictionsSettings } from '../contexts/settings/predictions.js'
