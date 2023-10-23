@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import L from 'leaflet'
+import { divIcon, marker, polyline, latLng, latLngBounds } from 'leaflet'
 
 import { useGlobals } from '../globals.js'
 
@@ -31,7 +31,7 @@ const getDirectionForStop = (id: string, directions: Direction[]) => {
   return directions[0]
 }
 const addRouteStopMarkers = (layer: LayerGroup, config: RouteStopConfig) => {
-  const divIcon = L.divIcon({
+  const icon = divIcon({
     iconSize: [7, 7],
     className: 'busmap-stop-icon',
     html: `
@@ -44,13 +44,13 @@ const addRouteStopMarkers = (layer: LayerGroup, config: RouteStopConfig) => {
 
   route.stops.forEach(stop => {
     const direction = getDirectionForStop(stop.id, route.directions)
-    const marker = L.marker([stop.lat, stop.lon], { icon: divIcon })
+    const stopMarker = marker([stop.lat, stop.lon], { icon })
 
-    marker.bindPopup(popup)
-    marker.on('click', () => {
+    stopMarker.bindPopup(popup)
+    stopMarker.on('click', () => {
       dispatch({ type: 'selected', value: { agency, route, stop, direction } })
     })
-    layer.addLayer(marker)
+    layer.addLayer(stopMarker)
   })
 }
 const addRoutePolyline = (layer: LayerGroup, route: Route) => {
@@ -60,7 +60,7 @@ const addRoutePolyline = (layer: LayerGroup, route: Route) => {
     polylines.push(path.points.map(({ lat, lon }) => [lat, lon]))
   })
 
-  layer.addLayer(L.polyline(polylines, { color: route.color }))
+  layer.addLayer(polyline(polylines, { color: route.color }))
 }
 const useRouteLayer = ({ routeLayer, map, popup }: UseRouteLayer) => {
   const { agency, route, dispatch } = useGlobals()
@@ -73,10 +73,7 @@ const useRouteLayer = ({ routeLayer, map, popup }: UseRouteLayer) => {
 
         routeLayer.clearLayers()
         map.fitBounds(
-          L.latLngBounds(
-            L.latLng(bnds.sw.lat, bnds.sw.lon),
-            L.latLng(bnds.ne.lat, bnds.ne.lon)
-          )
+          latLngBounds(latLng(bnds.sw.lat, bnds.sw.lon), latLng(bnds.ne.lat, bnds.ne.lon))
         )
         addRoutePolyline(routeLayer, route)
         addRouteStopMarkers(routeLayer, {

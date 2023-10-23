@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import L from 'leaflet'
+import { latLng, divIcon, popup as lPopup } from 'leaflet'
 
 import { VehicleMarker, VEHICLE_PANE } from './common.js'
 
@@ -215,18 +215,18 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             dimensions: iconDimensions.current
           })
           marker.getPopup()?.setContent(getVehiclePopupContent(marker, route))
-          marker.setLatLng(L.latLng(vehicle.lat, vehicle.lon))
+          marker.setLatLng(latLng(vehicle.lat, vehicle.lon))
         } else {
           const div = document.createElement('div')
           const title = document.createElement('span')
           const heading = document.createElement('span')
-          const icon = L.divIcon({
+          const icon = divIcon({
             iconAnchor: [0, 0],
             className: 'busmap-vehicle',
             html: div
           })
           const marker = new VehicleMarker(
-            L.latLng(vehicle.lat, vehicle.lon),
+            latLng(vehicle.lat, vehicle.lon),
             {
               vehicle,
               speedUnit,
@@ -240,7 +240,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
               pane: VEHICLE_PANE
             }
           )
-          const popup = L.popup({
+          const popup = lPopup({
             className: 'busmap-vehicle-popup',
             content: getVehiclePopupContent(marker, route)
           })
