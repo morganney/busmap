@@ -95,7 +95,6 @@ const Wrap = styled.div<FormItemProps>`
   gap: ${getGap};
   font-size: ${({ fontSize }) => fontSize};
 `
-const InputWrap = styled.span``
 const IconWrap = styled.div`
   display: flex;
   align-items: center;
@@ -154,12 +153,12 @@ const FormItem: FC<FormItemProps> = forwardRef<HTMLDivElement, FormItemProps>(
                 {renderLabelText(label, tip)}
               </Label>
             )}
-            <InputWrap>{children}</InputWrap>
+            <span>{children}</span>
           </>
         ) : (
           <Label direction={direction} fontWeight={fontWeight}>
             {renderLabelText(label, tip)}
-            <InputWrap>{children}</InputWrap>
+            <span>{children}</span>
           </Label>
         )}
       </Wrap>
