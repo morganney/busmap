@@ -24,7 +24,7 @@ const getSizing = (size: Size) => {
       return '32px'
   }
 }
-const Icon = styled.span<{ size: Size; color: string }>`
+const Icon = styled.span<{ size: Size; color: string; fill?: string }>`
   display: flex;
   width: ${({ size }) => getSizing(size)};
   height: ${({ size }) => getSizing(size)};
@@ -32,7 +32,7 @@ const Icon = styled.span<{ size: Size; color: string }>`
   cursor: pointer;
 
   svg {
-    fill: currentcolor;
+    fill: ${({ fill }) => fill ?? 'currentcolor'};
   }
 
   &:focus-visible {

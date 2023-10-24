@@ -1,6 +1,8 @@
 import styled, { keyframes } from 'styled-components'
 import { PB50T, PB80T } from '@busmap/components/colors'
 
+import { Locator } from './predForVehicleLocator.js'
+
 import { PredictedVehiclesColors } from '../common.js'
 import { useTheme } from '../contexts/settings/theme.js'
 import { useVehicleSettings } from '../contexts/settings/vehicle.js'
@@ -224,23 +226,34 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
             </Messages>
           )}
           <List markPredictedVehicles={markPredictedVehicles}>
-            {values.map(({ minutes, epochTime, direction, affectedByLayover }) => (
-              <li key={epochTime}>
-                {minutes === 0 ? (
-                  <em key={epochTime}>{event}</em>
-                ) : (
-                  <Format
-                    key={epochTime}
-                    minutes={minutes}
-                    epochTime={epochTime}
-                    affectedByLayover={affectedByLayover}
-                  />
-                )}
-                <span>
-                  {stop.title} &bull; {direction.title}
-                </span>
-              </li>
-            ))}
+            {values.map(
+              ({ minutes, epochTime, direction, affectedByLayover, vehicle }) => (
+                <li key={epochTime}>
+                  {minutes === 0 ? (
+                    <em key={epochTime}>{event}</em>
+                  ) : markPredictedVehicles ? (
+                    <Locator vehicleId={vehicle.id}>
+                      <Format
+                        key={epochTime}
+                        minutes={minutes}
+                        epochTime={epochTime}
+                        affectedByLayover={affectedByLayover}
+                      />
+                    </Locator>
+                  ) : (
+                    <Format
+                      key={epochTime}
+                      minutes={minutes}
+                      epochTime={epochTime}
+                      affectedByLayover={affectedByLayover}
+                    />
+                  )}
+                  <span>
+                    {stop.title} &bull; {direction.title}
+                  </span>
+                </li>
+              )
+            )}
           </List>
           {affectedByLayover && (
             <AffectedByLayover mode={mode}>

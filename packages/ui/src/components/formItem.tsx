@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { forwardRef } from 'react'
+import { Tooltip } from '@busmap/components/tooltip'
 
 import type { FC, ReactNode } from 'react'
 
@@ -24,6 +25,7 @@ interface FormItemProps {
   alignItems?: string
   fontWeight?: FontWeight
   fontSize?: string
+  tip?: string
 }
 
 const getFlexDirection = ({ direction }: LabelProps) => {
@@ -89,6 +91,7 @@ const FormItem: FC<FormItemProps> = forwardRef<HTMLLabelElement, FormItemProps>(
     {
       children,
       label,
+      tip,
       direction = 'vertical',
       gap = '4px',
       grow = 0,
@@ -109,7 +112,13 @@ const FormItem: FC<FormItemProps> = forwardRef<HTMLLabelElement, FormItemProps>(
         alignItems={alignItems}
         fontWeight={fontWeight}
         fontSize={fontSize}>
-        <span>{label ?? ''}</span>
+        {tip ? (
+          <Tooltip title={tip}>
+            <span>{label ?? ''}</span>
+          </Tooltip>
+        ) : (
+          <span>{label ?? ''}</span>
+        )}
         <span>{children}</span>
       </Label>
     )
