@@ -6,6 +6,7 @@ import { useInitMap } from './hooks/useInitMap.js'
 import { useLocateUser } from './hooks/useLocateUser.js'
 import { useRouteLayer } from './hooks/useRouteLayer.js'
 import { useZoomSelectedStop } from './hooks/useZoomSelectedStop.js'
+import { useZoomPredForVehicle } from './hooks/useZoomPredForVehicle.js'
 import { useVehiclesLayer } from './hooks/useVehiclesLayer.js'
 
 import type { FC, ReactNode } from 'react'
@@ -22,6 +23,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   useRouteLayer({ routeLayer, map, popup })
   useVehiclesLayer({ vehiclesLayer })
   useZoomSelectedStop({ map })
+  useZoomPredForVehicle({ map })
 
   if (selected) {
     return (

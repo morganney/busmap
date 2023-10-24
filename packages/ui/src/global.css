@@ -118,6 +118,9 @@ body.busmap-dark aside {
   border: 1px solid black;
   transition: transform 2.5s ease;
 }
+body.busmap-dark .busmap-vehicle {
+  border: 1px solid var(--color-dark);
+}
 .busmap-vehicle:hover {
   z-index: 999 !important;
 }
@@ -128,6 +131,9 @@ body.busmap-dark aside {
   display: block;
   background: black;
   position: absolute;
+}
+body.busmap-dark .busmap-vehicle::before {
+  background: var(--color-dark);
 }
 .busmap-vehicle.ne::before {
   top: -67%;

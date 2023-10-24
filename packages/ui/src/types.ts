@@ -126,6 +126,10 @@ interface PredictionsChanged {
   type: 'predictions'
   value: Prediction[]
 }
+interface PredForVehChanged {
+  type: 'predForVeh'
+  value?: Vehicle
+}
 interface LocationSettled {
   type: 'locationSettled'
   value: boolean
@@ -138,6 +142,7 @@ type BusmapAction =
   | DirectionChanged
   | StopChanged
   | PredictionsChanged
+  | PredForVehChanged
   | SelectedChanged
   | LocationSettled
 interface BusmapGlobals {
@@ -149,6 +154,7 @@ interface BusmapGlobals {
   direction?: Direction
   stop?: Stop
   predictions?: Prediction[]
+  predForVeh?: Vehicle
   selected?: Selection
   locationSettled: boolean
 }
