@@ -2,18 +2,15 @@ import styled from 'styled-components'
 import { forwardRef } from 'react'
 import { Tooltip } from '@busmap/components/tooltip'
 
-import type { FC, ReactNode } from 'react'
+import type { FC, ReactNode, ReactElement } from 'react'
 
 type Direction = 'horizontal' | 'vertical' | 'horizontal-rev'
 type FontWeight = 'bold' | 'normal'
 interface LabelProps {
-  direction: Direction
-  grow: number
-  gap: string
-  justifyContent: string
-  alignItems: string
-  fontSize: string
-  fontWeight: FontWeight
+  htmlFor?: string
+  fontSize?: string
+  fontWeight?: FontWeight
+  direction?: Direction
 }
 interface FormItemProps {
   children: ReactNode
@@ -26,6 +23,8 @@ interface FormItemProps {
   fontWeight?: FontWeight
   fontSize?: string
   tip?: string
+  htmlFor?: string
+  icon?: ReactElement
 }
 
 const getFlexDirection = ({ direction }: LabelProps) => {
@@ -40,14 +39,14 @@ const getFlexDirection = ({ direction }: LabelProps) => {
       return 'column'
   }
 }
-const getAlignItems = ({ alignItems }: LabelProps) => {
+const getAlignItems = ({ alignItems }: FormItemProps) => {
   if (alignItems) {
     return alignItems
   }
 
   return 'normal'
 }
-const getGap = ({ direction, gap }: LabelProps) => {
+const getGap = ({ direction, gap }: FormItemProps) => {
   if (gap) {
     return gap
   }
@@ -58,7 +57,7 @@ const getGap = ({ direction, gap }: LabelProps) => {
 
   return '8px'
 }
-const getJustifyContent = ({ direction, justifyContent }: LabelProps) => {
+const getJustifyContent = ({ direction, justifyContent }: FormItemProps) => {
   if (justifyContent) {
     return justifyContent
   }
@@ -72,9 +71,7 @@ const getJustifyContent = ({ direction, justifyContent }: LabelProps) => {
 const Label = styled.label<LabelProps>`
   display: flex;
   flex-direction: ${getFlexDirection};
-  align-items: ${getAlignItems};
-  justify-content: ${getJustifyContent};
-  gap: ${getGap};
+  gap: 4px;
   font-size: ${({ fontSize }) => fontSize};
 
   span:first-child {
@@ -85,13 +82,44 @@ const Label = styled.label<LabelProps>`
   span:last-child {
     display: flex;
   }
+
+  &[for] {
+    width: min-content;
+  }
 `
-const FormItem: FC<FormItemProps> = forwardRef<HTMLLabelElement, FormItemProps>(
+const Wrap = styled.div<FormItemProps>`
+  display: flex;
+  flex-direction: ${getFlexDirection};
+  align-items: ${getAlignItems};
+  justify-content: ${getJustifyContent};
+  gap: ${getGap};
+  font-size: ${({ fontSize }) => fontSize};
+`
+const InputWrap = styled.span``
+const IconWrap = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`
+const renderLabelText = (label?: string, tip?: string) => {
+  if (tip) {
+    return (
+      <Tooltip title={tip}>
+        <span>{label ?? ''}</span>
+      </Tooltip>
+    )
+  }
+
+  return <span>{label ?? ''}</span>
+}
+const FormItem: FC<FormItemProps> = forwardRef<HTMLDivElement, FormItemProps>(
   function FormItem(
     {
       children,
       label,
       tip,
+      icon,
+      htmlFor,
       direction = 'vertical',
       gap = '4px',
       grow = 0,
@@ -103,7 +131,7 @@ const FormItem: FC<FormItemProps> = forwardRef<HTMLLabelElement, FormItemProps>(
     ref
   ) {
     return (
-      <Label
+      <Wrap
         ref={ref}
         direction={direction}
         gap={gap}
@@ -112,15 +140,29 @@ const FormItem: FC<FormItemProps> = forwardRef<HTMLLabelElement, FormItemProps>(
         alignItems={alignItems}
         fontWeight={fontWeight}
         fontSize={fontSize}>
-        {tip ? (
-          <Tooltip title={tip}>
-            <span>{label ?? ''}</span>
-          </Tooltip>
+        {htmlFor ? (
+          <>
+            {icon ? (
+              <IconWrap>
+                <Label htmlFor={htmlFor} direction={direction} fontWeight={fontWeight}>
+                  {renderLabelText(label, tip)}
+                </Label>
+                {icon}
+              </IconWrap>
+            ) : (
+              <Label htmlFor={htmlFor} direction={direction} fontWeight={fontWeight}>
+                {renderLabelText(label, tip)}
+              </Label>
+            )}
+            <InputWrap>{children}</InputWrap>
+          </>
         ) : (
-          <span>{label ?? ''}</span>
+          <Label direction={direction} fontWeight={fontWeight}>
+            {renderLabelText(label, tip)}
+            <InputWrap>{children}</InputWrap>
+          </Label>
         )}
-        <span>{children}</span>
-      </Label>
+      </Wrap>
     )
   }
 )
