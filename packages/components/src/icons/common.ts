@@ -9,7 +9,7 @@ interface IconProps {
   color?: string
   size?: Size
   onClick?: () => void
-  onKeyDown?: (evt: KeyboardEvent<HTMLElement>) => void
+  onKeyDown?: (evt: KeyboardEvent<HTMLSpanElement>) => void
   className?: string
   tabIndex?: number
 }
@@ -31,8 +31,13 @@ const Icon = styled.span<{ size: Size; color: string; fill?: string; cursor?: st
   color: ${({ color }) => color};
   cursor: ${({ cursor }) => cursor ?? 'pointer'};
 
-  svg {
-    fill: ${({ fill }) => fill ?? 'currentcolor'};
+  /* extra specificity to override fortawesome styles */
+  && {
+    svg {
+      fill: ${({ fill }) => fill ?? 'currentcolor'};
+      height: auto;
+      overflow: hidden;
+    }
   }
 
   &:focus-visible {

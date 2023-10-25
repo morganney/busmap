@@ -62,7 +62,7 @@ aside {
   z-index: 999;
   height: 100%;
   width: 33%;
-  min-width: 290px;
+  min-width: 320px;
   max-width: 425px;
   background: var(--home-bg-color-light);
   border-left: 1px solid var(--home-border-color-light);
@@ -188,8 +188,8 @@ body.busmap-dark .busmap-vehicle::before {
   justify-content: center;
 }
 
-@media screen and (min-width: 350px) {
+@media screen and (min-width: 380px) {
   aside {
-    min-width: 320px;
+    min-width: 350px;
   }
 }
