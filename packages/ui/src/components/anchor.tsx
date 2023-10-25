@@ -16,7 +16,7 @@ const Button = styled.button<{ collapsed: boolean }>`
   background: ${PB50T}ee;
   border: none;
   border-bottom-left-radius: 5px;
-  padding: 10px;
+  padding: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,7 +29,7 @@ const Button = styled.button<{ collapsed: boolean }>`
     0 -1px ${PB50T};
 
   span {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     transform: ${({ collapsed }) => (collapsed ? 'rotate(180deg)' : 'rotate(0deg)')};
     transition: transform 0.25s ease;

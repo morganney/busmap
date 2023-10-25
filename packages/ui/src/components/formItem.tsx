@@ -94,6 +94,12 @@ const Wrap = styled.div<FormItemProps>`
   justify-content: ${getJustifyContent};
   gap: ${getGap};
   font-size: ${({ fontSize }) => fontSize};
+
+  > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 `
 const IconWrap = styled.div`
   display: flex;
@@ -153,7 +159,7 @@ const FormItem: FC<FormItemProps> = forwardRef<HTMLDivElement, FormItemProps>(
                 {renderLabelText(label, tip)}
               </Label>
             )}
-            <span>{children}</span>
+            <div>{children}</div>
           </>
         ) : (
           <Label direction={direction} fontWeight={fontWeight}>

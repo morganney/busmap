@@ -31,13 +31,8 @@ const Icon = styled.span<{ size: Size; color: string; fill?: string; cursor?: st
   color: ${({ color }) => color};
   cursor: ${({ cursor }) => cursor ?? 'pointer'};
 
-  /* extra specificity to override fortawesome styles */
-  && {
-    svg {
-      fill: ${({ fill }) => fill ?? 'currentcolor'};
-      height: auto;
-      overflow: hidden;
-    }
+  svg {
+    fill: ${({ fill }) => fill ?? 'currentcolor'};
   }
 
   &:focus-visible {

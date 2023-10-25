@@ -18,9 +18,10 @@ const Agencies: FC<Props> = ({ agencies, selected, isDisabled, onSelect }) => {
   const props = useSelectorProps<Agency>({ selected })
 
   return (
-    <FormItem label="Agency">
+    <FormItem label="Agency" htmlFor="agency-selector">
       <AutoSuggest
         {...props}
+        id="agency-selector"
         isDisabled={isDisabled}
         placeholder={`Agencies ... (${agencies.length})`}
         items={agencies}
