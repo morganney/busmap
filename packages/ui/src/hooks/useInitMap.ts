@@ -4,11 +4,13 @@ import { map as lMap, popup, layerGroup, tileLayer, control } from 'leaflet'
 import { VEHICLE_PANE } from './common.js'
 
 import { useGlobals } from '../globals.js'
+import { useMapDispatch } from '../contexts/map.js'
 
 import type { Map, LayerGroup } from 'leaflet'
 
 const useInitMap = () => {
   const { dispatch } = useGlobals()
+  const mapDispatch = useMapDispatch()
   const [map, setMap] = useState<Map | null>(null)
   const selectionRef = useRef(document.createElement('div'))
   const popupRef = useRef(popup({ minWidth: 200 }))
@@ -41,6 +43,12 @@ const useInitMap = () => {
       mapRef.current?.remove()
     }
   }, [dispatch])
+
+  useEffect(() => {
+    if (map) {
+      mapDispatch({ type: 'set', value: map })
+    }
+  }, [mapDispatch, map])
 
   return {
     map,

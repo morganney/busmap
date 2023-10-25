@@ -118,6 +118,9 @@ body.busmap-dark aside {
   border: 1px solid black;
   transition: transform 2.5s ease;
 }
+body.busmap-mapmove .busmap-vehicle {
+  transition: none;
+}
 body.busmap-dark .busmap-vehicle {
   border: 1px solid var(--color-dark);
 }

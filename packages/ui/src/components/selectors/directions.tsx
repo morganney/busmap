@@ -14,6 +14,7 @@ interface Props {
   isDisabled?: boolean
   onSelect: (selected: Direction) => void
 }
+
 const Directions: FC<Props> = ({
   directions,
   selected,

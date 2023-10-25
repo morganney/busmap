@@ -13,6 +13,7 @@ interface Props {
   isDisabled?: boolean
   onSelect: (selected: RouteName) => void
 }
+
 const Routes: FC<Props> = ({
   routes,
   selected,

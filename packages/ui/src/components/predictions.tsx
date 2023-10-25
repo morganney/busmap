@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components'
-import { PB50T, PB80T } from '@busmap/components/colors'
+import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
 
 import { Locator } from './predForVehicleLocator.js'
 
@@ -61,7 +61,7 @@ const NoArrivals = styled.p`
     text-decoration: underline;
   }
 `
-const List = styled.ul<{ markPredictedVehicles: boolean }>`
+const List = styled.ul<{ markPredictedVehicles: boolean; mode: Mode }>`
   margin: 0;
   padding: 0;
   list-style: none;
@@ -99,6 +99,7 @@ const List = styled.ul<{ markPredictedVehicles: boolean }>`
 
     span {
       font-size: 12px;
+      color: ${({ mode }) => (mode === 'light' ? 'inherit' : PB70T)};
     }
 
     &:last-child {
@@ -225,7 +226,7 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
               </ul>
             </Messages>
           )}
-          <List markPredictedVehicles={markPredictedVehicles}>
+          <List markPredictedVehicles={markPredictedVehicles} mode={mode}>
             {values.map(
               ({ minutes, epochTime, direction, affectedByLayover, vehicle }) => (
                 <li key={epochTime}>

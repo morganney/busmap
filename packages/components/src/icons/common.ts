@@ -24,12 +24,12 @@ const getSizing = (size: Size) => {
       return '32px'
   }
 }
-const Icon = styled.span<{ size: Size; color: string; fill?: string }>`
+const Icon = styled.span<{ size: Size; color: string; fill?: string; cursor?: string }>`
   display: flex;
   width: ${({ size }) => getSizing(size)};
   height: ${({ size }) => getSizing(size)};
   color: ${({ color }) => color};
-  cursor: pointer;
+  cursor: ${({ cursor }) => cursor ?? 'pointer'};
 
   svg {
     fill: ${({ fill }) => fill ?? 'currentcolor'};
