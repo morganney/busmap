@@ -23,9 +23,10 @@ const Routes: FC<Props> = ({
   const props = useSelectorProps<RouteName>({ selected })
 
   return (
-    <FormItem label="Route">
+    <FormItem label="Route" htmlFor="route-selector">
       <AutoSuggest
         {...props}
+        id="route-selector"
         isDisabled={isDisabled}
         placeholder={`Routes ... ${routes ? `(${routes.length})` : ''}`}
         items={routes ?? []}

@@ -35,9 +35,10 @@ const Directions: FC<Props> = ({
   }, [])
 
   return (
-    <FormItem label="Direction">
+    <FormItem label="Direction" htmlFor="direction-selector">
       <AutoSuggest
         {...props}
+        id="direction-selector"
         itemToString={itemToString}
         isDisabled={isDisabled}
         placeholder={`Directions ... ${directions ? `(${directions.length})` : ''}`}
