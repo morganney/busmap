@@ -12,7 +12,7 @@ type Positions =
   | 'top right'
   | 'bottom left'
   | 'bottom center'
-  | 'botom right'
+  | 'bottom right'
 type Variant = 'filled' | 'standard' | 'outlined'
 interface ToasterProps {
   type?: 'info' | 'success' | 'warning' | 'error'

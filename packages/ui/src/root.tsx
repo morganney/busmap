@@ -102,7 +102,7 @@ const Root = () => {
 
   return (
     <ErrorBoundary>
-      <Toaster anchor="top left" />
+      <Toaster anchor="bottom right" />
       <Layout>
         <Outlet />
       </Layout>
