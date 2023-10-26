@@ -2,10 +2,10 @@ import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Toaster, toast } from '@busmap/components/toast'
 
-import { STORAGE_KEYS } from './common.js'
 import { Layout } from './layout.js'
 import { ErrorBoundary } from './components/errorBoundary.js'
 import { useMap } from './contexts/map.js'
+import { useStorage, useStorageDispatch } from './contexts/storage.js'
 import { useTheme, isAMode } from './contexts/settings/theme.js'
 import { useVehicleSettings, isASpeedUnit } from './contexts/settings/vehicle.js'
 import {
@@ -15,11 +15,13 @@ import {
 
 // TODO: Should fetch agencies here and set it in context
 const Root = () => {
+  const location = useLocation()
   const map = useMap()
-  const { mode, dispatch } = useTheme()
+  const storage = useStorage()
+  const storageDispatch = useStorageDispatch()
+  const { mode, dispatch: modeDispatch } = useTheme()
   const { dispatch: vehicleDispatch } = useVehicleSettings()
   const { dispatch: predictionsDispatch } = usePredictionsSettings()
-  const location = useLocation()
 
   useEffect(() => {
     toast({ open: false })
@@ -54,51 +56,49 @@ const Root = () => {
   }, [mode])
 
   useEffect(() => {
-    // Check OS/Browser level settings
+    const themeMode = storage.themeMode
     const mql = window.matchMedia('(prefers-color-scheme: dark)')
-    // Check user-applied setting from local storage
-    const themeMode = localStorage.getItem(STORAGE_KEYS.themeMode)
     const onChangePrefersColorScheme = (evt: MediaQueryListEvent) => {
-      dispatch({
+      modeDispatch({
         type: 'mode',
         value: evt.matches ? 'dark' : 'light'
       })
       // Clear any previously user-applied setting if changing OS/Browser level setting
-      localStorage.removeItem(STORAGE_KEYS.themeMode)
+      storageDispatch({ type: 'themeMode', value: undefined })
     }
 
     mql.addEventListener('change', onChangePrefersColorScheme)
 
     // Set user-applied theme from local storage
     if (isAMode(themeMode)) {
-      dispatch({ type: 'mode', value: themeMode })
+      modeDispatch({ type: 'mode', value: themeMode })
     }
 
     return () => {
       mql.removeEventListener('change', onChangePrefersColorScheme)
     }
-  }, [dispatch])
+  }, [storage.themeMode, modeDispatch, storageDispatch])
 
   useEffect(() => {
-    const speedUnit = localStorage.getItem(STORAGE_KEYS.vehicleSpeedUnit)
-    const colorPredicted = localStorage.getItem(STORAGE_KEYS.vehicleColorPredicted)
+    const speedUnit = storage.vehicleSpeedUnit
+    const colorPredicted = storage.vehicleColorPredicted
 
     if (isASpeedUnit(speedUnit)) {
       vehicleDispatch({ type: 'speedUnit', value: speedUnit })
     }
 
-    if (colorPredicted && colorPredicted === 'false') {
+    if (colorPredicted === false) {
       vehicleDispatch({ type: 'markPredictedVehicles', value: false })
     }
-  }, [vehicleDispatch])
+  }, [storage.vehicleSpeedUnit, storage.vehicleColorPredicted, vehicleDispatch])
 
   useEffect(() => {
-    const format = localStorage.getItem(STORAGE_KEYS.predictionsFormat)
+    const format = storage.predsFormat
 
     if (isAPredictionFormat(format)) {
       predictionsDispatch({ type: 'format', value: format })
     }
-  }, [predictionsDispatch])
+  }, [storage.predsFormat, predictionsDispatch])
 
   return (
     <ErrorBoundary>

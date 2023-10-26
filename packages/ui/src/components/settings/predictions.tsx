@@ -2,9 +2,9 @@ import styled from 'styled-components'
 import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
+import { useStorageDispatch } from '../../contexts/storage.js'
 import { useSettings } from '../../contexts/settings/index.js'
 import { isAPredictionFormat } from '../../contexts/settings/predictions.js'
-import { STORAGE_KEYS } from '../../common.js'
 
 import type { FC, ChangeEvent } from 'react'
 
@@ -33,20 +33,24 @@ const Form = styled.form`
   }
 `
 const PredictionsSettings: FC = () => {
+  const storageDispatch = useStorageDispatch()
   const { predictions } = useSettings()
   const onChangeFormat = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       const { value } = evt.currentTarget
 
       if (isAPredictionFormat(value)) {
-        localStorage.setItem(STORAGE_KEYS.predictionsFormat, value)
+        storageDispatch({
+          value,
+          type: 'predsFormat'
+        })
         predictions.dispatch({
           value,
           type: 'format'
         })
       }
     },
-    [predictions]
+    [predictions, storageDispatch]
   )
 
   return (

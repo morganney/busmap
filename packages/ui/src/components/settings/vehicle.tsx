@@ -3,8 +3,8 @@ import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
 import { useSettings } from '../../contexts/settings/index.js'
+import { useStorageDispatch } from '../../contexts/storage.js'
 import { isASpeedUnit } from '../../contexts/settings/vehicle.js'
-import { STORAGE_KEYS } from '../../common.js'
 
 import type { FC, ChangeEvent } from 'react'
 
@@ -35,15 +35,19 @@ const Form = styled.form`
 `
 const VehicleSettings: FC = () => {
   const { vehicle } = useSettings()
+  const storageDispatch = useStorageDispatch()
   const onTogglePredictedVehicles = useCallback(() => {
     const value = !vehicle.markPredictedVehicles
 
-    localStorage.setItem(STORAGE_KEYS.vehicleColorPredicted, value.toString())
+    storageDispatch({
+      value,
+      type: 'vehicleColorPredicted'
+    })
     vehicle.dispatch({
       value,
       type: 'markPredictedVehicles'
     })
-  }, [vehicle])
+  }, [vehicle, storageDispatch])
   const onToggleHideOtherDirections = useCallback(() => {
     vehicle.dispatch({
       type: 'hideOtherDirections',
@@ -55,14 +59,17 @@ const VehicleSettings: FC = () => {
       const { value } = evt.currentTarget
 
       if (isASpeedUnit(value)) {
-        localStorage.setItem(STORAGE_KEYS.vehicleSpeedUnit, value)
+        storageDispatch({
+          value,
+          type: 'vehicleSpeedUnit'
+        })
         vehicle.dispatch({
           value,
           type: 'speedUnit'
         })
       }
     },
-    [vehicle]
+    [vehicle, storageDispatch]
   )
   const onChangeVisible = useCallback(() => {
     vehicle.dispatch({
