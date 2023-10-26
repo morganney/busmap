@@ -3,7 +3,8 @@ import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
 import { useStorageDispatch } from '../../contexts/storage.js'
-import { useTheme, isAMode } from '../../contexts/settings/theme.js'
+import { useTheme } from '../../contexts/settings/theme.js'
+import { isAMode } from '../../contexts/util.js'
 
 import type { FC, ChangeEvent } from 'react'
 

@@ -1,13 +1,9 @@
 import { createContext, useContext, useEffect, useReducer, useMemo } from 'react'
 
-import { isAPredictionFormat } from './settings/predictions.js'
-import { isASpeedUnit } from './settings/vehicle.js'
-import { isAMode } from './settings/theme.js'
+import { isAMode, isASpeedUnit, isAPredictionFormat } from './util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { PredictionFormat } from './settings/predictions.js'
-import type { SpeedUnit } from './settings/vehicle.js'
-import type { Mode } from './settings/theme.js'
+import type { Mode, SpeedUnit, PredictionFormat } from './util.js'
 
 interface StorageState {
   predsFormat?: PredictionFormat
@@ -80,7 +76,7 @@ const init = (): StorageState => {
   }
 
   if (vehicleColorPredicted !== null) {
-    state.vehicleColorPredicted = Boolean(vehicleColorPredicted)
+    state.vehicleColorPredicted = vehicleColorPredicted !== 'false'
   }
 
   return state
