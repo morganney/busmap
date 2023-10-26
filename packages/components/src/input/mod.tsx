@@ -157,7 +157,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     <Wrapper ref={wrapper} onBlur={handleOnBlur}>
       <StyledInput
         id={id}
-        name={name ?? id}
+        name={name}
         title={value?.toString() || undefined}
         ref={ref}
         list={list}
