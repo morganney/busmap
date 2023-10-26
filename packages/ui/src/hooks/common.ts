@@ -2,7 +2,7 @@ import { Marker } from 'leaflet'
 
 import type { MarkerOptions, LatLng } from 'leaflet'
 import type { Vehicle } from '../types.js'
-import type { SpeedUnit } from '../contexts/settings/vehicle.js'
+import type { SpeedUnit } from '../contexts/util.js'
 
 interface VehicleMarkerConfig {
   vehicle: Vehicle

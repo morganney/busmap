@@ -1,8 +1,11 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
 
-import type { FC, ReactNode, Dispatch } from 'react'
+import { useStorage } from '../storage.js'
+import { isASpeedUnit } from '../util.js'
 
-type SpeedUnit = 'kph' | 'mph'
+import type { FC, ReactNode, Dispatch } from 'react'
+import type { SpeedUnit } from '../util.js'
+
 interface VehicleSettingsState {
   visible: boolean
   hideOtherDirections: boolean
@@ -32,13 +35,6 @@ type VehicleSettingsAction =
   | MarkPredictedVehicles
   | HideOtherDirectionsChanged
 
-const isASpeedUnit = (x: unknown): x is SpeedUnit => {
-  if (x && typeof x === 'string' && ['kph', 'mph'].includes(x)) {
-    return true
-  }
-
-  return false
-}
 const defaultState: VehicleSettingsState = {
   dispatch: () => {},
   speedUnit: 'kph',
@@ -62,7 +58,12 @@ const reducer = (state: VehicleSettingsState, action: VehicleSettingsAction) => 
   }
 }
 const VehicleSettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [vehicleSettings, dispatch] = useReducer(reducer, defaultState)
+  const { vehicleSpeedUnit, vehicleColorPredicted } = useStorage()
+  const [vehicleSettings, dispatch] = useReducer(reducer, {
+    ...defaultState,
+    speedUnit: vehicleSpeedUnit ?? 'kph',
+    markPredictedVehicles: vehicleColorPredicted ?? true
+  })
   const context = useMemo(
     () => ({ ...vehicleSettings, dispatch }),
     [vehicleSettings, dispatch]
@@ -75,4 +76,3 @@ const useVehicleSettings = () => {
 }
 
 export { VehicleSettingsProvider, useVehicleSettings, isASpeedUnit }
-export type { SpeedUnit }

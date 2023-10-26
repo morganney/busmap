@@ -22,6 +22,3 @@ const useSettings = () => {
 }
 
 export { SettingsProvider, useSettings }
-export type { Mode } from './theme.js'
-export type { SpeedUnit } from './vehicle.js'
-export type { PredictionFormat } from './predictions.js'

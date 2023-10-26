@@ -2,9 +2,9 @@ import styled from 'styled-components'
 import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
-import { useSettings } from '../../contexts/settings/index.js'
-import { isAPredictionFormat } from '../../contexts/settings/predictions.js'
-import { STORAGE_KEYS } from '../../common.js'
+import { useStorageDispatch } from '../../contexts/storage.js'
+import { usePredictionsSettings } from '../../contexts/settings/predictions.js'
+import { isAPredictionFormat } from '../../contexts/util.js'
 
 import type { FC, ChangeEvent } from 'react'
 
@@ -33,20 +33,24 @@ const Form = styled.form`
   }
 `
 const PredictionsSettings: FC = () => {
-  const { predictions } = useSettings()
+  const storageDispatch = useStorageDispatch()
+  const { format, dispatch } = usePredictionsSettings()
   const onChangeFormat = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       const { value } = evt.currentTarget
 
       if (isAPredictionFormat(value)) {
-        localStorage.setItem(STORAGE_KEYS.predictionsFormat, value)
-        predictions.dispatch({
+        storageDispatch({
+          value,
+          type: 'predsFormat'
+        })
+        dispatch({
           value,
           type: 'format'
         })
       }
     },
-    [predictions]
+    [dispatch, storageDispatch]
   )
 
   return (
@@ -64,7 +68,7 @@ const PredictionsSettings: FC = () => {
             type="radio"
             name="format"
             value="minutes"
-            checked={predictions.format === 'minutes'}
+            checked={format === 'minutes'}
             onChange={onChangeFormat}
           />
         </FormItem>
@@ -73,7 +77,7 @@ const PredictionsSettings: FC = () => {
             type="radio"
             name="format"
             value="time"
-            checked={predictions.format === 'time'}
+            checked={format === 'time'}
             onChange={onChangeFormat}
           />
         </FormItem>

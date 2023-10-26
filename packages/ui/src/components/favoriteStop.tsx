@@ -21,12 +21,11 @@ const Button = styled.button`
   background: none;
 `
 const FavoriteStop: FC<FavoriteStopProps> = ({ stop, favorite = false }) => {
-
   if (stop) {
     return (
       <Tip title={favorite ? 'Favorite stop.' : 'Add to favorites.'}>
         <Button>
-          <Star color={SY30T} outlined={!favorite} />
+          <Star size="small" color={SY30T} outlined={!favorite} />
         </Button>
       </Tip>
     )

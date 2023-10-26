@@ -10,7 +10,7 @@ import { useVehicles } from '../contexts/vehicles.js'
 
 import type { FC, ReactNode } from 'react'
 import type { Vehicle } from '../types.js'
-import type { Mode } from '../contexts/settings/theme.js'
+import type { Mode } from '../contexts/util.js'
 
 interface LocatorProps {
   children: ReactNode

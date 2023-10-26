@@ -10,7 +10,7 @@ import { useTheme } from '../contexts/settings/theme.js'
 
 import type { FC } from 'react'
 import type { Stop } from '../types.js'
-import type { Mode } from '../contexts/settings/theme.js'
+import type { Mode } from '../contexts/util.js'
 
 interface StopLocatorProps {
   selected?: Stop

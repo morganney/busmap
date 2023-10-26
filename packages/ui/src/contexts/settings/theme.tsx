@@ -1,8 +1,10 @@
-import { useContext, createContext, useReducer, useMemo } from 'react'
+import { useContext, createContext, useReducer, useMemo, useEffect } from 'react'
+
+import { useStorage, useStorageDispatch } from '../storage.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
+import type { Mode, isAMode } from '../util.js'
 
-type Mode = 'light' | 'dark'
 interface ThemeAction {
   type: 'mode'
   value: Mode
@@ -12,13 +14,6 @@ interface ThemeState {
   dispatch: Dispatch<ThemeAction>
 }
 
-const isAMode = (x: unknown): x is Mode => {
-  if (x && typeof x === 'string' && ['dark', 'light'].includes(x)) {
-    return true
-  }
-
-  return false
-}
 const defaultState: ThemeState = {
   mode: 'light',
   dispatch: () => {}
@@ -36,11 +31,30 @@ const useTheme = () => {
   return useContext(ThemeContext)
 }
 const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [mode, dispatch] = useReducer(reducer, 'light')
+  const storage = useStorage()
+  const storageDispatch = useStorageDispatch()
+  const [mode, dispatch] = useReducer(reducer, storage.themeMode ?? 'light')
   const context = useMemo(() => ({ mode, dispatch }), [mode, dispatch])
+
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChangePrefersColorScheme = (evt: MediaQueryListEvent) => {
+      dispatch({
+        type: 'mode',
+        value: evt.matches ? 'dark' : 'light'
+      })
+      // Clear any previously user-applied setting if changing OS/Browser level setting
+      storageDispatch({ type: 'themeMode', value: undefined })
+    }
+
+    mql.addEventListener('change', onChangePrefersColorScheme)
+
+    return () => {
+      mql.removeEventListener('change', onChangePrefersColorScheme)
+    }
+  }, [storageDispatch])
 
   return <ThemeContext.Provider value={context}>{children}</ThemeContext.Provider>
 }
 
 export { ThemeProvider, useTheme, isAMode }
-export type { Mode }

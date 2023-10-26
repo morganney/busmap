@@ -10,7 +10,7 @@ import { usePredictionsSettings } from '../contexts/settings/predictions.js'
 
 import type { FC } from 'react'
 import type { Prediction, Stop } from '../types.js'
-import type { Mode } from '../contexts/settings/theme.js'
+import type { Mode } from '../contexts/util.js'
 
 interface PredictionsProps {
   preds?: Prediction[]

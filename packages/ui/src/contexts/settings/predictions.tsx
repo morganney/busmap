@@ -1,8 +1,11 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
 
-import type { FC, ReactNode, Dispatch } from 'react'
+import { useStorage } from '../storage.js'
+import { isAPredictionFormat } from '../util.js'
 
-type PredictionFormat = 'time' | 'minutes'
+import type { FC, ReactNode, Dispatch } from 'react'
+import type { PredictionFormat } from '../util.js'
+
 interface PredictionsSettingsState {
   format: PredictionFormat
   dispatch: Dispatch<PredictionsSettingsAction>
@@ -13,32 +16,26 @@ interface FormatChanged {
 }
 type PredictionsSettingsAction = FormatChanged
 
-const isAPredictionFormat = (x: unknown): x is PredictionFormat => {
-  if (x && typeof x === 'string' && ['time', 'minutes'].includes(x)) {
-    return true
-  }
-
-  return false
-}
 const defaultState: PredictionsSettingsState = {
   dispatch: () => {},
   format: 'minutes'
 }
 const PredictionsSettings = createContext<PredictionsSettingsState>(defaultState)
-const reducer = (state: PredictionsSettingsState, action: PredictionsSettingsAction) => {
+const reducer = (
+  state: PredictionFormat = 'minutes',
+  action: PredictionsSettingsAction
+) => {
   switch (action.type) {
     case 'format':
-      return { ...state, format: action.value }
+      return action.value
     default:
-      return { ...defaultState, ...state }
+      return state
   }
 }
 const PredictionsSettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [predictionsSettings, dispatch] = useReducer(reducer, defaultState)
-  const context = useMemo(
-    () => ({ ...predictionsSettings, dispatch }),
-    [predictionsSettings, dispatch]
-  )
+  const storage = useStorage()
+  const [format, dispatch] = useReducer(reducer, storage.predsFormat ?? 'minutes')
+  const context = useMemo(() => ({ format, dispatch }), [format, dispatch])
 
   return (
     <PredictionsSettings.Provider value={context}>
@@ -51,4 +48,3 @@ const usePredictionsSettings = () => {
 }
 
 export { PredictionsSettingsProvider, usePredictionsSettings, isAPredictionFormat }
-export type { PredictionFormat }
