@@ -2,9 +2,8 @@ import styled from 'styled-components'
 import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
-import { useSettings } from '../../contexts/settings/index.js'
 import { useStorageDispatch } from '../../contexts/storage.js'
-import { isASpeedUnit } from '../../contexts/settings/vehicle.js'
+import { useVehicleSettings, isASpeedUnit } from '../../contexts/settings/vehicle.js'
 
 import type { FC, ChangeEvent } from 'react'
 
@@ -34,26 +33,27 @@ const Form = styled.form`
   }
 `
 const VehicleSettings: FC = () => {
-  const { vehicle } = useSettings()
+  const { speedUnit, markPredictedVehicles, hideOtherDirections, visible, dispatch } =
+    useVehicleSettings()
   const storageDispatch = useStorageDispatch()
   const onTogglePredictedVehicles = useCallback(() => {
-    const value = !vehicle.markPredictedVehicles
+    const value = !markPredictedVehicles
 
     storageDispatch({
       value,
       type: 'vehicleColorPredicted'
     })
-    vehicle.dispatch({
+    dispatch({
       value,
       type: 'markPredictedVehicles'
     })
-  }, [vehicle, storageDispatch])
+  }, [markPredictedVehicles, dispatch, storageDispatch])
   const onToggleHideOtherDirections = useCallback(() => {
-    vehicle.dispatch({
+    dispatch({
       type: 'hideOtherDirections',
-      value: !vehicle.hideOtherDirections
+      value: !hideOtherDirections
     })
-  }, [vehicle])
+  }, [hideOtherDirections, dispatch])
   const onChangeSpeedUnit = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       const { value } = evt.currentTarget
@@ -63,20 +63,20 @@ const VehicleSettings: FC = () => {
           value,
           type: 'vehicleSpeedUnit'
         })
-        vehicle.dispatch({
+        dispatch({
           value,
           type: 'speedUnit'
         })
       }
     },
-    [vehicle, storageDispatch]
+    [dispatch, storageDispatch]
   )
   const onChangeVisible = useCallback(() => {
-    vehicle.dispatch({
+    dispatch({
       type: 'visibile',
-      value: !vehicle.visible
+      value: !visible
     })
-  }, [vehicle])
+  }, [dispatch, visible])
 
   return (
     <Form
@@ -91,7 +91,7 @@ const VehicleSettings: FC = () => {
         <input
           type="checkbox"
           name="visible"
-          checked={vehicle.visible}
+          checked={visible}
           onChange={onChangeVisible}
         />
       </FormItem>
@@ -103,8 +103,8 @@ const VehicleSettings: FC = () => {
         <input
           type="checkbox"
           name="colorPredicted"
-          disabled={!vehicle.visible}
-          checked={vehicle.markPredictedVehicles}
+          disabled={!visible}
+          checked={markPredictedVehicles}
           onChange={onTogglePredictedVehicles}
         />
       </FormItem>
@@ -117,8 +117,8 @@ const VehicleSettings: FC = () => {
         <input
           type="checkbox"
           name="hideOther"
-          disabled={!vehicle.visible}
-          checked={vehicle.hideOtherDirections}
+          disabled={!visible}
+          checked={hideOtherDirections}
           onChange={onToggleHideOtherDirections}
         />
       </FormItem>
@@ -129,8 +129,8 @@ const VehicleSettings: FC = () => {
             type="radio"
             name="speedUnit"
             value="kph"
-            disabled={!vehicle.visible}
-            checked={vehicle.speedUnit === 'kph'}
+            disabled={!visible}
+            checked={speedUnit === 'kph'}
             onChange={onChangeSpeedUnit}
           />
         </FormItem>
@@ -139,8 +139,8 @@ const VehicleSettings: FC = () => {
             type="radio"
             name="speedUnit"
             value="mph"
-            disabled={!vehicle.visible}
-            checked={vehicle.speedUnit === 'mph'}
+            disabled={!visible}
+            checked={speedUnit === 'mph'}
             onChange={onChangeSpeedUnit}
           />
         </FormItem>

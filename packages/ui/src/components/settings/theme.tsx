@@ -2,9 +2,8 @@ import styled from 'styled-components'
 import { useCallback } from 'react'
 
 import { FormItem } from '../formItem.js'
-import { useSettings } from '../../contexts/settings/index.js'
 import { useStorageDispatch } from '../../contexts/storage.js'
-import { isAMode } from '../../contexts/settings/theme.js'
+import { useTheme, isAMode } from '../../contexts/settings/theme.js'
 
 import type { FC, ChangeEvent } from 'react'
 
@@ -33,7 +32,7 @@ const Form = styled.form`
   }
 `
 const ThemeSettings: FC = () => {
-  const { theme } = useSettings()
+  const { mode, dispatch } = useTheme()
   const storageDispatch = useStorageDispatch()
   const onChangeMode = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
@@ -44,13 +43,13 @@ const ThemeSettings: FC = () => {
           value,
           type: 'themeMode'
         })
-        theme.dispatch({
+        dispatch({
           value,
           type: 'mode'
         })
       }
     },
-    [theme, storageDispatch]
+    [dispatch, storageDispatch]
   )
 
   return (
@@ -65,7 +64,7 @@ const ThemeSettings: FC = () => {
             type="radio"
             name="mode"
             value="light"
-            checked={theme.mode === 'light'}
+            checked={mode === 'light'}
             onChange={onChangeMode}
           />
         </FormItem>
@@ -74,7 +73,7 @@ const ThemeSettings: FC = () => {
             type="radio"
             name="mode"
             value="dark"
-            checked={theme.mode === 'dark'}
+            checked={mode === 'dark'}
             onChange={onChangeMode}
           />
         </FormItem>
