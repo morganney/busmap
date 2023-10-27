@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
 
-import { FormItem } from '../formItem.js'
-import { useStorageDispatch } from '../../contexts/storage.js'
-import { usePredictionsSettings } from '../../contexts/settings/predictions.js'
-import { isAPredictionFormat } from '../../contexts/util.js'
+import { FormItem } from '../../../components/formItem.js'
+import { useStorageDispatch } from '../../../contexts/storage.js'
+import { usePredictionsSettings } from '../contexts/predictions.js'
+import { isAPredictionFormat } from '../util.js'
 
 import type { FC, ChangeEvent } from 'react'
 

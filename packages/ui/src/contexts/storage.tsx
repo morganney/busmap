@@ -1,10 +1,10 @@
 import { createContext, useContext, useEffect, useReducer, useMemo } from 'react'
 
-import { isAMode, isASpeedUnit, isAPredictionFormat } from './util.js'
+import { isAMode, isASpeedUnit, isAPredictionFormat } from '../modules/settings/util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { Mode, SpeedUnit, PredictionFormat } from './util.js'
-import type { Favorite } from '@module/favorites/types.js'
+import type { Mode, SpeedUnit, PredictionFormat } from '../modules/settings/types.js'
+import type { Favorite } from '../modules/favorites/types.js'
 
 interface StorageState {
   predsFormat?: PredictionFormat

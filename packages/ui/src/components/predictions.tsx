@@ -4,13 +4,13 @@ import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
 import { VehicleLocator } from './vehicleLocator.js'
 
 import { PredictedVehiclesColors } from '../common.js'
-import { useTheme } from '../contexts/settings/theme.js'
-import { useVehicleSettings } from '../contexts/settings/vehicle.js'
-import { usePredictionsSettings } from '../contexts/settings/predictions.js'
+import { useTheme } from '../modules/settings/contexts/theme.js'
+import { useVehicleSettings } from '../modules/settings/contexts/vehicle.js'
+import { usePredictionsSettings } from '../modules/settings/contexts/predictions.js'
 
 import type { FC } from 'react'
 import type { Prediction, Stop } from '../types.js'
-import type { Mode } from '../contexts/util.js'
+import type { Mode } from '../modules/settings/types.js'
 
 interface PredictionsProps {
   preds?: Prediction[]

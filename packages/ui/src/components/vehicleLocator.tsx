@@ -5,12 +5,12 @@ import { Locate } from '@busmap/components/icons/locate'
 import { PB60T, PB70T, PB90T } from '@busmap/components/colors'
 
 import { useGlobals } from '../globals.js'
-import { useTheme } from '../contexts/settings/theme.js'
+import { useTheme } from '../modules/settings/contexts/theme.js'
 import { useVehicles } from '../contexts/vehicles.js'
 
 import type { FC, ReactNode } from 'react'
 import type { Vehicle } from '../types.js'
-import type { Mode } from '../contexts/util.js'
+import type { Mode } from '../modules/settings/types.js'
 
 interface LocatorProps {
   children: ReactNode

@@ -5,7 +5,7 @@ import { GlobalsProvider } from './globals.js'
 import { MapProvider } from './contexts/map.js'
 import { StorageProvider } from './contexts/storage.js'
 import { VehiclesProvider } from './contexts/vehicles.js'
-import { SettingsProvider } from './contexts/settings/index.js'
+import { SettingsProvider } from './modules/settings/contexts/settings.js'
 import { router } from './router.js'
 
 import type { FC } from 'react'

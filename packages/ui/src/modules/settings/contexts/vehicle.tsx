@@ -1,10 +1,10 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
 
-import { useStorage } from '../storage.js'
+import { useStorage } from '../../../contexts/storage.js'
 import { isASpeedUnit } from '../util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { SpeedUnit } from '../util.js'
+import type { SpeedUnit } from '../types.js'
 
 interface VehicleSettingsState {
   visible: boolean

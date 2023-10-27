@@ -1,6 +1,4 @@
-type Mode = 'light' | 'dark'
-type SpeedUnit = 'kph' | 'mph'
-type PredictionFormat = 'time' | 'minutes'
+import { Mode, SpeedUnit, PredictionFormat } from './types.js'
 
 const isAMode = (x: unknown): x is Mode => {
   if (x && typeof x === 'string' && ['dark', 'light'].includes(x)) {
@@ -25,4 +23,3 @@ const isAPredictionFormat = (x: unknown): x is PredictionFormat => {
 }
 
 export { isAMode, isASpeedUnit, isAPredictionFormat }
-export type { Mode, SpeedUnit, PredictionFormat }

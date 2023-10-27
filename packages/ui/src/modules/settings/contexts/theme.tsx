@@ -1,9 +1,9 @@
 import { useContext, createContext, useReducer, useMemo, useEffect } from 'react'
 
-import { useStorage, useStorageDispatch } from '../storage.js'
+import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { Mode, isAMode } from '../util.js'
+import type { Mode } from '../types.js'
 
 interface ThemeAction {
   type: 'mode'
@@ -57,4 +57,4 @@ const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return <ThemeContext.Provider value={context}>{children}</ThemeContext.Provider>
 }
 
-export { ThemeProvider, useTheme, isAMode }
+export { ThemeProvider, useTheme }
