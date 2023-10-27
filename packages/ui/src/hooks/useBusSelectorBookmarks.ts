@@ -8,7 +8,7 @@ const useBusSelectorBookmark = () => {
   if (!bookmark.current) {
     const homeBus = matches.find(match => match.id === 'home-bus')
 
-    bookmark.current = { ...homeBus?.params } ?? {}
+    bookmark.current = { ...homeBus?.params }
   }
 
   return bookmark.current

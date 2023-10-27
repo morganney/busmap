@@ -1,7 +1,7 @@
 import styled, { keyframes } from 'styled-components'
 import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
 
-import { Locator } from './predForVehicleLocator.js'
+import { VehicleLocator } from './vehicleLocator.js'
 
 import { PredictedVehiclesColors } from '../common.js'
 import { useTheme } from '../contexts/settings/theme.js'
@@ -233,14 +233,14 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
                   {minutes === 0 ? (
                     <em key={epochTime}>{event}</em>
                   ) : markPredictedVehicles ? (
-                    <Locator vehicleId={vehicle.id}>
+                    <VehicleLocator vehicleId={vehicle.id}>
                       <Format
                         key={epochTime}
                         minutes={minutes}
                         epochTime={epochTime}
                         affectedByLayover={affectedByLayover}
                       />
-                    </Locator>
+                    </VehicleLocator>
                   ) : (
                     <Format
                       key={epochTime}

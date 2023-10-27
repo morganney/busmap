@@ -3,7 +3,7 @@ import { AutoSuggest } from '@busmap/components/autoSuggest'
 import { useSelectorProps } from './useSelectorProps.js'
 
 import { StopLocator } from '../stopLocator.js'
-import { FavoriteStop } from '../favoriteStop.js'
+import { FavoriteStop } from '../../modules/favorites/components/favoriteStop.js'
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'

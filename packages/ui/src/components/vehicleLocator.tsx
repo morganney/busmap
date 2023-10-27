@@ -38,7 +38,7 @@ const Button = styled.button<{ mode: Mode }>`
     color: ${({ mode }) => (mode === 'light' ? 'black' : PB90T)};
   }
 `
-const Locator: FC<LocatorProps> = ({ children, vehicleId }) => {
+const VehicleLocator: FC<LocatorProps> = ({ children, vehicleId }) => {
   const { dispatch } = useGlobals()
   const { mode } = useTheme()
   const vehicles = useVehicles()
@@ -64,4 +64,4 @@ const Locator: FC<LocatorProps> = ({ children, vehicleId }) => {
   )
 }
 
-export { Locator }
+export { VehicleLocator }

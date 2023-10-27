@@ -1,4 +1,4 @@
-import type { Favorite } from '../contexts/storage.js'
+import type { Favorite } from '../../contexts/storage.js'
 
 interface FavoriteMessage {
   action: 'start' | 'stop' | 'close'

@@ -4,14 +4,8 @@ import { isAMode, isASpeedUnit, isAPredictionFormat } from './util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
 import type { Mode, SpeedUnit, PredictionFormat } from './util.js'
-import type { Agency, RouteName, DirectionName, Stop } from '../types.js'
+import type { Favorite } from '@module/favorites/types.js'
 
-interface Favorite {
-  agency: Agency
-  route: RouteName
-  direction: DirectionName
-  stop: Stop
-}
 interface StorageState {
   predsFormat?: PredictionFormat
   vehicleSpeedUnit?: SpeedUnit
