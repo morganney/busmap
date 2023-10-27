@@ -47,7 +47,7 @@ const Close = styled(CloseIcon)`
   position: absolute;
   right: 10px;
 `
-const StyledInput = styled.input<{
+const StyledInput = styled.input.attrs({ autoComplete: 'one-time-code' })<{
   $color: string
   $size: Size
   $fontSize: string

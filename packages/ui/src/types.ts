@@ -166,6 +166,7 @@ export type {
   Agency,
   Stop,
   Direction,
+  DirectionName,
   RouteName,
   Route,
   Pred,

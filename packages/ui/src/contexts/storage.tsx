@@ -4,14 +4,21 @@ import { isAMode, isASpeedUnit, isAPredictionFormat } from './util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
 import type { Mode, SpeedUnit, PredictionFormat } from './util.js'
+import type { Agency, RouteName, DirectionName, Stop } from '../types.js'
 
+interface Favorite {
+  agency: Agency
+  route: RouteName
+  direction: DirectionName
+  stop: Stop
+}
 interface StorageState {
   predsFormat?: PredictionFormat
   vehicleSpeedUnit?: SpeedUnit
   vehicleColorPredicted?: boolean
   themeMode?: Mode
+  favorites?: Favorite[]
 }
-
 interface PredsFormatUpdate {
   type: 'predsFormat'
   value?: PredictionFormat
@@ -28,16 +35,54 @@ interface ThemeModeUpdate {
   type: 'themeMode'
   value?: Mode
 }
+interface FavoriteAdded {
+  type: 'favoriteAdd'
+  value: Favorite
+}
+interface FavoriteRemoved {
+  type: 'favoriteRemove'
+  value: Favorite
+}
 type StorageAction =
   | PredsFormatUpdate
   | VehicleSpeedUnitUpdate
   | VehicleColorPredictedUpdate
   | ThemeModeUpdate
+  | FavoriteAdded
+  | FavoriteRemoved
 
 const reducer = (state: StorageState, action: StorageAction) => {
   switch (action.type) {
     case 'themeMode':
       return { ...state, themeMode: action.value }
+    case 'favoriteAdd': {
+      if (Array.isArray(state.favorites)) {
+        return {
+          ...state,
+          favorites: [...state.favorites, action.value]
+        }
+      }
+
+      return { ...state, favorites: [action.value] }
+    }
+    case 'favoriteRemove': {
+      if (Array.isArray(state.favorites)) {
+        const { value } = action
+        const { route, direction, stop } = value
+        const toRemove = `${route.id}${direction.id}${stop.id}`
+
+        return {
+          ...state,
+          favorites: state.favorites.filter(fav => {
+            const thisFav = `${fav.route.id}${fav.direction.id}${fav.stop.id}`
+
+            return toRemove !== thisFav
+          })
+        }
+      }
+
+      return state
+    }
     case 'predsFormat':
       return { ...state, predsFormat: action.value }
     case 'vehicleSpeedUnit':
@@ -52,7 +97,8 @@ const KEYS = {
   themeMode: 'busmap-themeMode',
   vehicleSpeedUnit: 'busmap-vehicleSpeedUnit',
   vehicleColorPredicted: 'busmap-vehicleColorPredicted',
-  predsFormat: 'busmap-predsFormat'
+  predsFormat: 'busmap-predsFormat',
+  favorites: 'busmap-favorites'
 }
 const StorageDispatch = createContext<Dispatch<StorageAction>>(() => {})
 const Storage = createContext<StorageState>({})
@@ -62,6 +108,7 @@ const init = (): StorageState => {
   const vehicleSpeedUnit = localStorage.getItem(KEYS.vehicleSpeedUnit)
   const vehicleColorPredicted = localStorage.getItem(KEYS.vehicleColorPredicted)
   const predsFormat = localStorage.getItem(KEYS.predsFormat)
+  const favoritesJson = localStorage.getItem(KEYS.favorites)
 
   if (isAMode(themeMode)) {
     state.themeMode = themeMode
@@ -79,11 +126,33 @@ const init = (): StorageState => {
     state.vehicleColorPredicted = vehicleColorPredicted !== 'false'
   }
 
+  if (favoritesJson) {
+    let favorites: Favorite[] | null = null
+
+    try {
+      favorites = JSON.parse(favoritesJson) as Favorite[]
+    } catch (err) {
+      // Ignore
+    }
+
+    if (favorites) {
+      state.favorites = favorites
+    }
+  }
+
   return state
 }
 const StorageProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [storage, dispatch] = useReducer(reducer, {}, init)
   const context = useMemo(() => storage, [storage])
+
+  useEffect(() => {
+    if (storage.favorites) {
+      localStorage.setItem(KEYS.favorites, JSON.stringify(storage.favorites))
+    } else {
+      localStorage.removeItem(KEYS.favorites)
+    }
+  }, [storage.favorites])
 
   useEffect(() => {
     if (storage.themeMode) {
@@ -134,3 +203,4 @@ const useStorageDispatch = () => {
 }
 
 export { StorageProvider, useStorage, useStorageDispatch }
+export type { Favorite }

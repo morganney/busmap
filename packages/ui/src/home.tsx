@@ -12,6 +12,7 @@ import { useTheme } from './contexts/settings/theme.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
 import { Settings } from './components/settings/index.js'
+import { Favorites } from './components/favorites.js'
 import { Info } from './components/info.js'
 import { Predictions } from './components/predictions.js'
 import { Anchor } from './components/anchor.js'
@@ -143,6 +144,7 @@ const Home: FC<HomeProps> = () => {
               <Tab name="select" label="🚌" />
               <Tab name="info" label="ℹ️" />
               <Tab name="settings" label="⚙️" />
+              <Tab name="favorites" label="⭐" />
               <Tab name="profile" label="👤" />
               <Tab name="login" label="Sign In" />
             </TabList>
@@ -154,6 +156,9 @@ const Home: FC<HomeProps> = () => {
             </TabPanel>
             <TabPanel name="settings">
               <Settings />
+            </TabPanel>
+            <TabPanel name="favorites">
+              <Favorites />
             </TabPanel>
             <TabPanel name="profile">
               <p>Profile</p>

@@ -40,7 +40,7 @@ const Stops: FC<Props> = ({
         onClear={onClear ?? true}
         onSelect={onSelect}
       />
-      <FavoriteStop stop={selected} favorite={false} />
+      <FavoriteStop />
     </FormItem>
   )
 }
