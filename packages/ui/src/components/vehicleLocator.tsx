@@ -5,12 +5,12 @@ import { Locate } from '@busmap/components/icons/locate'
 import { PB60T, PB70T, PB90T } from '@busmap/components/colors'
 
 import { useGlobals } from '../globals.js'
-import { useTheme } from '../contexts/settings/theme.js'
+import { useTheme } from '../modules/settings/contexts/theme.js'
 import { useVehicles } from '../contexts/vehicles.js'
 
 import type { FC, ReactNode } from 'react'
 import type { Vehicle } from '../types.js'
-import type { Mode } from '../contexts/util.js'
+import type { Mode } from '../modules/settings/types.js'
 
 interface LocatorProps {
   children: ReactNode
@@ -38,7 +38,7 @@ const Button = styled.button<{ mode: Mode }>`
     color: ${({ mode }) => (mode === 'light' ? 'black' : PB90T)};
   }
 `
-const Locator: FC<LocatorProps> = ({ children, vehicleId }) => {
+const VehicleLocator: FC<LocatorProps> = ({ children, vehicleId }) => {
   const { dispatch } = useGlobals()
   const { mode } = useTheme()
   const vehicles = useVehicles()
@@ -64,4 +64,4 @@ const Locator: FC<LocatorProps> = ({ children, vehicleId }) => {
   )
 }
 
-export { Locator }
+export { VehicleLocator }

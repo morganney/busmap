@@ -5,7 +5,7 @@ import { Toaster, toast } from '@busmap/components/toast'
 import { Layout } from './layout.js'
 import { ErrorBoundary } from './components/errorBoundary.js'
 import { useMap } from './contexts/map.js'
-import { useTheme } from './contexts/settings/theme.js'
+import { useTheme } from './modules/settings/contexts/theme.js'
 
 // TODO: Should fetch agencies here and set it in context
 const Root = () => {

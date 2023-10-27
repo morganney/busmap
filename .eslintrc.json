@@ -36,6 +36,7 @@
     "no-console": "error",
     "n/no-missing-import": "off",
     "n/no-unpublished-import": "off",
+    "import/no-unresolved": "off",
     "import/order": [
       "error",
       {

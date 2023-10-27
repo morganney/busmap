@@ -6,11 +6,11 @@ import { Locate } from '@busmap/components/icons/locate'
 import { PB60T, PB70T, PB90T } from '@busmap/components/colors'
 
 import { useMap } from '../contexts/map.js'
-import { useTheme } from '../contexts/settings/theme.js'
+import { useTheme } from '../modules/settings/contexts/theme.js'
 
 import type { FC } from 'react'
 import type { Stop } from '../types.js'
-import type { Mode } from '../contexts/util.js'
+import type { Mode } from '../modules/settings/types.js'
 
 interface StopLocatorProps {
   selected?: Stop

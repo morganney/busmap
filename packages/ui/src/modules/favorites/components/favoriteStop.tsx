@@ -4,11 +4,11 @@ import { Star } from '@busmap/components/icons/star'
 import { Tooltip } from '@busmap/components/tooltip'
 import { SY30T } from '@busmap/components/colors'
 
-import { useGlobals } from '../globals.js'
-import { useStorage, useStorageDispatch } from '../contexts/storage.js'
+import { useGlobals } from '../../../globals.js'
+import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
 
 import type { FC } from 'react'
-import type { Favorite } from '../contexts/storage.js'
+import type { Favorite } from '../../../contexts/storage.js'
 
 const Tip = styled(Tooltip)`
   display: flex;
@@ -19,7 +19,7 @@ const Button = styled.button`
   margin: 0;
   background: none;
 `
-const worker = new Worker(new URL('../workers/favorites.ts', import.meta.url), {
+const worker = new Worker(new URL('../worker.ts', import.meta.url), {
   type: 'module'
 })
 const FavoriteStop: FC = () => {
@@ -41,7 +41,7 @@ const FavoriteStop: FC = () => {
     } else if (agency && route && direction && stop) {
       const add: Favorite = {
         stop: stop,
-        agency: agency,
+        agency: { id: agency.id, title: agency.title, region: agency.region },
         route: { id: route.id, title: route.title ?? route.shortTitle },
         direction: { id: direction.id, title: direction.title ?? direction.shortTitle }
       }

@@ -6,7 +6,7 @@ import { ThemeSettings } from './theme.js'
 import { VehicleSettings } from './vehicle.js'
 import { PredictionsSettings } from './predictions.js'
 
-import { useTheme } from '../../contexts/settings/theme.js'
+import { useTheme } from '../contexts/theme.js'
 
 import type { FC } from 'react'
 
