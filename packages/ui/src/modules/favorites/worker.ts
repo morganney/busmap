@@ -9,9 +9,9 @@ interface TupleRequest {
   tuples: string[]
 }
 
-let timeout: ReturnType<typeof setTimeout>
+let favoritesPolling: ReturnType<typeof setTimeout>
 
-async function recurse(requests: TupleRequest[]) {
+async function pollFavorites(requests: TupleRequest[]) {
   try {
     const preds = await Promise.all(
       requests.map(({ agencyId, tuples }) => getForTuples(agencyId, tuples))
@@ -21,12 +21,12 @@ async function recurse(requests: TupleRequest[]) {
     )
 
     postMessage({ error: undefined, predictionsMap })
-    timeout = setTimeout(() => {
-      recurse(requests)
+    favoritesPolling = setTimeout(() => {
+      pollFavorites(requests)
     }, 10_000)
   } catch (err) {
     postMessage(err)
-    clearTimeout(timeout)
+    clearTimeout(favoritesPolling)
   }
 }
 
@@ -47,8 +47,8 @@ addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
       requests.push({ agencyId, tuples })
     }
 
-    clearTimeout(timeout)
-    recurse(requests)
+    clearTimeout(favoritesPolling)
+    pollFavorites(requests)
   }
 
   if (action === 'close') {
