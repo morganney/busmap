@@ -85,6 +85,11 @@ interface Prediction {
   stop: StopName & { distance: number | null }
   messages: Message[]
   values: Pred[]
+  _links?: {
+    from: object[]
+    self: object[]
+    to: object[]
+  }
 }
 interface Selection {
   agency: Agency

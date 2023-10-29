@@ -6,9 +6,10 @@ import { SY30T } from '@busmap/components/colors'
 
 import { useGlobals } from '../../../globals.js'
 import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
+import { same } from '../util.js'
 
 import type { FC } from 'react'
-import type { Favorite } from '../../../contexts/storage.js'
+import type { Favorite } from '../types.js'
 
 const Tip = styled(Tooltip)`
   display: flex;
@@ -19,25 +20,20 @@ const Button = styled.button`
   margin: 0;
   background: none;
 `
-const worker = new Worker(new URL('../worker.ts', import.meta.url), {
-  type: 'module'
-})
 const FavoriteStop: FC = () => {
   const storage = useStorage()
   const storageDispatch = useStorageDispatch()
   const { agency, route, direction, stop } = useGlobals()
   const favorite = useMemo(() => {
     return storage.favorites?.find(fav => {
-      return (
-        `${fav.route.id}${fav.direction.id}${fav.stop.id}` ===
-        `${route?.id}${direction?.id}${stop?.id}`
-      )
+      if (route && direction && stop && agency) {
+        return same(fav, { agency, route, direction, stop })
+      }
     })
-  }, [storage.favorites, stop, route, direction])
+  }, [storage.favorites, agency, stop, route, direction])
   const onClick = useCallback(() => {
     if (favorite) {
       storageDispatch({ type: 'favoriteRemove', value: favorite })
-      worker.postMessage({ action: 'stop', favorite })
     } else if (agency && route && direction && stop) {
       const add: Favorite = {
         stop: stop,
@@ -47,7 +43,6 @@ const FavoriteStop: FC = () => {
       }
 
       storageDispatch({ type: 'favoriteAdd', value: add })
-      worker.postMessage({ action: 'start', favorite: add })
     }
   }, [storageDispatch, agency, route, direction, stop, favorite])
 

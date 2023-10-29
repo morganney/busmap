@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useMemo } from 'react'
 
+import { same } from '../modules/favorites/util.js'
 import { isAMode, isASpeedUnit, isAPredictionFormat } from '../modules/settings/util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
@@ -11,7 +12,7 @@ interface StorageState {
   vehicleSpeedUnit?: SpeedUnit
   vehicleColorPredicted?: boolean
   themeMode?: Mode
-  favorites?: Favorite[]
+  favorites: Favorite[]
 }
 interface PredsFormatUpdate {
   type: 'predsFormat'
@@ -61,17 +62,9 @@ const reducer = (state: StorageState, action: StorageAction) => {
     }
     case 'favoriteRemove': {
       if (Array.isArray(state.favorites)) {
-        const { value } = action
-        const { route, direction, stop } = value
-        const toRemove = `${route.id}${direction.id}${stop.id}`
-
         return {
           ...state,
-          favorites: state.favorites.filter(fav => {
-            const thisFav = `${fav.route.id}${fav.direction.id}${fav.stop.id}`
-
-            return toRemove !== thisFav
-          })
+          favorites: state.favorites.filter(fav => !same(fav, action.value))
         }
       }
 
@@ -94,10 +87,10 @@ const KEYS = {
   predsFormat: 'busmap-predsFormat',
   favorites: 'busmap-favorites'
 }
+const initStorageState = { favorites: [] }
 const StorageDispatch = createContext<Dispatch<StorageAction>>(() => {})
-const Storage = createContext<StorageState>({})
-const init = (): StorageState => {
-  const state: StorageState = {}
+const Storage = createContext<StorageState>(initStorageState)
+const init = (state: StorageState): StorageState => {
   const themeMode = localStorage.getItem(KEYS.themeMode)
   const vehicleSpeedUnit = localStorage.getItem(KEYS.vehicleSpeedUnit)
   const vehicleColorPredicted = localStorage.getItem(KEYS.vehicleColorPredicted)
@@ -121,7 +114,7 @@ const init = (): StorageState => {
   }
 
   if (favoritesJson) {
-    let favorites: Favorite[] | null = null
+    let favorites: Favorite[] = []
 
     try {
       favorites = JSON.parse(favoritesJson) as Favorite[]
@@ -129,15 +122,13 @@ const init = (): StorageState => {
       // Ignore
     }
 
-    if (favorites) {
-      state.favorites = favorites
-    }
+    state.favorites = favorites
   }
 
   return state
 }
 const StorageProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [storage, dispatch] = useReducer(reducer, {}, init)
+  const [storage, dispatch] = useReducer(reducer, initStorageState, init)
   const context = useMemo(() => storage, [storage])
 
   useEffect(() => {
@@ -197,4 +188,3 @@ const useStorageDispatch = () => {
 }
 
 export { StorageProvider, useStorage, useStorageDispatch }
-export type { Favorite }
