@@ -1,7 +1,7 @@
 import type { Agency, RouteName, DirectionName, Stop, Prediction } from '../../types.js'
 
 interface Favorite {
-  agency: Omit<Agency, 'region'>
+  agency: Agency
   route: RouteName
   direction: DirectionName
   stop: Stop
