@@ -186,15 +186,15 @@ const Time: FC<FormatProps> = ({ epochTime, affectedByLayover }) => {
   const time = date.toLocaleTimeString([], { timeStyle: 'short' })
 
   return (
-    <time key={epochTime} dateTime={dateTime}>
+    <time dateTime={dateTime}>
       {time}
       {affectedByLayover && <sup>*</sup>}
     </time>
   )
 }
-const Minutes: FC<FormatProps> = ({ epochTime, minutes, affectedByLayover }) => {
+const Minutes: FC<FormatProps> = ({ minutes, affectedByLayover }) => {
   return (
-    <time key={epochTime} dateTime={`PT${minutes}M`}>
+    <time dateTime={`PT${minutes}M`}>
       {minutes} min{affectedByLayover && <sup>*</sup>}
     </time>
   )
@@ -229,13 +229,12 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
           <List markPredictedVehicles={markPredictedVehicles} mode={mode}>
             {values.map(
               ({ minutes, epochTime, direction, affectedByLayover, vehicle }) => (
-                <li key={epochTime}>
+                <li key={`${epochTime}-${vehicle.id}`}>
                   {minutes === 0 ? (
-                    <em key={epochTime}>{event}</em>
+                    <em>{event}</em>
                   ) : markPredictedVehicles ? (
                     <VehicleLocator vehicleId={vehicle.id}>
                       <Format
-                        key={epochTime}
                         minutes={minutes}
                         epochTime={epochTime}
                         affectedByLayover={affectedByLayover}
@@ -243,7 +242,6 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
                     </VehicleLocator>
                   ) : (
                     <Format
-                      key={epochTime}
                       minutes={minutes}
                       epochTime={epochTime}
                       affectedByLayover={affectedByLayover}

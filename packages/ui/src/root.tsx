@@ -47,7 +47,7 @@ const Root = () => {
 
   return (
     <ErrorBoundary>
-      <Toaster anchor="bottom right" />
+      <Toaster anchor="bottom left" />
       <Layout>
         <Outlet />
       </Layout>

@@ -93,7 +93,7 @@ const Home: FC<HomeProps> = () => {
     {
       enabled: Boolean(agency) && Boolean(route),
       refetchOnWindowFocus: false,
-      refetchInterval: 5_000,
+      refetchInterval: 10_000,
       onSuccess(data) {
         vehiclesDispatch({ type: 'set', value: data })
 
