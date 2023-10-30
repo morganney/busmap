@@ -1,6 +1,7 @@
 import styled from 'styled-components'
-import { useEffect, useState, useMemo, memo } from 'react'
+import { useEffect, useState, useMemo, useRef, memo } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from '@busmap/components/toast'
 import { PB70T } from '@busmap/components/colors'
 
 import { useStorage } from '../../../contexts/storage.js'
@@ -91,11 +92,8 @@ const Article = styled.article`
     }
   }
 `
-const worker = new Worker(new URL('../worker.ts', import.meta.url), {
-  type: 'module',
-  name: 'favorites'
-})
 const Favorites = memo(function Favorites() {
+  const workerRef = useRef<Worker>()
   const { favorites } = useStorage()
   const { format } = usePredictionsSettings()
   const [predictionsMap, setPredictionsMap] = useState<PredictionsMap>({})
@@ -114,16 +112,29 @@ const Favorites = memo(function Favorites() {
   }, [favorites])
 
   useEffect(() => {
-    worker.addEventListener('message', (evt: MessageEvent<WorkerMessage>) => {
+    workerRef.current = new Worker(new URL('../worker.ts', import.meta.url), {
+      type: 'module',
+      name: 'favorites'
+    })
+
+    workerRef.current.addEventListener('message', (evt: MessageEvent<WorkerMessage>) => {
       if (!evt.data.error) {
         setPredictionsMap(evt.data.predictionsMap)
       }
+
+      if (evt.data.error) {
+        toast({ type: 'error', message: 'Error loading favorites.' })
+      }
     })
+
+    return () => {
+      workerRef.current?.terminate()
+    }
   }, [])
 
   useEffect(() => {
-    if (favorites) {
-      worker.postMessage({
+    if (favorites && workerRef.current) {
+      workerRef.current.postMessage({
         action: 'update',
         favoritesByAgencyId: groupBy(favorites, ({ agency }) => agency.id)
       })

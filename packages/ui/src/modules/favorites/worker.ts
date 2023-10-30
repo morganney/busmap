@@ -15,12 +15,15 @@ const INTERVAL = 10_000
 let timeToNextFetch = 0
 let tupleRequests: TupleRequest[] = []
 let timeoutId: ReturnType<typeof requestAnimationFrame>
+let controller = new AbortController()
 
 const getFavoritePreds = async (timeSinceLastFetch: number) => {
   if (timeToNextFetch <= timeSinceLastFetch) {
     try {
       const preds = await Promise.all(
-        tupleRequests.map(({ agencyId, tuples }) => getForTuples(agencyId, tuples))
+        tupleRequests.map(({ agencyId, tuples }) =>
+          getForTuples(agencyId, tuples, controller.signal)
+        )
       )
       const predictionsMap = groupBy(preds.flat(), pred =>
         getPredsKey(pred.agency.title, pred.route.title, pred.stop.id)
@@ -29,17 +32,21 @@ const getFavoritePreds = async (timeSinceLastFetch: number) => {
       postMessage({ error: undefined, predictionsMap })
       timeToNextFetch = timeSinceLastFetch + INTERVAL
     } catch (err) {
-      timeToNextFetch = 0
-      postMessage(err)
       cancelAnimationFrame(timeoutId)
+      timeToNextFetch = 0
+
+      if (err instanceof Error && err.name !== 'AbortError') {
+        postMessage({ error: err })
+      }
     }
   }
-  cancelAnimationFrame(timeoutId)
+
   timeoutId = requestAnimationFrame(getFavoritePreds)
 }
 const restartFavoritesPoll = debounce(
   () => {
-    requestAnimationFrame(getFavoritePreds)
+    controller = new AbortController()
+    timeoutId = requestAnimationFrame(getFavoritePreds)
   },
   350,
   { leading: true, trailing: false }
@@ -62,6 +69,7 @@ addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
       requests.push({ agencyId, tuples })
     }
 
+    controller.abort()
     cancelAnimationFrame(timeoutId)
     tupleRequests = requests
     timeToNextFetch = 0
@@ -72,12 +80,15 @@ addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
   }
 
   if (action === 'stop') {
+    controller.abort()
     cancelAnimationFrame(timeoutId)
     tupleRequests = []
     timeToNextFetch = 0
   }
 
   if (action === 'close') {
+    controller.abort()
+    cancelAnimationFrame(timeoutId)
     postMessage(`Worker ${self.name} is closing...`)
     self.close()
   }

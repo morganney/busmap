@@ -5,13 +5,18 @@ import { errors } from '../errors.js'
 
 import type { Prediction } from '../../types.js'
 
-const getForTuples = async (agencyId?: string, tuples?: string[]) => {
+const getForTuples = async (
+  agencyId?: string,
+  tuples?: string[],
+  signal?: AbortSignal
+) => {
   if (!agencyId || !tuples) {
     throw errors.create('GET', 400, 'Bad Request')
   }
 
   const preds = await transport.fetch<Prediction[]>(
-    `${ROOT}/agencies/${agencyId}/tuples/${tuples.join(',')}/predictions`
+    `${ROOT}/agencies/${agencyId}/tuples/${tuples.join(',')}/predictions`,
+    { signal }
   )
 
   return preds.map(pred => {
