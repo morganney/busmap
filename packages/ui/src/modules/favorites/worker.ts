@@ -1,3 +1,5 @@
+import debounce from 'lodash.debounce'
+
 import { groupBy, getPredsKey } from './util.js'
 
 import { getForTuples } from '../../api/rb/tuples.js'
@@ -9,26 +11,39 @@ interface TupleRequest {
   tuples: string[]
 }
 
-let favoritesPolling: ReturnType<typeof setTimeout>
+const INTERVAL = 10_000
+let timeToNextFetch = 0
+let tupleRequests: TupleRequest[] = []
+let timeoutId: ReturnType<typeof requestAnimationFrame>
 
-async function pollFavorites(requests: TupleRequest[]) {
-  try {
-    const preds = await Promise.all(
-      requests.map(({ agencyId, tuples }) => getForTuples(agencyId, tuples))
-    )
-    const predictionsMap = groupBy(preds.flat(), pred =>
-      getPredsKey(pred.agency.title, pred.route.title, pred.stop.id)
-    )
+const getFavoritePreds = async (timeSinceLastFetch: number) => {
+  if (timeToNextFetch <= timeSinceLastFetch) {
+    try {
+      const preds = await Promise.all(
+        tupleRequests.map(({ agencyId, tuples }) => getForTuples(agencyId, tuples))
+      )
+      const predictionsMap = groupBy(preds.flat(), pred =>
+        getPredsKey(pred.agency.title, pred.route.title, pred.stop.id)
+      )
 
-    postMessage({ error: undefined, predictionsMap })
-    favoritesPolling = setTimeout(() => {
-      pollFavorites(requests)
-    }, 10_000)
-  } catch (err) {
-    postMessage(err)
-    clearTimeout(favoritesPolling)
+      postMessage({ error: undefined, predictionsMap })
+      timeToNextFetch = timeSinceLastFetch + INTERVAL
+    } catch (err) {
+      timeToNextFetch = 0
+      postMessage(err)
+      cancelAnimationFrame(timeoutId)
+    }
   }
+  cancelAnimationFrame(timeoutId)
+  timeoutId = requestAnimationFrame(getFavoritePreds)
 }
+const restartFavoritesPoll = debounce(
+  () => {
+    requestAnimationFrame(getFavoritePreds)
+  },
+  350,
+  { leading: true, trailing: false }
+)
 
 addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
   const { action, favoritesByAgencyId } = evt.data
@@ -40,15 +55,26 @@ addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
       const tuples: string[] = []
 
       favs.forEach(fav => {
-        // Restbus tuple is <routeId>:<stopId>
+        // Restbus API tuple is <routeId>:<stopId>
         tuples.push(`${fav.route.id}:${fav.stop.id}`)
       })
 
       requests.push({ agencyId, tuples })
     }
 
-    clearTimeout(favoritesPolling)
-    pollFavorites(requests)
+    cancelAnimationFrame(timeoutId)
+    tupleRequests = requests
+    timeToNextFetch = 0
+
+    if (requests.length) {
+      restartFavoritesPoll()
+    }
+  }
+
+  if (action === 'stop') {
+    cancelAnimationFrame(timeoutId)
+    tupleRequests = []
+    timeToNextFetch = 0
   }
 
   if (action === 'close') {

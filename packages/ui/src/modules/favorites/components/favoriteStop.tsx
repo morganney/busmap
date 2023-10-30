@@ -38,7 +38,12 @@ const FavoriteStop: FC = () => {
       const add: Favorite = {
         stop: stop,
         agency: { id: agency.id, title: agency.title, region: agency.region },
-        route: { id: route.id, title: route.title ?? route.shortTitle },
+        route: {
+          id: route.id,
+          title: route.title ?? route.shortTitle,
+          color: route.color,
+          textColor: route.textColor
+        },
         direction: { id: direction.id, title: direction.title ?? direction.shortTitle }
       }
 

@@ -1,8 +1,19 @@
-import type { Agency, RouteName, DirectionName, Stop, Prediction } from '../../types.js'
+import type {
+  Agency,
+  RouteName,
+  Route,
+  DirectionName,
+  Stop,
+  Prediction
+} from '../../types.js'
 
+interface RouteMeta extends RouteName {
+  color: Route['color']
+  textColor: Route['textColor']
+}
 interface Favorite {
   agency: Agency
-  route: RouteName
+  route: RouteMeta
   direction: DirectionName
   stop: Stop
 }
@@ -17,7 +28,7 @@ interface WorkerMessage {
   predictionsMap: PredictionsMap
 }
 interface ThreadMessage {
-  action: 'update' | 'close'
+  action: 'update' | 'stop' | 'close'
   favoritesByAgencyId?: FavoriteGroup
 }
 
