@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, memo, useEffect } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate, generatePath } from 'react-router-dom'
 import styled from 'styled-components'
 
@@ -51,64 +51,27 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     data: routes,
     error: routesError,
     isLoading: isRoutesLoading
-  } = useQuery(['routes', agency?.id], () => getAllRoutes(agency?.id), {
-    enabled: Boolean(agency),
-    onSuccess(data) {
-      if (bookmark.route) {
-        const route = data.find(({ id }) => id === bookmark.route)
-
-        if (route) {
-          setRouteName(route)
-        }
-
-        delete bookmark.route
-      } else {
-        // When agency changes, use the first route as the default
-        setRouteName(data[0])
-      }
-    }
+  } = useQuery({
+    queryKey: ['routes', agency?.id],
+    queryFn: () => getAllRoutes(agency?.id),
+    enabled: Boolean(agency)
   })
-  const { error: routeError, isLoading: isRouteLoading } = useQuery(
-    ['route', routeName?.id],
-    () => getRoute(agency?.id, routeName?.id),
-    {
-      enabled: Boolean(agency) && Boolean(routeName),
-      onSuccess(data) {
-        dispatch({ type: 'route', value: data })
-        vehiclesDispatch({ type: 'set', value: undefined })
-
-        if (bookmark.direction) {
-          const direction = data.directions.find(({ id }) => id === bookmark.direction)
-
-          if (direction) {
-            dispatch({ type: 'direction', value: direction })
-          }
-
-          delete bookmark.direction
-
-          if (bookmark.stop) {
-            const stop = data.stops.find(({ id }) => id === bookmark.stop)
-
-            if (stop) {
-              dispatch({ type: 'stop', value: stop })
-            }
-
-            delete bookmark.stop
-          }
-        } else {
-          dispatch({ type: 'direction', value: data.directions[0] })
-        }
-      }
-    }
-  )
+  const {
+    data: routeConfig,
+    error: routeError,
+    isLoading: isRouteLoading
+  } = useQuery({
+    queryKey: ['route', routeName?.id],
+    queryFn: () => getRoute(agency?.id, routeName?.id),
+    enabled: Boolean(agency) && Boolean(routeName)
+  })
   const onSelectAgency = useCallback(
     (selected: Agency) => {
       dispatch({
         type: 'agency',
         value: selected
       })
-
-      navigate(generatePath('/bus/:agency', { agency: selected.id }), { replace: true })
+      navigate('/', { replace: true })
     },
     [dispatch, navigate]
   )
@@ -116,13 +79,10 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     (selected: RouteName) => {
       if (agency) {
         setRouteName(selected)
-        navigate(
-          generatePath('/bus/:agency/:route', { agency: agency.id, route: selected.id }),
-          { replace: true }
-        )
+        navigate('/', { replace: true })
       }
     },
-    [navigate, agency]
+    [agency, navigate]
   )
   const onSelectDirection = useCallback(
     (selected: Direction) => {
@@ -132,14 +92,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           value: selected
         })
         vehiclesDispatch({ type: 'reset' })
-        navigate(
-          generatePath('/bus/:agency/:route/:direction', {
-            agency: agency.id,
-            route: route.id,
-            direction: selected.id
-          }),
-          { replace: true }
-        )
+        navigate('/', { replace: true })
       }
     },
     [dispatch, vehiclesDispatch, navigate, agency, route]
@@ -152,7 +105,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           value: selected
         })
         navigate(
-          generatePath('/bus/:agency/:route/:direction/:stop', {
+          generatePath('/stop/:agency/:route/:direction/:stop', {
             agency: agency.id,
             route: route.id,
             direction: direction.id,
@@ -168,16 +121,8 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     if (agency && route && direction) {
       dispatch({ type: 'stop', value: undefined })
       vehiclesDispatch({ type: 'reset' })
-      navigate(
-        generatePath('/bus/:agency/:route/:direction', {
-          agency: agency.id,
-          route: route.id,
-          direction: direction.id
-        }),
-        { replace: true }
-      )
     }
-  }, [dispatch, vehiclesDispatch, navigate, agency, route, direction])
+  }, [dispatch, vehiclesDispatch, agency, route, direction])
   const error = getFirstDataError([routesError, routeError])
   const isLoading = isRoutesLoading || isRouteLoading
 
@@ -192,6 +137,54 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
       delete bookmark.agency
     }
   }, [agencies, bookmark.agency, dispatch])
+
+  useEffect(() => {
+    if (routes) {
+      if (bookmark.route) {
+        const route = routes.find(({ id }) => id === bookmark.route)
+
+        if (route) {
+          setRouteName(route)
+        }
+
+        delete bookmark.route
+      } else {
+        // When agency changes, use the first route as the default
+        setRouteName(routes[0])
+      }
+    }
+  }, [routes, bookmark])
+
+  useEffect(() => {
+    if (routeConfig) {
+      dispatch({ type: 'route', value: routeConfig })
+      vehiclesDispatch({ type: 'set', value: undefined })
+
+      if (bookmark.direction) {
+        const direction = routeConfig.directions.find(
+          ({ id }) => id === bookmark.direction
+        )
+
+        if (direction) {
+          dispatch({ type: 'direction', value: direction })
+        }
+
+        delete bookmark.direction
+
+        if (bookmark.stop) {
+          const stop = routeConfig.stops.find(({ id }) => id === bookmark.stop)
+
+          if (stop) {
+            dispatch({ type: 'stop', value: stop })
+          }
+
+          delete bookmark.stop
+        }
+      } else {
+        dispatch({ type: 'direction', value: routeConfig.directions[0] })
+      }
+    }
+  }, [routeConfig, bookmark, dispatch, vehiclesDispatch])
 
   if (error instanceof Error) {
     return (

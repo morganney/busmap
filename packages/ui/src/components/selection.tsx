@@ -1,6 +1,6 @@
 import styled, { keyframes } from 'styled-components'
 import { useEffect } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@busmap/components/skeleton'
 
 import { getForStop } from '../api/rb/predictions.js'
@@ -78,14 +78,12 @@ const Definition = styled.dl`
   }
 `
 const Selection: FC<SelectionProps> = ({ stop, agency, route, direction, popup }) => {
-  const { data, error, isFetching } = useQuery(
-    ['preds', agency.id, route.id, stop.id],
-    () => getForStop(agency.id, route.id, stop.id),
-    {
-      refetchOnWindowFocus: true,
-      refetchInterval: 10_000
-    }
-  )
+  const { data, error, isFetching } = useQuery({
+    queryKey: ['preds', agency.id, route.id, stop.id],
+    queryFn: () => getForStop(agency.id, route.id, stop.id),
+    refetchOnWindowFocus: true,
+    refetchInterval: 10_000
+  })
   const arrivals = !data?.length
     ? []
     : /**
