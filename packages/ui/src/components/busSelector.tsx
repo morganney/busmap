@@ -54,7 +54,8 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   } = useQuery({
     queryKey: ['routes', agency?.id],
     queryFn: () => getAllRoutes(agency?.id),
-    enabled: Boolean(agency)
+    enabled: Boolean(agency),
+    staleTime: 10 * 60 * 1000
   })
   const {
     data: routeConfig,
@@ -63,7 +64,8 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   } = useQuery({
     queryKey: ['route', routeName?.id],
     queryFn: () => getRoute(agency?.id, routeName?.id),
-    enabled: Boolean(agency) && Boolean(routeName)
+    enabled: Boolean(agency) && Boolean(routeName),
+    staleTime: 10 * 60 * 1000
   })
   const onSelectAgency = useCallback(
     (selected: Agency) => {
