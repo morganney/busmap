@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, generatePath, useMatches } from 'react-router-dom'
+import { latLng, latLngBounds } from 'leaflet'
 import styled from 'styled-components'
 
 import { Agencies } from './selectors/agencies.js'
@@ -9,6 +10,7 @@ import { Directions } from './selectors/directions.js'
 import { Stops } from './selectors/stops.js'
 
 import { useGlobals } from '../globals.js'
+import { useMap } from '../contexts/map.js'
 import { useVehiclesDispatch } from '../contexts/vehicles.js'
 import { getAll as getAllRoutes, get as getRoute } from '../api/rb/route.js'
 
@@ -30,6 +32,7 @@ const Form = styled.form`
   gap: 10px;
 `
 const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
+  const map = useMap()
   const navigate = useNavigate()
   const matches = useMatches()
   const homeStop = matches.find(({ id }) => id === 'home-stop')
@@ -172,16 +175,34 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           delete bookmark.current.stop
         }
       } else {
+        const bnds = routeConfig.bounds
+
+        map?.fitBounds(
+          latLngBounds(latLng(bnds.sw.lat, bnds.sw.lon), latLng(bnds.ne.lat, bnds.ne.lon))
+        )
         dispatch({ type: 'direction', value: routeConfig.directions[0] })
       }
     }
-  }, [routeConfig, dispatch, vehiclesDispatch])
+  }, [routeConfig, map, dispatch, vehiclesDispatch])
 
   useEffect(() => {
+    /**
+     * This is a /stop route where stop state
+     * and url param are out of sync. Maybe
+     * an initial page load or favorites link.
+     */
     if (homeStop && stop?.id !== homeStop.params.stop) {
       const { params } = homeStop
 
+      /**
+       * This is where selector state and url params
+       * are all in synnc except the stop params/state.
+       *
+       * Make sure stop is not falsy so clearing a
+       * selected stop does not trigger this branch.
+       */
       if (
+        stop &&
         agency?.id === params.agency &&
         routeName?.id === params.route &&
         direction?.id === params.direction
@@ -192,24 +213,36 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           dispatch({ type: 'stop', value: stp })
         }
       } else {
+        /**
+         * From here check for out of sync state/param values one
+         * by one, update the associated state and bookmark the
+         * remaining, async values from the url params.
+         */
         if (agency?.id !== params.agency) {
           const stopAgency = agencies.find(({ id }) => id === params.agency)
 
-          bookmark.current.route = params.route
-          bookmark.current.direction = params.direction
-          bookmark.current.stop = params.stop
-
           if (stopAgency) {
+            bookmark.current.route = params.route
+            bookmark.current.direction = params.direction
+            bookmark.current.stop = params.stop
             dispatch({ type: 'agency', value: stopAgency })
           }
         } else if (routeName?.id !== params.route) {
           const stopRouteName = routes?.find(({ id }) => id === params.route)
 
-          bookmark.current.direction = params.direction
-          bookmark.current.stop = params.stop
-
           if (stopRouteName) {
+            bookmark.current.direction = params.direction
+            bookmark.current.stop = params.stop
             setRouteName(stopRouteName)
+          }
+        } else if (direction?.id !== params.direction) {
+          const stopDirection = route?.directions.find(
+            ({ id }) => id === params.direction
+          )
+
+          if (stopDirection) {
+            bookmark.current.stop = params.stop
+            dispatch({ type: 'direction', value: stopDirection })
           }
         }
       }

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { divIcon, marker, polyline, latLng, latLngBounds } from 'leaflet'
+import { divIcon, marker, polyline } from 'leaflet'
 
 import { useGlobals } from '../globals.js'
 
@@ -69,12 +69,7 @@ const useRouteLayer = ({ routeLayer, map, popup }: UseRouteLayer) => {
   useEffect(() => {
     if (map) {
       if (agency && route) {
-        const bnds = route.bounds
-
         routeLayer.clearLayers()
-        map.fitBounds(
-          latLngBounds(latLng(bnds.sw.lat, bnds.sw.lon), latLng(bnds.ne.lat, bnds.ne.lon))
-        )
         addRoutePolyline(routeLayer, route)
         addRouteStopMarkers(routeLayer, {
           agency,
