@@ -1,6 +1,6 @@
-import { useState, useCallback, useMemo, memo, useEffect } from 'react'
-import { useQuery } from 'react-query'
-import { useNavigate, generatePath } from 'react-router-dom'
+import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useNavigate, generatePath, useMatches } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { Agencies } from './selectors/agencies.js'
@@ -10,7 +10,6 @@ import { Stops } from './selectors/stops.js'
 
 import { useGlobals } from '../globals.js'
 import { useVehiclesDispatch } from '../contexts/vehicles.js'
-import { useBusSelectorBookmark } from '../hooks/useBusSelectorBookmarks.js'
 import { getAll as getAllRoutes, get as getRoute } from '../api/rb/route.js'
 
 import type { Agency, RouteName, Direction, Stop } from '../types.js'
@@ -32,7 +31,9 @@ const Form = styled.form`
 `
 const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const navigate = useNavigate()
-  const bookmark = useBusSelectorBookmark()
+  const matches = useMatches()
+  const homeStop = matches.find(({ id }) => id === 'home-stop')
+  const bookmark = useRef<Record<string, string | undefined>>({})
   const [routeName, setRouteName] = useState<RouteName>()
   const { dispatch, agency, route, direction, stop } = useGlobals()
   const vehiclesDispatch = useVehiclesDispatch()
@@ -51,64 +52,29 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     data: routes,
     error: routesError,
     isLoading: isRoutesLoading
-  } = useQuery(['routes', agency?.id], () => getAllRoutes(agency?.id), {
+  } = useQuery({
+    queryKey: ['routes', agency?.id],
+    queryFn: () => getAllRoutes(agency?.id),
     enabled: Boolean(agency),
-    onSuccess(data) {
-      if (bookmark.route) {
-        const route = data.find(({ id }) => id === bookmark.route)
-
-        if (route) {
-          setRouteName(route)
-        }
-
-        delete bookmark.route
-      } else {
-        // When agency changes, use the first route as the default
-        setRouteName(data[0])
-      }
-    }
+    staleTime: 10 * 60 * 1000
   })
-  const { error: routeError, isLoading: isRouteLoading } = useQuery(
-    ['route', routeName?.id],
-    () => getRoute(agency?.id, routeName?.id),
-    {
-      enabled: Boolean(agency) && Boolean(routeName),
-      onSuccess(data) {
-        dispatch({ type: 'route', value: data })
-        vehiclesDispatch({ type: 'set', value: undefined })
-
-        if (bookmark.direction) {
-          const direction = data.directions.find(({ id }) => id === bookmark.direction)
-
-          if (direction) {
-            dispatch({ type: 'direction', value: direction })
-          }
-
-          delete bookmark.direction
-
-          if (bookmark.stop) {
-            const stop = data.stops.find(({ id }) => id === bookmark.stop)
-
-            if (stop) {
-              dispatch({ type: 'stop', value: stop })
-            }
-
-            delete bookmark.stop
-          }
-        } else {
-          dispatch({ type: 'direction', value: data.directions[0] })
-        }
-      }
-    }
-  )
+  const {
+    data: routeConfig,
+    error: routeError,
+    isLoading: isRouteLoading
+  } = useQuery({
+    queryKey: ['route', routeName?.id],
+    queryFn: () => getRoute(agency?.id, routeName?.id),
+    enabled: Boolean(agency) && Boolean(routeName),
+    staleTime: 10 * 60 * 1000
+  })
   const onSelectAgency = useCallback(
     (selected: Agency) => {
       dispatch({
         type: 'agency',
         value: selected
       })
-
-      navigate(generatePath('/bus/:agency', { agency: selected.id }), { replace: true })
+      navigate('/', { replace: true })
     },
     [dispatch, navigate]
   )
@@ -116,13 +82,10 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     (selected: RouteName) => {
       if (agency) {
         setRouteName(selected)
-        navigate(
-          generatePath('/bus/:agency/:route', { agency: agency.id, route: selected.id }),
-          { replace: true }
-        )
+        navigate('/', { replace: true })
       }
     },
-    [navigate, agency]
+    [agency, navigate]
   )
   const onSelectDirection = useCallback(
     (selected: Direction) => {
@@ -132,14 +95,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           value: selected
         })
         vehiclesDispatch({ type: 'reset' })
-        navigate(
-          generatePath('/bus/:agency/:route/:direction', {
-            agency: agency.id,
-            route: route.id,
-            direction: selected.id
-          }),
-          { replace: true }
-        )
+        navigate('/', { replace: true })
       }
     },
     [dispatch, vehiclesDispatch, navigate, agency, route]
@@ -152,7 +108,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           value: selected
         })
         navigate(
-          generatePath('/bus/:agency/:route/:direction/:stop', {
+          generatePath('/stop/:agency/:route/:direction/:stop', {
             agency: agency.id,
             route: route.id,
             direction: direction.id,
@@ -168,30 +124,97 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     if (agency && route && direction) {
       dispatch({ type: 'stop', value: undefined })
       vehiclesDispatch({ type: 'reset' })
-      navigate(
-        generatePath('/bus/:agency/:route/:direction', {
-          agency: agency.id,
-          route: route.id,
-          direction: direction.id
-        }),
-        { replace: true }
-      )
     }
-  }, [dispatch, vehiclesDispatch, navigate, agency, route, direction])
+  }, [dispatch, vehiclesDispatch, agency, route, direction])
   const error = getFirstDataError([routesError, routeError])
   const isLoading = isRoutesLoading || isRouteLoading
 
   useEffect(() => {
-    if (bookmark.agency) {
-      const agency = agencies.find(({ id }) => id === bookmark.agency)
+    if (routes) {
+      if (bookmark.current.route) {
+        const route = routes.find(({ id }) => id === bookmark.current.route)
 
-      if (agency) {
-        dispatch({ type: 'agency', value: agency })
+        if (route) {
+          setRouteName(route)
+        }
+
+        delete bookmark.current.route
+      } else {
+        // When agency changes, use the first route as the default
+        setRouteName(routes[0])
       }
-
-      delete bookmark.agency
     }
-  }, [agencies, bookmark.agency, dispatch])
+  }, [routes])
+
+  useEffect(() => {
+    if (routeConfig) {
+      dispatch({ type: 'route', value: routeConfig })
+      vehiclesDispatch({ type: 'set', value: undefined })
+
+      if (bookmark.current.direction) {
+        const direction = routeConfig.directions.find(
+          ({ id }) => id === bookmark.current.direction
+        )
+
+        if (direction) {
+          dispatch({ type: 'direction', value: direction })
+        }
+
+        delete bookmark.current.direction
+
+        if (bookmark.current.stop) {
+          const stop = routeConfig.stops.find(({ id }) => id === bookmark.current.stop)
+
+          if (stop) {
+            dispatch({ type: 'stop', value: stop })
+          }
+
+          delete bookmark.current.stop
+        }
+      } else {
+        dispatch({ type: 'direction', value: routeConfig.directions[0] })
+      }
+    }
+  }, [routeConfig, dispatch, vehiclesDispatch])
+
+  useEffect(() => {
+    if (homeStop && stop?.id !== homeStop.params.stop) {
+      const { params } = homeStop
+
+      if (
+        agency?.id === params.agency &&
+        routeName?.id === params.route &&
+        direction?.id === params.direction
+      ) {
+        const stp = route?.stops.find(({ id }) => id === params.stop)
+
+        if (stp) {
+          dispatch({ type: 'stop', value: stp })
+        }
+      } else {
+        if (agency?.id !== params.agency) {
+          const stopAgency = agencies.find(({ id }) => id === params.agency)
+
+          bookmark.current.route = params.route
+          bookmark.current.direction = params.direction
+          bookmark.current.stop = params.stop
+
+          if (stopAgency) {
+            dispatch({ type: 'agency', value: stopAgency })
+          }
+        } else if (routeName?.id !== params.route) {
+          const stopRouteName = routes?.find(({ id }) => id === params.route)
+
+          bookmark.current.direction = params.direction
+          bookmark.current.stop = params.stop
+
+          if (stopRouteName) {
+            setRouteName(stopRouteName)
+          }
+        }
+      }
+    }
+  }, [homeStop, dispatch, agencies, agency, routeName, routes, route, direction, stop])
 
   if (error instanceof Error) {
     return (

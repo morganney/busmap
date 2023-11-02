@@ -170,7 +170,7 @@ const Favorites = memo(function Favorites() {
                         <header>
                           <h5>
                             <Link
-                              to={`/bus/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
+                              to={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
                               {fav.stop.title}
                             </Link>
                           </h5>

@@ -6,9 +6,9 @@ const useBusSelectorBookmark = () => {
   const bookmark = useRef<Record<string, string | undefined> | undefined>()
 
   if (!bookmark.current) {
-    const homeBus = matches.find(match => match.id === 'home-bus')
+    const homeStop = matches.find(match => match.id === 'home-stop')
 
-    bookmark.current = { ...homeBus?.params }
+    bookmark.current = { ...homeStop?.params }
   }
 
   return bookmark.current

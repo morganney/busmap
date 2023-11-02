@@ -1,5 +1,5 @@
 import { useReducer, useCallback, useEffect } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { createPortal } from 'react-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import { toast } from '@busmap/components/toast'
@@ -64,50 +64,31 @@ const Home: FC<HomeProps> = () => {
   const vehiclesDispatch = useVehiclesDispatch()
   const { dispatch: update, locationSettled, agency, route, stop } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { data: agencies, error: agenciesError } = useQuery('agencies', getAllAgencies)
-  const { data: preds, isFetching: isPredsFetching } = useQuery(
-    ['preds', agency?.id, route?.id, stop?.id],
-    () => getForStop(agency?.id, route?.id, stop?.id),
-    {
-      enabled: Boolean(agency) && Boolean(route) && Boolean(stop),
-      refetchOnWindowFocus: true,
-      refetchInterval: 10_000,
-      onSuccess(data) {
-        update({ type: 'predictions', value: data })
-        dispatch({ type: 'timestamp', value: Date.now() })
-        // Reset vehicles based on changed predicted vehicles
-        vehiclesDispatch({ type: 'reset' })
-      }
-    }
-  )
+  const { data: agencies, error: agenciesError } = useQuery({
+    queryKey: ['agencies'],
+    queryFn: getAllAgencies,
+    staleTime: 10 * 60 * 1000
+  })
+  const { data: preds, isFetching: isPredsFetching } = useQuery({
+    queryKey: ['preds', agency?.id, route?.id, stop?.id],
+    queryFn: () => getForStop(agency?.id, route?.id, stop?.id),
+    enabled: Boolean(agency) && Boolean(route) && Boolean(stop),
+    refetchOnWindowFocus: true,
+    refetchInterval: 10_000
+  })
+  const { data: vehicles } = useQuery({
+    queryKey: ['vehicles', agency?.id, route?.id],
+    queryFn: () => getAllVehicles(agency?.id, route?.id),
+    enabled: Boolean(agency) && Boolean(route),
+    refetchOnWindowFocus: true,
+    refetchInterval: 10_000
+  })
   const onClickAnchor = useCallback(() => {
     dispatch({ type: 'collapsed', value: !state.collapsed })
   }, [state.collapsed])
   const messages = preds?.length ? preds[0].messages : []
   const tabsBackground = mode === 'dark' ? PB50T : undefined
   const tabsColor = mode === 'dark' ? PB90T : undefined
-
-  useQuery(
-    ['vehicles', agency?.id, route?.id],
-    () => getAllVehicles(agency?.id, route?.id),
-    {
-      enabled: Boolean(agency) && Boolean(route),
-      refetchOnWindowFocus: false,
-      refetchInterval: 10_000,
-      onSuccess(data) {
-        vehiclesDispatch({ type: 'set', value: data })
-
-        if (!data.filter(({ predictable }) => predictable).length) {
-          toast({
-            type: 'info',
-            message: `No ${data.length ? 'predictable ' : ''}vehicles on route.`,
-            // Keep open until the user closes
-            timeout: undefined
-          })
-        }
-      }
-    }
-  )
 
   useEffect(() => {
     if (state.collapsed) {
@@ -116,6 +97,30 @@ const Home: FC<HomeProps> = () => {
       asideNode.classList.remove('collapsed')
     }
   }, [state.collapsed])
+
+  useEffect(() => {
+    if (preds) {
+      update({ type: 'predictions', value: preds })
+      dispatch({ type: 'timestamp', value: Date.now() })
+      // Reset vehicles based on changed predicted vehicles
+      vehiclesDispatch({ type: 'reset' })
+    }
+  }, [update, vehiclesDispatch, preds])
+
+  useEffect(() => {
+    if (vehicles) {
+      vehiclesDispatch({ type: 'set', value: vehicles })
+
+      if (!vehicles.filter(({ predictable }) => predictable).length) {
+        toast({
+          type: 'info',
+          message: `No ${vehicles.length ? 'predictable ' : ''}vehicles on route.`,
+          // Keep open until the user closes
+          timeout: undefined
+        })
+      }
+    }
+  }, [vehiclesDispatch, vehicles])
 
   if (agenciesError instanceof Error) {
     return createPortal(
