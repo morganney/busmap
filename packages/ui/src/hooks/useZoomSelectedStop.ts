@@ -18,7 +18,7 @@ const useZoomSelectedStop = ({ map }: UseZoomSelectedStop) => {
       const { lat, lon } = stop
       const latLng = lLatLng(lat, lon)
 
-      map.setView(latLng, Math.max(map.getZoom(), 16))
+      map.setView(latLng, Math.max(map.getZoom() ?? 1, 16))
       marker.current.bindPopup(stop.title ?? 'Your selected stop.')
       marker.current.setLatLng(latLng).addTo(map)
     }
