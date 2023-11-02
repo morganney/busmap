@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, generatePath, useMatches } from 'react-router-dom'
+import { latLng, latLngBounds } from 'leaflet'
 import styled from 'styled-components'
 
 import { Agencies } from './selectors/agencies.js'
@@ -9,6 +10,7 @@ import { Directions } from './selectors/directions.js'
 import { Stops } from './selectors/stops.js'
 
 import { useGlobals } from '../globals.js'
+import { useMap } from '../contexts/map.js'
 import { useVehiclesDispatch } from '../contexts/vehicles.js'
 import { getAll as getAllRoutes, get as getRoute } from '../api/rb/route.js'
 
@@ -30,6 +32,7 @@ const Form = styled.form`
   gap: 10px;
 `
 const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
+  const map = useMap()
   const navigate = useNavigate()
   const matches = useMatches()
   const homeStop = matches.find(({ id }) => id === 'home-stop')
@@ -172,10 +175,15 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           delete bookmark.current.stop
         }
       } else {
+        const bnds = routeConfig.bounds
+
+        map?.fitBounds(
+          latLngBounds(latLng(bnds.sw.lat, bnds.sw.lon), latLng(bnds.ne.lat, bnds.ne.lon))
+        )
         dispatch({ type: 'direction', value: routeConfig.directions[0] })
       }
     }
-  }, [routeConfig, dispatch, vehiclesDispatch])
+  }, [routeConfig, map, dispatch, vehiclesDispatch])
 
   useEffect(() => {
     /**
