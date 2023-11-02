@@ -1,9 +1,9 @@
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
 
 import { VehicleLocator } from './vehicleLocator.js'
 
-import { PredictedVehiclesColors } from '../common.js'
+import { PredictedVehiclesColors, blinkStyles } from '../common.js'
 import { useTheme } from '../modules/settings/contexts/theme.js'
 import { useVehicleSettings } from '../modules/settings/contexts/vehicle.js'
 import { usePredictionsSettings } from '../modules/settings/contexts/predictions.js'
@@ -24,24 +24,6 @@ interface FormatProps {
   affectedByLayover: boolean
   minutes: number
 }
-
-const blink = keyframes`
-  10% {
-    opacity: 0;
-  }
-  20% {
-    opacity: 0;
-  }
-  30% {
-    opacity: 0;
-  }
-  40% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 1;
-  }
-`
 const Section = styled.section`
   margin: 0;
 `
@@ -92,9 +74,7 @@ const List = styled.ul<{ markPredictedVehicles: boolean; mode: Mode }>`
     }
 
     em {
-      font-style: normal;
-      opacity: 1;
-      animation: ${blink} 1.5s linear infinite;
+      ${blinkStyles};
     }
 
     span {

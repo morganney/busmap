@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { marker, latLng, latLngBounds } from 'leaflet'
 
-import { useBusSelectorBookmark } from './useBusSelectorBookmarks.js'
+import { useHomeStop } from './useHomeStop.js'
 
 import { useGlobals } from '../globals.js'
 
@@ -11,12 +11,12 @@ interface UseLocateUser {
   map: Map | null
 }
 const useLocateUser = ({ map }: UseLocateUser) => {
+  const homeStop = useHomeStop()
   const { locationSettled, dispatch } = useGlobals()
-  const bookmark = useBusSelectorBookmark()
 
   useEffect(() => {
     if (map && !locationSettled) {
-      if (!Object.keys(bookmark).length) {
+      if (!homeStop) {
         map.on('locationfound', evt => {
           marker(evt.latlng)
             .addTo(map)
@@ -37,7 +37,7 @@ const useLocateUser = ({ map }: UseLocateUser) => {
         dispatch({ type: 'locationSettled', value: true })
       }
     }
-  }, [map, locationSettled, bookmark, dispatch])
+  }, [map, locationSettled, homeStop, dispatch])
 }
 
 export { useLocateUser }
