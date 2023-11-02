@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate, generatePath, useMatches } from 'react-router-dom'
+import { useNavigate, generatePath } from 'react-router-dom'
 import { latLng, latLngBounds } from 'leaflet'
 import styled from 'styled-components'
 
@@ -11,6 +11,7 @@ import { Stops } from './selectors/stops.js'
 
 import { useGlobals } from '../globals.js'
 import { useMap } from '../contexts/map.js'
+import { useHomeStop } from '../hooks/useHomeStop.js'
 import { useVehiclesDispatch } from '../contexts/vehicles.js'
 import { getAll as getAllRoutes, get as getRoute } from '../api/rb/route.js'
 
@@ -34,8 +35,7 @@ const Form = styled.form`
 const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const map = useMap()
   const navigate = useNavigate()
-  const matches = useMatches()
-  const homeStop = matches.find(({ id }) => id === 'home-stop')
+  const homeStop = useHomeStop()
   const bookmark = useRef<Record<string, string | undefined>>({})
   const [routeName, setRouteName] = useState<RouteName>()
   const { dispatch, agency, route, direction, stop } = useGlobals()
@@ -59,7 +59,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     queryKey: ['routes', agency?.id],
     queryFn: () => getAllRoutes(agency?.id),
     enabled: Boolean(agency),
-    staleTime: 10 * 60 * 1000
+    staleTime: 20 * 60 * 1000
   })
   const {
     data: routeConfig,
@@ -69,7 +69,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     queryKey: ['route', routeName?.id],
     queryFn: () => getRoute(agency?.id, routeName?.id),
     enabled: Boolean(agency) && Boolean(routeName),
-    staleTime: 10 * 60 * 1000
+    staleTime: 20 * 60 * 1000
   })
   const onSelectAgency = useCallback(
     (selected: Agency) => {
@@ -239,10 +239,11 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           const stopDirection = route?.directions.find(
             ({ id }) => id === params.direction
           )
+          const stopStop = route?.stops.find(({ id }) => id === params.stop)
 
-          if (stopDirection) {
-            bookmark.current.stop = params.stop
+          if (stopDirection && stopStop) {
             dispatch({ type: 'direction', value: stopDirection })
+            dispatch({ type: 'stop', value: stopStop })
           }
         }
       }

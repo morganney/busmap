@@ -67,7 +67,7 @@ const Home: FC<HomeProps> = () => {
   const { data: agencies, error: agenciesError } = useQuery({
     queryKey: ['agencies'],
     queryFn: getAllAgencies,
-    staleTime: 10 * 60 * 1000
+    staleTime: 20 * 60 * 1000
   })
   const { data: preds, isFetching: isPredsFetching } = useQuery({
     queryKey: ['preds', agency?.id, route?.id, stop?.id],
