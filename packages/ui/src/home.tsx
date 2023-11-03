@@ -147,23 +147,23 @@ const Home: FC<HomeProps> = () => {
             background={tabsBackground}>
             <TabList>
               <Tab name="select" label="🚌" />
-              <Tab name="info" label="ℹ️" />
-              <Tab name="settings" label="⚙️" />
               <Tab name="favorites" label="⭐" />
+              <Tab name="settings" label="⚙️" />
+              <Tab name="info" label="ℹ️" />
               <Tab name="profile" label="👤" />
               <Tab name="login" label="Sign In" />
             </TabList>
             <TabPanel name="select">
               <BusSelector agencies={agencies} />
             </TabPanel>
-            <TabPanel name="info">
-              <Info />
+            <TabPanel name="favorites">
+              <Favorites />
             </TabPanel>
             <TabPanel name="settings">
               <Settings />
             </TabPanel>
-            <TabPanel name="favorites">
-              <Favorites />
+            <TabPanel name="info">
+              <Info />
             </TabPanel>
             <TabPanel name="profile">
               <p>Profile</p>
