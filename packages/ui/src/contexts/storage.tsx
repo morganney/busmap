@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useMemo } from 'react'
 
 import { same } from '../modules/favorites/util.js'
+import { MAX_FAVORITES } from '../modules/favorites/common.js'
 import { isAMode, isASpeedUnit, isAPredictionFormat } from '../modules/settings/util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
@@ -122,7 +123,7 @@ const init = (state: StorageState): StorageState => {
       // Ignore
     }
 
-    state.favorites = favorites
+    state.favorites = favorites.slice(0, MAX_FAVORITES)
   }
 
   return state

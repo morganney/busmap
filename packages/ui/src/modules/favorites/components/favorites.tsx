@@ -6,7 +6,7 @@ import { toast } from '@busmap/components/toast'
 import { Tooltip } from '@busmap/components/tooltip'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
 import { Trash } from '@busmap/components/icons/trash'
-import { PB20T, PB80T, PB90T, PB10T } from '@busmap/components/colors'
+import { PB20T, PB80T, PB10T, PB50T } from '@busmap/components/colors'
 
 import { blinkStyles } from '../../../common.js'
 import { useMap } from '../../../contexts/map.js'
@@ -14,9 +14,11 @@ import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
 import { useHomeStop } from '../../../hooks/useHomeStop.js'
 import { useTheme } from '../../../modules/settings/contexts/theme.js'
 import { usePredictionsSettings } from '../../settings/contexts/predictions.js'
+import { Details } from '../../../components/details.js'
 import { Minutes } from '../../../components/predictionFormats/minutes.js'
 import { Time } from '../../../components/predictionFormats/time.js'
 import { groupBy, getPredsKey } from '../util.js'
+import { MAX_FAVORITES } from '../common.js'
 
 import type { MouseEvent } from 'react'
 import type {
@@ -26,6 +28,14 @@ import type {
 } from '../types.js'
 import type { Mode } from '../../../modules/settings/types.js'
 
+const Empty = styled.div`
+  display: grid;
+  gap: 10px;
+
+  p {
+    margin: 0;
+  }
+`
 const Section = styled.section`
   display: flex;
   flex-direction: column;
@@ -71,7 +81,7 @@ const RouteWrap = styled.div`
 `
 const RouteSection = styled.section<{ routeColor: string; routeTextColor: string }>`
   border-radius: 5px;
-  border: 2px solid ${({ routeColor }) => routeColor};
+  border: 1px solid ${({ routeColor }) => routeColor};
 
   h4 {
     font-size: 14px;
@@ -88,7 +98,7 @@ const Article = styled.article<{ routeColor: string; isSelected: boolean; mode: 
   flex-direction: column;
   gap: 12px;
   padding: 8px;
-  border-bottom: 2px dashed ${({ routeColor }) => routeColor};
+  border-bottom: 1px dashed ${({ routeColor }) => routeColor};
 
   &:last-child {
     border-bottom: none;
@@ -214,7 +224,10 @@ const Favorites = memo(function Favorites() {
     if (favorites && workerRef.current) {
       workerRef.current.postMessage({
         action: 'update',
-        favoritesByAgencyId: groupBy(favorites, ({ agency }) => agency.id)
+        favoritesByAgencyId: groupBy(
+          favorites.slice(0, MAX_FAVORITES),
+          ({ agency }) => agency.id
+        )
       })
     }
   }, [favorites])
@@ -223,115 +236,132 @@ const Favorites = memo(function Favorites() {
     <Section>
       <h2>Favorite Stops</h2>
       {!favorites.length ? (
-        <div>⭐ You can select your favorite stops from the bus selector tab. ⭐</div>
+        <Empty>
+          <span>⭐⭐⭐</span>
+          <p>
+            You can select up to {MAX_FAVORITES} favorite stops from the bus selector tab.
+            Their arrival or departure prediction times will be displayed here.
+          </p>
+          <span>⭐⭐⭐</span>
+        </Empty>
       ) : (
-        <AgenciesWrap>
-          {Object.keys(agencyRouteGroup).map(agencyTitle => (
-            <AgencySection key={agencyTitle} mode={mode}>
-              <h3>{agencyTitle}</h3>
-              <RouteWrap>
-                {Object.keys(agencyRouteGroup[agencyTitle]).map(routeTitle => {
-                  const firstFav = agencyRouteGroup[agencyTitle][routeTitle][0]
-                  const { color, textColor } = firstFav.route
+        <>
+          {favorites.length === MAX_FAVORITES && (
+            <Details mode={mode}>
+              <summary>Maximum favorites reached.</summary>
+              <p>
+                You have reached your maximum of {MAX_FAVORITES} favorite stops. To select
+                another favorite stop you can remove a current favorite, or create an
+                account to increase your maximum limit.
+              </p>
+            </Details>
+          )}
+          <AgenciesWrap>
+            {Object.keys(agencyRouteGroup).map(agencyTitle => (
+              <AgencySection key={agencyTitle} mode={mode}>
+                <h3>{agencyTitle}</h3>
+                <RouteWrap>
+                  {Object.keys(agencyRouteGroup[agencyTitle]).map(routeTitle => {
+                    const firstFav = agencyRouteGroup[agencyTitle][routeTitle][0]
+                    const { color, textColor } = firstFav.route
 
-                  return (
-                    <RouteSection
-                      key={routeTitle}
-                      routeColor={color}
-                      routeTextColor={textColor}>
-                      <h4>{routeTitle}</h4>
-                      {agencyRouteGroup[agencyTitle][routeTitle].map((fav, idx) => {
-                        const isHomeStopFav =
-                          fav.agency.id === homeStop?.params.agency &&
-                          fav.route.id === homeStop?.params.route &&
-                          fav.direction.id === homeStop?.params.direction &&
-                          fav.stop.id === homeStop?.params.stop
-                        const PredFormat = format === 'minutes' ? Minutes : Time
-                        const preds =
-                          predictionsMap[
-                            getPredsKey(agencyTitle, routeTitle, fav.stop.id)
-                          ]
+                    return (
+                      <RouteSection
+                        key={routeTitle}
+                        routeColor={color}
+                        routeTextColor={textColor}>
+                        <h4>{routeTitle}</h4>
+                        {agencyRouteGroup[agencyTitle][routeTitle].map((fav, idx) => {
+                          const isHomeStopFav =
+                            fav.agency.id === homeStop?.params.agency &&
+                            fav.route.id === homeStop?.params.route &&
+                            fav.direction.id === homeStop?.params.direction &&
+                            fav.stop.id === homeStop?.params.stop
+                          const PredFormat = format === 'minutes' ? Minutes : Time
+                          const preds =
+                            predictionsMap[
+                              getPredsKey(agencyTitle, routeTitle, fav.stop.id)
+                            ]
 
-                        return (
-                          <Article
-                            key={`${fav.stop.id}-${idx}`}
-                            routeColor={color}
-                            mode={mode}
-                            isSelected={isHomeStopFav}>
-                            <header>
-                              <h5 className={isHomeStopFav ? 'fav-selected' : undefined}>
-                                <Link
-                                  to={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
-                                  {fav.stop.title}
-                                </Link>
-                                {isHomeStopFav && (
-                                  <Tooltip title="Locate selected favorite.">
-                                    <button
-                                      onClick={onClickSelectedFavorite}
-                                      data-lat={fav.stop.lat}
-                                      data-lon={fav.stop.lon}>
-                                      <MapMarked size="small" color={color} />
-                                    </button>
-                                  </Tooltip>
-                                )}
-                              </h5>
-                              <h6>{fav.direction.title}</h6>
-                            </header>
-                            {preds?.length ? (
-                              <ul>
-                                {preds[0].values
-                                  .slice(0, 3)
-                                  .map(
-                                    ({
-                                      vehicle,
-                                      epochTime,
-                                      minutes,
-                                      affectedByLayover
-                                    }) => (
-                                      <li key={`${epochTime}-${vehicle.id}`}>
-                                        {minutes === 0 ? (
-                                          <em>Now</em>
-                                        ) : (
-                                          <PredFormat
-                                            minutes={minutes}
-                                            epochTime={epochTime}
-                                            affectedByLayover={affectedByLayover}
-                                          />
-                                        )}
-                                        <span>•</span>
-                                      </li>
-                                    )
+                          return (
+                            <Article
+                              key={`${fav.stop.id}-${idx}`}
+                              routeColor={color}
+                              mode={mode}
+                              isSelected={isHomeStopFav}>
+                              <header>
+                                <h5
+                                  className={isHomeStopFav ? 'fav-selected' : undefined}>
+                                  <Link
+                                    to={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
+                                    {fav.stop.title}
+                                  </Link>
+                                  {isHomeStopFav && (
+                                    <Tooltip title="Locate selected favorite.">
+                                      <button
+                                        onClick={onClickSelectedFavorite}
+                                        data-lat={fav.stop.lat}
+                                        data-lon={fav.stop.lon}>
+                                        <MapMarked size="small" color={color} />
+                                      </button>
+                                    </Tooltip>
                                   )}
-                              </ul>
-                            ) : (
-                              <span>No predictions.</span>
-                            )}
-                            <footer>
-                              <Tooltip title="Delete">
-                                <button
-                                  onClick={() => {
-                                    storageDispatch({
-                                      type: 'favoriteRemove',
-                                      value: fav
-                                    })
-                                  }}>
-                                  <Trash
-                                    size="small"
-                                    color={mode === 'light' ? PB20T : PB90T}
-                                  />
-                                </button>
-                              </Tooltip>
-                            </footer>
-                          </Article>
-                        )
-                      })}
-                    </RouteSection>
-                  )
-                })}
-              </RouteWrap>
-            </AgencySection>
-          ))}
-        </AgenciesWrap>
+                                </h5>
+                                <h6>{fav.direction.title}</h6>
+                              </header>
+                              {preds?.length ? (
+                                <ul>
+                                  {preds[0].values
+                                    .slice(0, 3)
+                                    .map(
+                                      ({
+                                        vehicle,
+                                        epochTime,
+                                        minutes,
+                                        affectedByLayover
+                                      }) => (
+                                        <li key={`${epochTime}-${vehicle.id}`}>
+                                          {minutes === 0 ? (
+                                            <em>Now</em>
+                                          ) : (
+                                            <PredFormat
+                                              minutes={minutes}
+                                              epochTime={epochTime}
+                                              affectedByLayover={affectedByLayover}
+                                            />
+                                          )}
+                                          <span>•</span>
+                                        </li>
+                                      )
+                                    )}
+                                </ul>
+                              ) : (
+                                <span>No predictions.</span>
+                              )}
+                              <footer>
+                                <Tooltip title="Delete">
+                                  <button
+                                    onClick={() => {
+                                      storageDispatch({
+                                        type: 'favoriteRemove',
+                                        value: fav
+                                      })
+                                    }}>
+                                    <Trash size="small" color={PB50T} />
+                                  </button>
+                                </Tooltip>
+                              </footer>
+                            </Article>
+                          )
+                        })}
+                      </RouteSection>
+                    )
+                  })}
+                </RouteWrap>
+              </AgencySection>
+            ))}
+          </AgenciesWrap>
+        </>
       )}
     </Section>
   )

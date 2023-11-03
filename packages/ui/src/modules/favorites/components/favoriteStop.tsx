@@ -7,6 +7,7 @@ import { SY30T } from '@busmap/components/colors'
 import { useGlobals } from '../../../globals.js'
 import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
 import { same } from '../util.js'
+import { MAX_FAVORITES } from '../common.js'
 
 import type { FC } from 'react'
 import type { Favorite } from '../types.js'
@@ -21,16 +22,16 @@ const Button = styled.button`
   background: none;
 `
 const FavoriteStop: FC = () => {
-  const storage = useStorage()
+  const { favorites } = useStorage()
   const storageDispatch = useStorageDispatch()
   const { agency, route, direction, stop } = useGlobals()
   const favorite = useMemo(() => {
-    return storage.favorites?.find(fav => {
+    return favorites.find(fav => {
       if (route && direction && stop && agency) {
         return same(fav, { agency, route, direction, stop })
       }
     })
-  }, [storage.favorites, agency, stop, route, direction])
+  }, [favorites, agency, stop, route, direction])
   const onClick = useCallback(() => {
     if (favorite) {
       storageDispatch({ type: 'favoriteRemove', value: favorite })
@@ -50,8 +51,9 @@ const FavoriteStop: FC = () => {
       storageDispatch({ type: 'favoriteAdd', value: add })
     }
   }, [storageDispatch, agency, route, direction, stop, favorite])
+  const isFavoritable = Boolean(stop) && (favorites.length < MAX_FAVORITES || favorite)
 
-  if (stop) {
+  if (isFavoritable) {
     return (
       <Tip title={favorite ? 'Remove favorite.' : 'Add favorite.'}>
         <Button>
