@@ -1,13 +1,16 @@
 import styled from 'styled-components'
-import { useEffect, useState, useMemo, useRef, memo } from 'react'
+import { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react'
+import { latLng } from 'leaflet'
 import { Link } from 'react-router-dom'
 import { toast } from '@busmap/components/toast'
 import { Tooltip } from '@busmap/components/tooltip'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
-import { PB20T, PB80T, PB10T } from '@busmap/components/colors'
+import { Trash } from '@busmap/components/icons/trash'
+import { PB20T, PB80T, PB90T, PB10T } from '@busmap/components/colors'
 
 import { blinkStyles } from '../../../common.js'
-import { useStorage } from '../../../contexts/storage.js'
+import { useMap } from '../../../contexts/map.js'
+import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
 import { useHomeStop } from '../../../hooks/useHomeStop.js'
 import { useTheme } from '../../../modules/settings/contexts/theme.js'
 import { usePredictionsSettings } from '../../settings/contexts/predictions.js'
@@ -15,6 +18,7 @@ import { Minutes } from '../../../components/predictionFormats/minutes.js'
 import { Time } from '../../../components/predictionFormats/time.js'
 import { groupBy, getPredsKey } from '../util.js'
 
+import type { MouseEvent } from 'react'
 import type {
   WorkerMessage,
   PredictionsMap,
@@ -30,6 +34,14 @@ const Section = styled.section`
   h2 {
     font-size: 22px;
     margin: 0;
+  }
+
+  button {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
   }
 `
 const AgenciesWrap = styled.div`
@@ -92,10 +104,11 @@ const Article = styled.article<{ routeColor: string; isSelected: boolean; mode: 
   }
 
   h5.fav-selected {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
     a {
-      display: flex;
-      align-items: center;
-      gap: 8px;
       text-decoration: none;
 
       &,
@@ -116,13 +129,14 @@ const Article = styled.article<{ routeColor: string; isSelected: boolean; mode: 
     padding: 0;
     list-style: none;
     display: flex;
-    gap: 4px;
+    gap: 6px;
+    line-height: 1;
 
     li {
       display: flex;
       align-items: center;
       gap: 5px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: bold;
 
       em {
@@ -136,12 +150,20 @@ const Article = styled.article<{ routeColor: string; isSelected: boolean; mode: 
       }
     }
   }
+
+  footer {
+    > div {
+      display: inline-block;
+    }
+  }
 `
 const Favorites = memo(function Favorites() {
+  const map = useMap()
   const workerRef = useRef<Worker>()
   const homeStop = useHomeStop()
   const { mode } = useTheme()
   const { favorites } = useStorage()
+  const storageDispatch = useStorageDispatch()
   const { format } = usePredictionsSettings()
   const [predictionsMap, setPredictionsMap] = useState<PredictionsMap>({})
   const agencyRouteGroup = useMemo(() => {
@@ -157,6 +179,15 @@ const Favorites = memo(function Favorites() {
 
     return outer
   }, [favorites])
+  const onClickSelectedFavorite = useCallback(
+    (evt: MouseEvent<HTMLButtonElement>) => {
+      const { lat, lon } = evt.currentTarget.dataset
+      const latLon = latLng(Number(lat), Number(lon))
+
+      map?.setView(latLon, Math.max(map.getZoom() ?? 1, 16))
+    },
+    [map]
+  )
 
   useEffect(() => {
     workerRef.current = new Worker(new URL('../worker.ts', import.meta.url), {
@@ -231,13 +262,18 @@ const Favorites = memo(function Favorites() {
                               <h5 className={isHomeStopFav ? 'fav-selected' : undefined}>
                                 <Link
                                   to={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
-                                  <span>{fav.stop.title}</span>
-                                  {isHomeStopFav && (
-                                    <Tooltip title="Favorite selected.">
-                                      <MapMarked size="small" color={color} />
-                                    </Tooltip>
-                                  )}
+                                  {fav.stop.title}
                                 </Link>
+                                {isHomeStopFav && (
+                                  <Tooltip title="Locate selected favorite.">
+                                    <button
+                                      onClick={onClickSelectedFavorite}
+                                      data-lat={fav.stop.lat}
+                                      data-lon={fav.stop.lon}>
+                                      <MapMarked size="small" color={color} />
+                                    </button>
+                                  </Tooltip>
+                                )}
                               </h5>
                               <h6>{fav.direction.title}</h6>
                             </header>
@@ -270,6 +306,22 @@ const Favorites = memo(function Favorites() {
                             ) : (
                               <span>No predictions.</span>
                             )}
+                            <footer>
+                              <Tooltip title="Delete">
+                                <button
+                                  onClick={() => {
+                                    storageDispatch({
+                                      type: 'favoriteRemove',
+                                      value: fav
+                                    })
+                                  }}>
+                                  <Trash
+                                    size="small"
+                                    color={mode === 'light' ? PB20T : PB90T}
+                                  />
+                                </button>
+                              </Tooltip>
+                            </footer>
                           </Article>
                         )
                       })}
