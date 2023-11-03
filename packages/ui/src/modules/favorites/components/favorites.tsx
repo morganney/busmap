@@ -89,6 +89,9 @@ const RouteSection = styled.section<{ routeColor: string; routeTextColor: string
     margin: 0;
     padding: 2px 3px;
     line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: ${({ routeTextColor }) => routeTextColor};
     background: ${({ routeColor }) => routeColor};
   }
@@ -270,7 +273,7 @@ const Favorites = memo(function Favorites() {
                         key={routeTitle}
                         routeColor={color}
                         routeTextColor={textColor}>
-                        <h4>{routeTitle}</h4>
+                        <h4 title={routeTitle}>{routeTitle}</h4>
                         {agencyRouteGroup[agencyTitle][routeTitle].map((fav, idx) => {
                           const isHomeStopFav =
                             fav.agency.id === homeStop?.params.agency &&
