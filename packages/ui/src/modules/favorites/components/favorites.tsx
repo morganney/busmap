@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import ReactColorA11y from 'react-color-a11y'
 import { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react'
 import { latLng } from 'leaflet'
 import { Link } from 'react-router-dom'
@@ -107,34 +108,50 @@ const Article = styled.article<{ routeColor: string; isSelected: boolean; mode: 
     border-bottom: none;
   }
 
-  h5 {
-    font-size: 16px;
-    margin: 0;
-
-    a {
-      color: ${({ routeColor }) => routeColor};
+  footer {
+    > div {
+      display: inline-block;
     }
   }
 
-  h5.fav-selected {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  header {
+    > div {
+      display: inline-block;
+    }
 
-    a {
-      text-decoration: none;
+    h5 {
+      font-size: 16px;
+      margin: 0;
 
-      &,
-      svg {
-        cursor: auto;
+      a {
+        color: ${({ routeColor }) => routeColor};
       }
     }
-  }
 
-  h6 {
-    font-size: 12px;
-    font-weight: normal;
-    margin: 0;
+    h6 {
+      font-size: 12px;
+      font-weight: normal;
+      margin: 0;
+    }
+
+    &.fav-selected {
+      > div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      h5 {
+        a {
+          text-decoration: none;
+
+          &,
+          svg {
+            cursor: auto;
+          }
+        }
+      }
+    }
   }
 
   ul {
@@ -161,12 +178,6 @@ const Article = styled.article<{ routeColor: string; isSelected: boolean; mode: 
       span:last-child {
         display: none;
       }
-    }
-  }
-
-  footer {
-    > div {
-      display: inline-block;
     }
   }
 `
@@ -268,97 +279,94 @@ const Favorites = memo(function Favorites() {
                     const firstFav = agencyRouteGroup[agencyTitle][routeTitle][0]
                     const { color, textColor } = firstFav.route
 
-                    return (
-                      <RouteSection
-                        key={routeTitle}
-                        routeColor={color}
-                        routeTextColor={textColor}>
-                        <h4 title={routeTitle}>{routeTitle}</h4>
-                        {agencyRouteGroup[agencyTitle][routeTitle].map((fav, idx) => {
-                          const isHomeStopFav =
-                            fav.agency.id === homeStop?.params.agency &&
-                            fav.route.id === homeStop?.params.route &&
-                            fav.direction.id === homeStop?.params.direction &&
-                            fav.stop.id === homeStop?.params.stop
-                          const PredFormat = format === 'minutes' ? Minutes : Time
-                          const preds =
-                            predictionsMap[
-                              getPredsKey(agencyTitle, routeTitle, fav.stop.id)
-                            ]
+                    return agencyRouteGroup[agencyTitle][routeTitle].map(fav => {
+                      const isHomeStopFav =
+                        fav.agency.id === homeStop?.params.agency &&
+                        fav.route.id === homeStop?.params.route &&
+                        fav.direction.id === homeStop?.params.direction &&
+                        fav.stop.id === homeStop?.params.stop
+                      const PredFormat = format === 'minutes' ? Minutes : Time
+                      const preds =
+                        predictionsMap[getPredsKey(agencyTitle, routeTitle, fav.stop.id)]
 
-                          return (
-                            <Article
-                              key={`${fav.stop.id}-${idx}`}
-                              routeColor={color}
-                              mode={mode}
-                              isSelected={isHomeStopFav}>
-                              <header>
-                                <h5
-                                  className={isHomeStopFav ? 'fav-selected' : undefined}>
+                      return (
+                        <RouteSection
+                          key={`${routeTitle}-${fav.stop.id}`}
+                          routeColor={color}
+                          routeTextColor={textColor}>
+                          <h4 title={routeTitle}>{routeTitle}</h4>
+                          <Article
+                            routeColor={color}
+                            mode={mode}
+                            isSelected={isHomeStopFav}>
+                            <header
+                              className={isHomeStopFav ? 'fav-selected' : undefined}>
+                              <ReactColorA11y colorPaletteKey={mode}>
+                                <h5>
                                   <Link
                                     to={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
                                     {fav.stop.title}
                                   </Link>
-                                  {isHomeStopFav && (
-                                    <Tooltip title="Locate selected favorite.">
-                                      <button
-                                        onClick={onClickSelectedFavorite}
-                                        data-lat={fav.stop.lat}
-                                        data-lon={fav.stop.lon}>
-                                        <MapMarked size="small" color={color} />
-                                      </button>
-                                    </Tooltip>
-                                  )}
                                 </h5>
-                                <h6>{fav.direction.title}</h6>
-                              </header>
-                              {preds?.length ? (
-                                <ul>
-                                  {preds[0].values
-                                    .slice(0, 3)
-                                    .map(
-                                      ({
-                                        vehicle,
-                                        epochTime,
-                                        minutes,
-                                        affectedByLayover
-                                      }) => (
-                                        <li key={`${epochTime}-${vehicle.id}`}>
-                                          {minutes === 0 ? (
-                                            <em>Now</em>
-                                          ) : (
-                                            <PredFormat
-                                              minutes={minutes}
-                                              epochTime={epochTime}
-                                              affectedByLayover={affectedByLayover}
-                                            />
-                                          )}
-                                          <span>•</span>
-                                        </li>
-                                      )
-                                    )}
-                                </ul>
-                              ) : (
-                                <span>No predictions.</span>
-                              )}
-                              <footer>
-                                <Tooltip title="Delete">
-                                  <button
-                                    onClick={() => {
-                                      storageDispatch({
-                                        type: 'favoriteRemove',
-                                        value: fav
-                                      })
-                                    }}>
-                                    <Trash size="small" color={PB50T} />
-                                  </button>
-                                </Tooltip>
-                              </footer>
-                            </Article>
-                          )
-                        })}
-                      </RouteSection>
-                    )
+                                {isHomeStopFav && (
+                                  <Tooltip title="Locate selected favorite.">
+                                    <button
+                                      onClick={onClickSelectedFavorite}
+                                      data-lat={fav.stop.lat}
+                                      data-lon={fav.stop.lon}>
+                                      <MapMarked size="small" color={color} />
+                                    </button>
+                                  </Tooltip>
+                                )}
+                              </ReactColorA11y>
+                              <h6>{fav.direction.title}</h6>
+                            </header>
+                            {preds?.length ? (
+                              <ul>
+                                {preds[0].values
+                                  .slice(0, 3)
+                                  .map(
+                                    ({
+                                      vehicle,
+                                      epochTime,
+                                      minutes,
+                                      affectedByLayover
+                                    }) => (
+                                      <li key={`${epochTime}-${vehicle.id}`}>
+                                        {minutes === 0 ? (
+                                          <em>Now</em>
+                                        ) : (
+                                          <PredFormat
+                                            minutes={minutes}
+                                            epochTime={epochTime}
+                                            affectedByLayover={affectedByLayover}
+                                          />
+                                        )}
+                                        <span>•</span>
+                                      </li>
+                                    )
+                                  )}
+                              </ul>
+                            ) : (
+                              <span>No predictions.</span>
+                            )}
+                            <footer>
+                              <Tooltip title="Delete">
+                                <button
+                                  onClick={() => {
+                                    storageDispatch({
+                                      type: 'favoriteRemove',
+                                      value: fav
+                                    })
+                                  }}>
+                                  <Trash size="small" color={PB50T} />
+                                </button>
+                              </Tooltip>
+                            </footer>
+                          </Article>
+                        </RouteSection>
+                      )
+                    })
                   })}
                 </RouteWrap>
               </AgencySection>
