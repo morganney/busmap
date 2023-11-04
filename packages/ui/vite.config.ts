@@ -18,7 +18,8 @@ export default defineConfig(() => {
       rollupOptions: {
         output: {
           manualChunks: {
-            leaflet: ['leaflet']
+            leaflet: ['leaflet'],
+            react: ['react', 'react-dom']
           }
         }
       }

@@ -114,9 +114,7 @@ const Home: FC<HomeProps> = () => {
       if (!vehicles.filter(({ predictable }) => predictable).length) {
         toast({
           type: 'info',
-          message: `No ${vehicles.length ? 'predictable ' : ''}vehicles on route.`,
-          // Keep open until the user closes
-          timeout: undefined
+          message: `No ${vehicles.length ? 'predictable ' : ''}vehicles on route.`
         })
       }
     }
