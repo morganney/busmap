@@ -1,16 +1,17 @@
 import styled from 'styled-components'
 import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
 
+import { useTheme } from '@module/settings/contexts/theme.js'
+import { useVehicleSettings } from '@module/settings/contexts/vehicle.js'
+import { usePredictionsSettings } from '@module/settings/contexts/predictions.js'
+
 import { VehicleLocator } from './vehicleLocator.js'
 
 import { PredictedVehiclesColors, blinkStyles } from '../common.js'
-import { useTheme } from '../modules/settings/contexts/theme.js'
-import { useVehicleSettings } from '../modules/settings/contexts/vehicle.js'
-import { usePredictionsSettings } from '../modules/settings/contexts/predictions.js'
 
 import type { FC } from 'react'
+import type { Mode } from '@module/settings/types.js'
 import type { Prediction, Stop } from '../types.js'
-import type { Mode } from '../modules/settings/types.js'
 
 interface PredictionsProps {
   preds?: Prediction[]

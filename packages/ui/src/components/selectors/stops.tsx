@@ -1,13 +1,14 @@
 import { AutoSuggest } from '@busmap/components/autoSuggest'
 
+import { FavoriteStop } from '@module/favorites/components/favoriteStop.js'
+
 import { useSelectorProps } from './useSelectorProps.js'
 
 import { StopLocator } from '../stopLocator.js'
-import { FavoriteStop } from '../../modules/favorites/components/favoriteStop.js'
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
-import type { Stop } from '../../types.js'
+import type { Stop } from '@core/types.js'
 
 interface Props {
   stops: Stop[]

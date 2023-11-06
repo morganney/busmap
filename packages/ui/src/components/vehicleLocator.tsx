@@ -4,13 +4,14 @@ import { Tooltip } from '@busmap/components/tooltip'
 import { Locate } from '@busmap/components/icons/locate'
 import { PB60T, PB70T, PB90T } from '@busmap/components/colors'
 
+import { useTheme } from '@module/settings/contexts/theme.js'
+
 import { useGlobals } from '../globals.js'
-import { useTheme } from '../modules/settings/contexts/theme.js'
 import { useVehicles } from '../contexts/vehicles.js'
 
 import type { FC, ReactNode } from 'react'
+import type { Mode } from '@module/settings/types.js'
 import type { Vehicle } from '../types.js'
-import type { Mode } from '../modules/settings/types.js'
 
 interface LocatorProps {
   children: ReactNode

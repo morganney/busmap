@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react'
 import { latLng, divIcon, popup as lPopup } from 'leaflet'
 
+import { useVehicleSettings } from '@module/settings/contexts/vehicle.js'
+
 import { VehicleMarker, VEHICLE_PANE } from './common.js'
 
 import { useGlobals } from '../globals.js'
 import { useVehicles } from '../contexts/vehicles.js'
 import { usePredictions } from '../contexts/predictions.js'
-import { useVehicleSettings } from '../modules/settings/contexts/vehicle.js'
 import { PredictedVehiclesColors } from '../common.js'
 
 import type { LayerGroup } from 'leaflet'

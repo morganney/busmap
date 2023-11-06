@@ -5,12 +5,13 @@ import { Tooltip } from '@busmap/components/tooltip'
 import { Locate } from '@busmap/components/icons/locate'
 import { PB60T, PB70T, PB90T } from '@busmap/components/colors'
 
+import { useTheme } from '@module/settings/contexts/theme.js'
+
 import { useMap } from '../contexts/map.js'
-import { useTheme } from '../modules/settings/contexts/theme.js'
 
 import type { FC } from 'react'
+import type { Mode } from '@module/settings/types.js'
 import type { Stop } from '../types.js'
-import type { Mode } from '../modules/settings/types.js'
 
 interface StopLocatorProps {
   selected?: Stop

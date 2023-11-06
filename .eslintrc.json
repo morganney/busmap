@@ -26,7 +26,11 @@
   "settings": {
     "import/resolver": {
       "node": true,
-      "typescript": true
+      "typescript": {
+        "project": [
+          "packages/*/tsconfig.json"
+        ]
+      }
     },
     "react": {
       "version": "detect"
@@ -41,6 +45,13 @@
       "error",
       {
         "groups": ["builtin", "external", "internal", "index", "sibling", "parent", "type"],
+        "pathGroups": [
+          {
+            "pattern": "@(@core|@module)/**/!(types).js",
+            "group": "internal"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["type"],
         "newlines-between": "always"
       }
     ],

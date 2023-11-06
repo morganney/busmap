@@ -5,7 +5,7 @@ import { useSelectorProps } from './useSelectorProps.js'
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
-import type { Agency } from '../../types.js'
+import type { Agency } from '@core/types.js'
 
 interface Props {
   agencies: Agency[]

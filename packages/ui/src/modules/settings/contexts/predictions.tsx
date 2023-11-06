@@ -1,6 +1,7 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
 
-import { useStorage } from '../../../contexts/storage.js'
+import { useStorage } from '@core/contexts/storage.js'
+
 import { isAPredictionFormat } from '../util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'

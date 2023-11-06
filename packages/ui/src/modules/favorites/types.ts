@@ -1,5 +1,5 @@
-import type { Agency, RouteName, Route, DirectionName, Stop } from '../../types.js'
-import type { Prediction } from '../../contexts/predictions.js'
+import type { Agency, RouteName, Route, DirectionName, Stop } from '@core/types.js'
+import type { Prediction } from '@core/contexts/predictions.js'
 
 interface RouteMeta extends RouteName {
   color: Route['color']

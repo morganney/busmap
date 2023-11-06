@@ -5,7 +5,7 @@ import { useSelectorProps } from './useSelectorProps.js'
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
-import type { RouteName } from '../../types.js'
+import type { RouteName } from '@core/types.js'
 
 interface Props {
   routes?: RouteName[]

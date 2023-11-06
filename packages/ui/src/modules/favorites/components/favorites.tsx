@@ -9,25 +9,26 @@ import { MapMarked } from '@busmap/components/icons/mapMarked'
 import { Trash } from '@busmap/components/icons/trash'
 import { PB20T, PB80T, PB10T, PB50T } from '@busmap/components/colors'
 
-import { blinkStyles } from '../../../common.js'
-import { useMap } from '../../../contexts/map.js'
-import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
-import { useHomeStop } from '../../../hooks/useHomeStop.js'
-import { useTheme } from '../../../modules/settings/contexts/theme.js'
-import { usePredictionsSettings } from '../../settings/contexts/predictions.js'
-import { Details } from '../../../components/details.js'
-import { Minutes } from '../../../components/predictionFormats/minutes.js'
-import { Time } from '../../../components/predictionFormats/time.js'
+import { blinkStyles } from '@core/common.js'
+import { useMap } from '@core/contexts/map.js'
+import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
+import { useHomeStop } from '@core/hooks/useHomeStop.js'
+import { useTheme } from '@core/modules/settings/contexts/theme.js'
+import { Details } from '@core/components/details.js'
+import { Minutes } from '@core/components/predictionFormats/minutes.js'
+import { Time } from '@core/components/predictionFormats/time.js'
+import { usePredictionsSettings } from '@module/settings/contexts/predictions.js'
+
 import { groupBy, getPredsKey } from '../util.js'
 import { MAX_FAVORITES } from '../common.js'
 
 import type { MouseEvent } from 'react'
+import type { Mode } from '@module/settings/types.js'
 import type {
   WorkerMessage,
   PredictionsMap,
   AgencyRouteFavoritesGroup
 } from '../types.js'
-import type { Mode } from '../../../modules/settings/types.js'
 
 const Empty = styled.div`
   display: grid;
