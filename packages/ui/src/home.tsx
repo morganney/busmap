@@ -138,7 +138,7 @@ const Home: FC<HomeProps> = () => {
         <Anchor onClick={onClickAnchor} collapsed={state.collapsed} />
         <Wrap>
           <Tabs
-            initialTab="select"
+            initialTab="locate"
             position="end"
             fontSize="14px"
             gap="16px"

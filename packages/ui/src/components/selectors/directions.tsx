@@ -6,7 +6,7 @@ import { useSelectorProps } from './useSelectorProps.js'
 import { FormItem } from '../formItem.js'
 
 import type { FC } from 'react'
-import type { Direction } from '../../types.js'
+import type { Direction } from '@core/types.js'
 
 interface Props {
   directions?: Direction[]

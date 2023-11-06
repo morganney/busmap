@@ -158,7 +158,11 @@ const Tabs: FC<TabsProps> = ({
 
   useEffect(() => {
     setSelected(initialTab)
-  }, [initialTab])
+
+    if (typeof onSelect === 'function') {
+      onSelect(initialTab)
+    }
+  }, [initialTab, onSelect])
 
   return (
     <Wrap className={className} direction={direction} gap={gap} minHeight={minHeight}>

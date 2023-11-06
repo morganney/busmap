@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { DARK_MODE_FIELD, PB90T } from '@busmap/components/colors'
 
-import { useTheme } from '../../modules/settings/contexts/theme.js'
+import { useTheme } from '@module/settings/contexts/theme.js'
 
 import type { AutoSuggestProps } from '@busmap/components/autoSuggest'
 

@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
 
-import { FormItem } from '../../../components/formItem.js'
-import { useStorageDispatch } from '../../../contexts/storage.js'
+import { FormItem } from '@core/components/formItem.js'
+import { useStorageDispatch } from '@core/contexts/storage.js'
+
 import { useVehicleSettings, isASpeedUnit } from '../contexts/vehicle.js'
 
 import type { FC, ChangeEvent } from 'react'

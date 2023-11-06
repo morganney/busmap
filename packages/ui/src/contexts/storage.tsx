@@ -1,12 +1,12 @@
 import { createContext, useContext, useEffect, useReducer, useMemo } from 'react'
 
-import { same } from '../modules/favorites/util.js'
-import { MAX_FAVORITES } from '../modules/favorites/common.js'
-import { isAMode, isASpeedUnit, isAPredictionFormat } from '../modules/settings/util.js'
+import { same } from '@module/favorites/util.js'
+import { MAX_FAVORITES } from '@module/favorites/common.js'
+import { isAMode, isASpeedUnit, isAPredictionFormat } from '@module/settings/util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { Mode, SpeedUnit, PredictionFormat } from '../modules/settings/types.js'
-import type { Favorite } from '../modules/favorites/types.js'
+import type { Mode, SpeedUnit, PredictionFormat } from '@module/settings/types.js'
+import type { Favorite } from '@module/favorites/types.js'
 
 interface StorageState {
   predsFormat?: PredictionFormat

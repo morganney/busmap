@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
 
-import { FormItem } from '../../../components/formItem.js'
-import { useStorageDispatch } from '../../../contexts/storage.js'
+import { FormItem } from '@core/components/formItem.js'
+import { useStorageDispatch } from '@core/contexts/storage.js'
+
 import { useTheme } from '../contexts/theme.js'
 import { isAMode } from '../util.js'
 

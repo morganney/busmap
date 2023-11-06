@@ -4,8 +4,9 @@ import { Star } from '@busmap/components/icons/star'
 import { Tooltip } from '@busmap/components/tooltip'
 import { SY30T } from '@busmap/components/colors'
 
-import { useGlobals } from '../../../globals.js'
-import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
+import { useGlobals } from '@core/globals.js'
+import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
+
 import { same } from '../util.js'
 import { MAX_FAVORITES } from '../common.js'
 

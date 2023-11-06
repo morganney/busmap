@@ -1,6 +1,6 @@
 import { useContext, createContext, useReducer, useMemo, useEffect } from 'react'
 
-import { useStorage, useStorageDispatch } from '../../../contexts/storage.js'
+import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
 import type { Mode } from '../types.js'
