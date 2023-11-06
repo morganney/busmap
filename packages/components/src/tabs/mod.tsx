@@ -236,7 +236,7 @@ const TabList: FC<TabListProps> = ({ children, margin, background = 'none' }) =>
 }
 
 interface TabProps {
-  label: string
+  children: ReactNode
   /**
    * Identifies the tab and associates it with
    * the corresponding panel. Should be unique
@@ -274,12 +274,16 @@ const getMargin = ({ fluid, direction }: ButtonProps) => {
   return '0'
 }
 const getPadding = ({ fluid, direction }: ButtonProps) => {
-  if (fluid && direction === 'column') {
-    // Compensate for -2px margin when fluid to cover border
-    return '7px 13px 7px 11px'
+  if (direction === 'column') {
+    if (fluid) {
+      // Compensate for -2px margin when fluid to cover border
+      return '8px 13px 8px 11px'
+    }
+
+    return '8px 11px'
   }
 
-  return '7px 11px'
+  return '8px 12px'
 }
 const Button = styled.button<ButtonProps>`
   cursor: pointer;
@@ -300,7 +304,7 @@ const Button = styled.button<ButtonProps>`
     border-color: ${SLB30T};
   }
 `
-const Tab: FC<TabProps> = ({ label, name }) => {
+const Tab: FC<TabProps> = ({ children, name }) => {
   const {
     color,
     fluid,
@@ -334,7 +338,8 @@ const Tab: FC<TabProps> = ({ label, name }) => {
       id={`tab-${name}`}
       role="tab"
       aria-selected={active}
-      arial-controls={name}
+      aria-controls={`panel-${name}`}
+      aria-label={typeof children === 'string' ? undefined : name}
       tabIndex={active ? 0 : -1}
       data-name={name}
       active={active}
@@ -346,7 +351,7 @@ const Tab: FC<TabProps> = ({ label, name }) => {
       border={border}
       borderRadius={borderRadius}
       onClick={onClick}>
-      {label}
+      {children}
     </Button>
   )
 }

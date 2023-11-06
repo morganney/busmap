@@ -29,9 +29,9 @@ const Settings: FC = () => {
       background={background}
       color={color}>
       <TabList>
-        <Tab name="vehicle" label="Vehicle" />
-        <Tab name="predictions" label="Predictions" />
-        <Tab name="theme" label="Theme" />
+        <Tab name="vehicle">Vehicle</Tab>
+        <Tab name="predictions">Predictions</Tab>
+        <Tab name="theme">Theme</Tab>
       </TabList>
       <TabPanel name="vehicle">
         <VehicleSettings />

@@ -2,6 +2,9 @@ import styled from 'styled-components'
 
 import { Tabs, TabList, Tab, TabPanel } from './mod.js'
 
+import { Star } from '../icons/star/mod.js'
+import { MapMarked } from '../icons/mapMarked/mod.js'
+
 import type { StoryFn } from '@storybook/react'
 
 const Grid = styled.div`
@@ -16,9 +19,9 @@ const Primary: StoryFn<typeof Tabs> = args => {
   return (
     <Tabs initialTab="foo" {...args}>
       <TabList>
-        <Tab name="foo" label="Foo" />
-        <Tab name="bar" label="Bar" />
-        <Tab name="baz" label="Baz" />
+        <Tab name="foo">Foo</Tab>
+        <Tab name="bar">Bar</Tab>
+        <Tab name="baz">Baz</Tab>
       </TabList>
       <TabPanel name="foo">
         <p>This is Foo content.</p>
@@ -32,6 +35,36 @@ const Primary: StoryFn<typeof Tabs> = args => {
     </Tabs>
   )
 }
+Primary.argTypes = {
+  initialTab: {
+    control: 'select',
+    options: ['foo', 'bar']
+  }
+}
+const IconTabs: StoryFn<typeof Tabs> = args => {
+  return (
+    <Tabs {...args} initialTab="favorites">
+      <TabList>
+        <Tab name="favorites">
+          <Star size="small" />
+        </Tab>
+        <Tab name="map">
+          <MapMarked size="small" />
+        </Tab>
+      </TabList>
+      <TabPanel name="favorites">
+        <p>
+          This <Star /> content.
+        </p>
+      </TabPanel>
+      <TabPanel name="map">
+        <p>
+          This is <MapMarked /> content.
+        </p>
+      </TabPanel>
+    </Tabs>
+  )
+}
 const CustomTabs = styled(Tabs)`
   button[aria-selected='true'] {
     font-style: italic;
@@ -41,9 +74,9 @@ const Custom: StoryFn<typeof Tabs> = args => {
   return (
     <CustomTabs initialTab="foo" {...args}>
       <TabList>
-        <Tab name="foo" label="Foo" />
-        <Tab name="bar" label="Bar" />
-        <Tab name="baz" label="Baz" />
+        <Tab name="foo">Foo</Tab>
+        <Tab name="bar">Bar</Tab>
+        <Tab name="baz">Baz</Tab>
       </TabList>
       <TabPanel name="foo">
         <p>This is Foo content.</p>
@@ -61,9 +94,9 @@ const Vertical: StoryFn<typeof Tabs> = args => {
   return (
     <Tabs {...args} direction="column">
       <TabList>
-        <Tab name="one" label="One" />
-        <Tab name="two" label="Two" />
-        <Tab name="three" label="Three" />
+        <Tab name="one">One</Tab>
+        <Tab name="two">Two</Tab>
+        <Tab name="three">Three</Tab>
       </TabList>
       <TabPanel name="one">
         <span>One</span>
@@ -95,8 +128,8 @@ const Multiple: StoryFn<typeof Tabs> = args => {
     <Grid>
       <Tabs {...args} initialTab="a">
         <TabList>
-          <Tab name="a" label="A" />
-          <Tab name="b" label="B" />
+          <Tab name="a">A</Tab>
+          <Tab name="b">B</Tab>
         </TabList>
         <TabPanel name="a">
           <p>A</p>
@@ -107,8 +140,8 @@ const Multiple: StoryFn<typeof Tabs> = args => {
       </Tabs>
       <Tabs {...args} initialTab="d" position="end">
         <TabList>
-          <Tab name="c" label="C" />
-          <Tab name="d" label="D" />
+          <Tab name="c">C</Tab>
+          <Tab name="d">D</Tab>
         </TabList>
         <TabPanel name="c">
           <p>C</p>
@@ -126,13 +159,12 @@ Multiple.parameters = {
   }
 }
 
-export { Primary, Custom, Multiple, Vertical }
+export { Primary, IconTabs, Custom, Multiple, Vertical }
 export default {
   title: 'Tabs',
   component: Tabs,
   args: {
     label: 'Tabs content',
-    initialTab: 'foo',
     direction: 'row',
     position: 'start',
     gap: '15px',
@@ -145,10 +177,6 @@ export default {
     background: 'white'
   },
   argTypes: {
-    initialTab: {
-      control: 'select',
-      options: ['foo', 'bar']
-    },
     position: {
       control: 'select',
       options: ['start', 'end']
