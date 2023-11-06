@@ -146,13 +146,13 @@ const Home: FC<HomeProps> = () => {
             color={tabsColor}
             background={tabsBackground}>
             <TabList>
-              <Tab name="select" label="🚌" />
-              <Tab name="favorites" label="⭐" />
-              <Tab name="settings" label="⚙️" />
-              <Tab name="info" label="ℹ️" />
-              <Tab name="profile" label="👤" />
-              <Tab name="login" label="Sign In" />
+              <Tab name="locate">📍</Tab>
+              <Tab name="select">🚌</Tab>
+              <Tab name="favorites">⭐</Tab>
+              <Tab name="settings">⚙️</Tab>
+              <Tab name="info">ℹ️</Tab>
             </TabList>
+            <TabPanel name="locate">Locate</TabPanel>
             <TabPanel name="select">
               <BusSelector agencies={agencies} />
             </TabPanel>
@@ -164,14 +164,6 @@ const Home: FC<HomeProps> = () => {
             </TabPanel>
             <TabPanel name="info">
               <Info />
-            </TabPanel>
-            <TabPanel name="profile">
-              <p>Profile</p>
-            </TabPanel>
-            <TabPanel name="login">
-              <form>
-                <p>Sign In</p>
-              </form>
             </TabPanel>
           </Tabs>
           <Predictions
