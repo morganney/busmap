@@ -127,10 +127,6 @@ interface SelectedChanged {
   type: 'selected'
   value?: Selection
 }
-interface PredictionsChanged {
-  type: 'predictions'
-  value: Prediction[]
-}
 interface PredForVehChanged {
   type: 'predForVeh'
   value?: Vehicle
@@ -146,7 +142,6 @@ type BusmapAction =
   | RouteChanged
   | DirectionChanged
   | StopChanged
-  | PredictionsChanged
   | PredForVehChanged
   | SelectedChanged
   | LocationSettled
@@ -158,7 +153,6 @@ interface BusmapGlobals {
   route?: Route
   direction?: Direction
   stop?: Stop
-  predictions?: Prediction[]
   predForVeh?: Vehicle
   selected?: Selection
   locationSettled: boolean
@@ -169,9 +163,12 @@ export type {
   Bounds,
   Path,
   Agency,
+  StopName,
   Stop,
+  StopChanged,
   Direction,
   DirectionName,
+  DirectionChanged,
   RouteName,
   Route,
   Pred,

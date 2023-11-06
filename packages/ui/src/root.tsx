@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { Toaster, toast } from '@busmap/components/toast'
 
@@ -40,7 +40,7 @@ const Root = () => {
     }
   }, [map])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.body.classList.remove('busmap-light', 'busmap-dark')
     document.body.classList.add(`busmap-${mode}`)
   }, [mode])

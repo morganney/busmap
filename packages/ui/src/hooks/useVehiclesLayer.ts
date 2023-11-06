@@ -5,6 +5,7 @@ import { VehicleMarker, VEHICLE_PANE } from './common.js'
 
 import { useGlobals } from '../globals.js'
 import { useVehicles } from '../contexts/vehicles.js'
+import { usePredictions } from '../contexts/predictions.js'
 import { useVehicleSettings } from '../modules/settings/contexts/vehicle.js'
 import { PredictedVehiclesColors } from '../common.js'
 
@@ -175,7 +176,8 @@ const getVehiclePopupContent = (marker: VehicleMarker, route: Route) => {
 }
 const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
   const vehicles = useVehicles()
-  const { route, direction, predictions } = useGlobals()
+  const { predictions } = usePredictions()
+  const { route, direction } = useGlobals()
   const { visible, hideOtherDirections, markPredictedVehicles, speedUnit } =
     useVehicleSettings()
 

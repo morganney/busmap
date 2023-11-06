@@ -47,15 +47,12 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
         ...state,
         direction: action.value,
         stop: undefined,
-        predictions: undefined,
         selected: undefined
       }
     case 'stop':
-      return { ...state, stop: action.value, predictions: undefined }
+      return { ...state, stop: action.value }
     case 'locationSettled':
       return { ...state, locationSettled: action.value }
-    case 'predictions':
-      return { ...state, predictions: action.value }
     case 'predForVeh':
       return { ...state, predForVeh: action.value }
     case 'selected':

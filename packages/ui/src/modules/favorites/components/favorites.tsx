@@ -97,7 +97,7 @@ const RouteSection = styled.section<{ routeColor: string; routeTextColor: string
     background: ${({ routeColor }) => routeColor};
   }
 `
-const Article = styled.article<{ routeColor: string; isSelected: boolean; mode: Mode }>`
+const Article = styled.article<{ routeColor: string; mode: Mode }>`
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -295,10 +295,7 @@ const Favorites = memo(function Favorites() {
                           routeColor={color}
                           routeTextColor={textColor}>
                           <h4 title={routeTitle}>{routeTitle}</h4>
-                          <Article
-                            routeColor={color}
-                            mode={mode}
-                            isSelected={isHomeStopFav}>
+                          <Article routeColor={color} mode={mode}>
                             <header
                               className={isHomeStopFav ? 'fav-selected' : undefined}>
                               <ReactColorA11y colorPaletteKey={mode}>
