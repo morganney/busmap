@@ -7,6 +7,7 @@ import { PB50T, PB90T } from '@busmap/components/colors'
 import styled from 'styled-components'
 
 import { useGlobals } from './globals.js'
+import { usePredictions } from './contexts/predictions.js'
 import { useVehiclesDispatch } from './contexts/vehicles.js'
 import { useTheme } from './modules/settings/contexts/theme.js'
 import { BusSelector } from './components/busSelector.js'
@@ -62,7 +63,8 @@ interface HomeProps {
 const Home: FC<HomeProps> = () => {
   const { mode } = useTheme()
   const vehiclesDispatch = useVehiclesDispatch()
-  const { dispatch: update, locationSettled, agency, route, stop } = useGlobals()
+  const { dispatch: predsDispatch } = usePredictions()
+  const { locationSettled, agency, route, stop } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
   const { data: agencies, error: agenciesError } = useQuery({
     queryKey: ['agencies'],
@@ -100,12 +102,12 @@ const Home: FC<HomeProps> = () => {
 
   useEffect(() => {
     if (preds) {
-      update({ type: 'predictions', value: preds })
+      predsDispatch({ type: 'predictions', value: preds })
       dispatch({ type: 'timestamp', value: Date.now() })
       // Reset vehicles based on changed predicted vehicles
       vehiclesDispatch({ type: 'reset' })
     }
-  }, [update, vehiclesDispatch, preds])
+  }, [predsDispatch, vehiclesDispatch, preds])
 
   useEffect(() => {
     if (vehicles) {
