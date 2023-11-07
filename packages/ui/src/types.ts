@@ -131,10 +131,6 @@ interface PredForVehChanged {
   type: 'predForVeh'
   value?: Vehicle
 }
-interface LocationSettled {
-  type: 'locationSettled'
-  value: boolean
-}
 type BusmapAction =
   | BoundsChanged
   | CenterChanged
@@ -144,7 +140,6 @@ type BusmapAction =
   | StopChanged
   | PredForVehChanged
   | SelectedChanged
-  | LocationSettled
 interface BusmapGlobals {
   dispatch: Dispatch<BusmapAction>
   center: Point
@@ -155,7 +150,6 @@ interface BusmapGlobals {
   stop?: Stop
   predForVeh?: Vehicle
   selected?: Selection
-  locationSettled: boolean
 }
 
 export type {

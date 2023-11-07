@@ -6,6 +6,7 @@ import { MapProvider } from './contexts/map.js'
 import { StorageProvider } from './contexts/storage.js'
 import { VehiclesProvider } from './contexts/vehicles.js'
 import { PredictionsProvider } from './contexts/predictions.js'
+import { LocationProvider } from './modules/location/contexts/location.js'
 import { SettingsProvider } from './modules/settings/contexts/settings.js'
 import { router } from './router.js'
 import { queryClient } from './queryClient.js'
@@ -18,13 +19,15 @@ const BusMap: FC = () => {
       <StorageProvider>
         <GlobalsProvider>
           <MapProvider>
-            <SettingsProvider>
-              <VehiclesProvider>
-                <PredictionsProvider>
-                  <RouterProvider router={router} />
-                </PredictionsProvider>
-              </VehiclesProvider>
-            </SettingsProvider>
+            <LocationProvider>
+              <SettingsProvider>
+                <VehiclesProvider>
+                  <PredictionsProvider>
+                    <RouterProvider router={router} />
+                  </PredictionsProvider>
+                </VehiclesProvider>
+              </SettingsProvider>
+            </LocationProvider>
           </MapProvider>
         </GlobalsProvider>
       </StorageProvider>
