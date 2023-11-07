@@ -100,11 +100,7 @@ const Home: FC<HomeProps> = () => {
   }, [state.collapsed])
   const onSelectTab = useCallback(
     (selected: string) => {
-      if (selected === 'locate') {
-        dispatch({ type: 'locate', value: true })
-      } else {
-        dispatch({ type: 'locate', value: false })
-      }
+      dispatch({ type: 'locate', value: selected === 'locate' })
     },
     [dispatch]
   )
