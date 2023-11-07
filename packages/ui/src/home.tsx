@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useEffect } from 'react'
+import { useReducer, useCallback, useEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createPortal } from 'react-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
@@ -9,9 +9,11 @@ import styled from 'styled-components'
 import { useGlobals } from './globals.js'
 import { usePredictions } from './contexts/predictions.js'
 import { useVehiclesDispatch } from './contexts/vehicles.js'
+import { useHomeStop } from './hooks/useHomeStop.js'
 import { useTheme } from './modules/settings/contexts/theme.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
+import { Location } from './modules/location/components/location.js'
 import { Settings } from './modules/settings/components/settings.js'
 import { Favorites } from './modules/favorites/components/favorites.js'
 import { Info } from './components/info.js'
@@ -24,6 +26,7 @@ import { getForStop } from './api/rb/predictions.js'
 import type { ReactNode, FC } from 'react'
 
 interface HomeState {
+  locate: boolean
   collapsed: boolean
   timestamp: number
 }
@@ -35,11 +38,17 @@ interface PredTimestampChanged {
   type: 'timestamp'
   value: number
 }
-type HomeAction = CollapsedChanged | PredTimestampChanged
-const initialState: HomeState = { collapsed: false, timestamp: 0 }
+interface LocateUser {
+  type: 'locate'
+  value: boolean
+}
+type HomeAction = CollapsedChanged | PredTimestampChanged | LocateUser
+const initialState: HomeState = { collapsed: false, timestamp: 0, locate: false }
 const asideNode = document.querySelector('body > aside') as HTMLElement
 const reducer = (state: HomeState, action: HomeAction) => {
   switch (action.type) {
+    case 'locate':
+      return { ...state, locate: action.value }
     case 'collapsed':
       return { ...state, collapsed: action.value }
     case 'timestamp':
@@ -62,9 +71,10 @@ interface HomeProps {
 }
 const Home: FC<HomeProps> = () => {
   const { mode } = useTheme()
+  const bookmark = useRef(useHomeStop())
   const vehiclesDispatch = useVehiclesDispatch()
   const { dispatch: predsDispatch } = usePredictions()
-  const { locationSettled, agency, route, stop } = useGlobals()
+  const { agency, route, stop } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
   const { data: agencies, error: agenciesError } = useQuery({
     queryKey: ['agencies'],
@@ -88,6 +98,12 @@ const Home: FC<HomeProps> = () => {
   const onClickAnchor = useCallback(() => {
     dispatch({ type: 'collapsed', value: !state.collapsed })
   }, [state.collapsed])
+  const onSelectTab = useCallback(
+    (selected: string) => {
+      dispatch({ type: 'locate', value: selected === 'locate' })
+    },
+    [dispatch]
+  )
   const messages = preds?.length ? preds[0].messages : []
   const tabsBackground = mode === 'dark' ? PB50T : undefined
   const tabsColor = mode === 'dark' ? PB90T : undefined
@@ -133,18 +149,19 @@ const Home: FC<HomeProps> = () => {
   }
 
   return createPortal(
-    locationSettled && agencies ? (
+    agencies ? (
       <>
         <Anchor onClick={onClickAnchor} collapsed={state.collapsed} />
         <Wrap>
           <Tabs
-            initialTab="locate"
+            initialTab={bookmark.current ? 'select' : 'locate'}
             position="end"
             fontSize="14px"
             gap="16px"
             borderRadius="5px 5px 0 0"
             color={tabsColor}
-            background={tabsBackground}>
+            background={tabsBackground}
+            onSelect={onSelectTab}>
             <TabList>
               <Tab name="locate">📍</Tab>
               <Tab name="select">🚌</Tab>
@@ -152,7 +169,9 @@ const Home: FC<HomeProps> = () => {
               <Tab name="settings">⚙️</Tab>
               <Tab name="info">ℹ️</Tab>
             </TabList>
-            <TabPanel name="locate">Locate</TabPanel>
+            <TabPanel name="locate">
+              <Location active={state.locate} />
+            </TabPanel>
             <TabPanel name="select">
               <BusSelector agencies={agencies} />
             </TabPanel>
@@ -175,10 +194,8 @@ const Home: FC<HomeProps> = () => {
           />
         </Wrap>
       </>
-    ) : locationSettled ? (
-      <Loading text="Loading agencies..." />
     ) : (
-      <Loading text="Attempting to locate your position..." />
+      <Loading text="Loading agencies..." />
     ),
     asideNode
   )

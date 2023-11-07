@@ -15,6 +15,7 @@ export default defineConfig(() => {
 
   return {
     build: {
+      target: ['chrome118', 'safari16', 'edge118', 'firefox118'],
       rollupOptions: {
         output: {
           manualChunks: {

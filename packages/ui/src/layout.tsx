@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom'
 import { useGlobals } from './globals.js'
 import { Selection } from './components/selection.js'
 import { useInitMap } from './hooks/useInitMap.js'
-import { useLocateUser } from './hooks/useLocateUser.js'
 import { useRouteLayer } from './hooks/useRouteLayer.js'
 import { useZoomSelectedStop } from './hooks/useZoomSelectedStop.js'
 import { useZoomPredForVehicle } from './hooks/useZoomPredForVehicle.js'
@@ -19,7 +18,6 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   const { selected } = useGlobals()
   const { map, selectionNode, popup, routeLayer, vehiclesLayer } = useInitMap()
 
-  useLocateUser({ map })
   useRouteLayer({ routeLayer, map, popup })
   useVehiclesLayer({ vehiclesLayer })
   useZoomSelectedStop({ map })
