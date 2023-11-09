@@ -38,6 +38,7 @@ const Section = styled.section`
       margin: 0;
       font-size: 22px;
     }
+
     h3 {
       margin: 0;
       font-size: 14px;
