@@ -7,9 +7,8 @@ import { toast } from '@busmap/components/toast'
 import { Tooltip } from '@busmap/components/tooltip'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
 import { Trash } from '@busmap/components/icons/trash'
-import { PB20T, PB80T, PB10T, PB50T } from '@busmap/components/colors'
+import { PB50T } from '@busmap/components/colors'
 
-import { blinkStyles } from '@core/common.js'
 import { useMap } from '@core/contexts/map.js'
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 import { useHomeStop } from '@core/hooks/useHomeStop.js'
@@ -18,12 +17,19 @@ import { Details } from '@core/components/details.js'
 import { Minutes } from '@core/components/predictionFormats/minutes.js'
 import { Time } from '@core/components/predictionFormats/time.js'
 import { usePredictionsSettings } from '@module/settings/contexts/predictions.js'
+import {
+  AgenciesWrap,
+  AgencySection,
+  RouteWrap,
+  RouteSection,
+  StopArticle
+} from '@module/components.js'
+import { groupBy } from '@module/util.js'
 
-import { groupBy, getPredsKey } from '../util.js'
+import { getPredsKey } from '../util.js'
 import { MAX_FAVORITES } from '../common.js'
 
 import type { MouseEvent } from 'react'
-import type { Mode } from '@module/settings/types.js'
 import type {
   WorkerMessage,
   PredictionsMap,
@@ -54,132 +60,6 @@ const Section = styled.section`
     background: none;
     border: none;
     cursor: pointer;
-  }
-`
-const AgenciesWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`
-const AgencySection = styled.section<{ mode: Mode }>`
-  border: 2px solid ${PB80T};
-  border-radius: 5px;
-
-  h3 {
-    font-size: 14px;
-    font-style: italic;
-    margin: 0;
-    padding: 2px 3px;
-    line-height: 1;
-    background: ${PB80T};
-    color: ${({ mode }) => (mode === 'light' ? PB20T : PB10T)};
-  }
-`
-const RouteWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 3px;
-`
-const RouteSection = styled.section<{ routeColor: string; routeTextColor: string }>`
-  border-radius: 5px;
-  border: 1px solid ${({ routeColor }) => routeColor};
-
-  h4 {
-    font-size: 14px;
-    font-weight: normal;
-    margin: 0;
-    padding: 2px 3px;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: ${({ routeTextColor }) => routeTextColor};
-    background: ${({ routeColor }) => routeColor};
-  }
-`
-const Article = styled.article<{ routeColor: string; mode: Mode }>`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 8px;
-  border-bottom: 1px dashed ${({ routeColor }) => routeColor};
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  footer {
-    > div {
-      display: inline-block;
-    }
-  }
-
-  header {
-    > div {
-      display: inline-block;
-    }
-
-    h5 {
-      font-size: 16px;
-      margin: 0;
-
-      a {
-        color: ${({ routeColor }) => routeColor};
-      }
-    }
-
-    h6 {
-      font-size: 12px;
-      font-weight: normal;
-      margin: 0;
-    }
-
-    &.fav-selected {
-      > div {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      h5 {
-        a {
-          text-decoration: none;
-
-          &,
-          svg {
-            cursor: auto;
-          }
-        }
-      }
-    }
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    gap: 6px;
-    line-height: 1;
-
-    li {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 15px;
-      font-weight: bold;
-
-      em {
-        ${blinkStyles};
-      }
-    }
-
-    li:last-child {
-      span:last-child {
-        display: none;
-      }
-    }
   }
 `
 const Favorites = memo(function Favorites() {
@@ -296,7 +176,7 @@ const Favorites = memo(function Favorites() {
                           routeColor={color}
                           routeTextColor={textColor}>
                           <h4 title={routeTitle}>{routeTitle}</h4>
-                          <Article routeColor={color} mode={mode}>
+                          <StopArticle routeColor={color} mode={mode}>
                             <header
                               className={isHomeStopFav ? 'fav-selected' : undefined}>
                               <ReactColorA11y colorPaletteKey={mode}>
@@ -361,7 +241,7 @@ const Favorites = memo(function Favorites() {
                                 </button>
                               </Tooltip>
                             </footer>
-                          </Article>
+                          </StopArticle>
                         </RouteSection>
                       )
                     })

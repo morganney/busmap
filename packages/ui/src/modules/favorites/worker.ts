@@ -1,8 +1,9 @@
 import debounce from 'lodash.debounce'
 
 import { getForTuples } from '@core/api/rb/tuples.js'
+import { groupBy } from '@module/util.js'
 
-import { groupBy, getPredsKey } from './util.js'
+import { getPredsKey } from './util.js'
 
 import type { ThreadMessage } from './types.js'
 

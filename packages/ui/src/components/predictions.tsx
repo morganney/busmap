@@ -11,11 +11,12 @@ import { PredictedVehiclesColors, blinkStyles } from '../common.js'
 
 import type { FC } from 'react'
 import type { Mode } from '@module/settings/types.js'
-import type { Prediction, Stop } from '../types.js'
+import type { Prediction, Stop, Route } from '../types.js'
 
 interface PredictionsProps {
   preds?: Prediction[]
   stop?: Stop
+  route?: Route
   isFetching: boolean
   timestamp: number
   messages: Prediction['messages']
@@ -27,10 +28,23 @@ interface FormatProps {
 }
 const Section = styled.section`
   margin: 0;
-`
-const Title = styled.h2`
-  margin: 0;
-  font-size: 22px;
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+
+    h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+    h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 1;
+    }
+  }
 `
 const Timestamp = styled.p`
   margin: 0;
@@ -180,13 +194,19 @@ const Minutes: FC<FormatProps> = ({ minutes, affectedByLayover }) => {
     </time>
   )
 }
-const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp }) => {
+const Predictions: FC<PredictionsProps> = ({
+  route,
+  preds,
+  stop,
+  messages,
+  timestamp
+}) => {
   const { mode } = useTheme()
   const { format } = usePredictionsSettings()
   const { markPredictedVehicles } = useVehicleSettings()
   const Format = format === 'minutes' ? Minutes : Time
 
-  if (Array.isArray(preds) && stop) {
+  if (Array.isArray(preds) && stop && route) {
     if (preds.length) {
       const values = preds[0].values.slice(0, 3)
       const title = values[0].isDeparture ? 'Departures' : 'Arrivals'
@@ -196,7 +216,10 @@ const Predictions: FC<PredictionsProps> = ({ preds, stop, messages, timestamp })
 
       return (
         <Section>
-          <Title>Next {title}</Title>
+          <header>
+            <h2>Next {title}</h2>
+            <h3>{route.title}</h3>
+          </header>
           {messages.length > 0 && (
             <Messages mode={mode}>
               <summary>Messages 💬</summary>

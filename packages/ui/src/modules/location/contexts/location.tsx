@@ -43,7 +43,7 @@ const reducer = (state: LocationState, action: LocationAction) => {
     case 'locationSettled':
       return { ...state, locationSettled: action.value }
     case 'locationChanged':
-      return { ...state, position: action.value }
+      return { ...state, position: action.value /*{lat: 37.784825,lon:-122.395592}*/ }
     default:
       return state
   }

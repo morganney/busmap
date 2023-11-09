@@ -65,6 +65,10 @@ const Wrap = styled.div`
   padding: 15px 30px 30px;
   height: 100%;
   overflow-y: auto;
+
+  #panel-locate {
+    min-height: 100px;
+  }
 `
 interface HomeProps {
   children?: ReactNode
@@ -188,6 +192,7 @@ const Home: FC<HomeProps> = () => {
           <Predictions
             isFetching={isPredsFetching}
             stop={stop}
+            route={route}
             preds={preds}
             messages={messages}
             timestamp={state.timestamp}

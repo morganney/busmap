@@ -55,6 +55,7 @@ interface TabsProps {
   className?: string
   fontSize?: string
   minHeight?: string
+  height?: string
   /**
    * Whether the Tabs remove the bottom border
    * when they are active/visible. Requires a
@@ -102,11 +103,17 @@ interface TabsProps {
   onSelect?: (selectedName: string) => void
 }
 
-const Wrap = styled.div<{ direction: Direction; gap: string; minHeight: string }>`
+const Wrap = styled.div<{
+  direction: Direction
+  gap: string
+  minHeight: string
+  height: string
+}>`
   display: flex;
   flex-direction: ${({ direction }) => (direction === 'column' ? 'row' : 'column')};
   gap: ${({ gap }) => gap};
   min-height: ${({ minHeight }) => minHeight};
+  height: ${({ height }) => height};
 `
 const Tabs: FC<TabsProps> = ({
   children,
@@ -122,6 +129,7 @@ const Tabs: FC<TabsProps> = ({
   position = 'start',
   gap = '0',
   minHeight = 'auto',
+  height = 'auto',
   label = 'Content Tabs',
   initialTab = ''
 }) => {
@@ -165,7 +173,12 @@ const Tabs: FC<TabsProps> = ({
   }, [initialTab, onSelect])
 
   return (
-    <Wrap className={className} direction={direction} gap={gap} minHeight={minHeight}>
+    <Wrap
+      className={className}
+      direction={direction}
+      gap={gap}
+      minHeight={minHeight}
+      height={height}>
       <Context.Provider value={context}>{children}</Context.Provider>
     </Wrap>
   )
