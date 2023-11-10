@@ -30,6 +30,7 @@ const Icon = styled.span<{ size: Size; color: string; fill?: string; cursor?: st
   height: ${({ size }) => getSizing(size)};
   color: ${({ color }) => color};
   cursor: ${({ cursor }) => cursor ?? 'pointer'};
+  justify-content: center;
 
   svg {
     fill: ${({ fill }) => fill ?? 'currentcolor'};

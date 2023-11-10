@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { marker } from 'leaflet'
 
 import { useMap } from '@core/contexts/map.js'
 import { useHomeStop } from '@core/hooks/useHomeStop.js'
@@ -13,14 +12,14 @@ const useLocateUser = (active: boolean) => {
 
   useEffect(() => {
     map?.on('locationfound', evt => {
-      marker(evt.latlng)
-        .addTo(map)
-        .bindPopup(
-          `Your location within ${Intl.NumberFormat().format(evt.accuracy)} meters.`
-        )
+      const { latlng, accuracy } = evt
+
       dispatch({
         type: 'locationChanged',
-        value: { lat: evt.latlng.lat, lon: evt.latlng.lng }
+        value: {
+          accuracy,
+          point: { lat: latlng.lat, lon: latlng.lng }
+        }
       })
     })
     map?.on('locationerror', err => {
@@ -32,7 +31,7 @@ const useLocateUser = (active: boolean) => {
 
   useEffect(() => {
     if (active && map) {
-      map.locate({ setView: !homeStop, watch: true })
+      map.locate({ setView: !homeStop, watch: true, maximumAge: 1 * 60 * 1000 })
     }
 
     if (!active && map) {

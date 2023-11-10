@@ -3,10 +3,14 @@ import { createContext, useContext, useReducer, useMemo, useEffect } from 'react
 import type { FC, ReactNode, Dispatch } from 'react'
 import type { Point } from '@core/types'
 
+interface Position {
+  point: Point
+  accuracy: number
+}
 interface LocationState {
   permission: PermissionState
   locationSettled: boolean
-  position?: Point
+  position?: Position
 }
 interface LocationContext extends LocationState {
   dispatch: Dispatch<LocationAction>
@@ -17,7 +21,7 @@ interface LocationSettled {
 }
 interface LocationChanged {
   type: 'locationChanged'
-  value: Point
+  value: Position
 }
 interface PermissionChanged {
   type: 'permission'

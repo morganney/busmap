@@ -18,6 +18,8 @@
   --home-bg-color-dark: #191919cc;
   --home-border-color-dark: #191919;
 
+  --user-marker: #ffb566;
+
   color-scheme: light dark;
 }
 *,
@@ -81,6 +83,17 @@ body.busmap-dark aside {
 }
 .leaflet-container {
   background: transparent;
+}
+.busmap-user {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--user-marker);
+}
+.busmap-user svg path {
+  fill: currentColor;
+  stroke: #666666;
+  stroke-width: 2px;
 }
 .busmap-stop-icon svg {
   position: absolute;

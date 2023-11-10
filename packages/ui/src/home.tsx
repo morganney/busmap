@@ -168,19 +168,19 @@ const Home: FC<HomeProps> = () => {
             onSelect={onSelectTab}>
             <TabList>
               <Tab name="locate">📍</Tab>
-              <Tab name="select">🚌</Tab>
               <Tab name="favorites">⭐</Tab>
+              <Tab name="select">🚌</Tab>
               <Tab name="settings">⚙️</Tab>
               <Tab name="info">ℹ️</Tab>
             </TabList>
             <TabPanel name="locate">
               <Location active={state.locate} />
             </TabPanel>
-            <TabPanel name="select">
-              <BusSelector agencies={agencies} />
-            </TabPanel>
             <TabPanel name="favorites">
               <Favorites />
+            </TabPanel>
+            <TabPanel name="select">
+              <BusSelector agencies={agencies} />
             </TabPanel>
             <TabPanel name="settings">
               <Settings />

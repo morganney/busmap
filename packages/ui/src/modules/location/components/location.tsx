@@ -6,6 +6,8 @@ import { latLng, latLngBounds } from 'leaflet'
 import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from '@busmap/components/tooltip'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
+import { StreetView } from '@busmap/components/icons/streetView'
+import { SO40T } from '@busmap/components/colors'
 
 import { get as getRoute } from '@core/api/rb/route.js'
 import { Loading } from '@core/components/loading.js'
@@ -27,6 +29,7 @@ import { useTheme } from '@module/settings/contexts/theme.js'
 import { get as getPredictions } from '../api/predictions.js'
 import { useLocation } from '../contexts/location.js'
 import { useLocateUser } from '../hooks/useLocateUser.js'
+import { useTrackUser } from '../hooks/useTrackUser.js'
 
 import type { MouseEvent } from 'react'
 import type { Route, Prediction, RouteName, Stop } from '@core/types.js'
@@ -70,6 +73,12 @@ const Section = styled.section`
     }
   }
 `
+const LocateMe = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+`
 const Location = memo(function Location({ active = false }: LocationProps) {
   const map = useMap()
   const homeStop = useHomeStop()
@@ -77,8 +86,8 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   const { format } = usePredictionsSettings()
   const { permission, position } = useLocation()
   const { data: predictions } = useQuery({
-    queryKey: ['location', [position?.lat, position?.lon]],
-    queryFn: () => getPredictions(position),
+    queryKey: ['location', [position?.point.lat, position?.point.lon]],
+    queryFn: () => getPredictions(position?.point),
     enabled: permission === 'granted' && active,
     refetchOnWindowFocus: true,
     refetchInterval: 10_000
@@ -175,6 +184,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   )
   const PredFormat = format === 'minutes' ? Minutes : Time
 
+  useTrackUser()
   useLocateUser(active && permission !== 'denied')
 
   useEffect(() => {
@@ -198,6 +208,10 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     return (
       <Section>
         <h2>Nearby Stops</h2>
+        <LocateMe>
+          <StreetView size="small" color={SO40T} />
+          <span>Locate me</span>
+        </LocateMe>
         <AgenciesWrap>
           {Object.keys(uiGroup).map(agencyTitle => (
             <AgencySection key={agencyTitle} mode={mode}>
