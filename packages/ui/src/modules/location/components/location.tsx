@@ -6,8 +6,6 @@ import { latLng, latLngBounds } from 'leaflet'
 import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from '@busmap/components/tooltip'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
-import { StreetView } from '@busmap/components/icons/streetView'
-import { SO40T } from '@busmap/components/colors'
 
 import { get as getRoute } from '@core/api/rb/route.js'
 import { Loading } from '@core/components/loading.js'
@@ -25,6 +23,8 @@ import {
   StopArticle
 } from '@module/components.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
+
+import { UserLocator } from './userLocator.js'
 
 import { get as getPredictions } from '../api/predictions.js'
 import { useLocation } from '../contexts/location.js'
@@ -72,12 +72,6 @@ const Section = styled.section`
       font-size: 14px;
     }
   }
-`
-const LocateMe = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
 `
 const Location = memo(function Location({ active = false }: LocationProps) {
   const map = useMap()
@@ -211,10 +205,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     return (
       <Section>
         <h2>Nearby Stops</h2>
-        <LocateMe>
-          <StreetView size="small" color={SO40T} />
-          <span>Locate me</span>
-        </LocateMe>
+        <UserLocator />
         <AgenciesWrap>
           {Object.keys(uiGroup).map(agencyTitle => (
             <AgencySection key={agencyTitle} mode={mode}>
@@ -235,8 +226,11 @@ const Location = memo(function Location({ active = false }: LocationProps) {
                         routeColor={color}
                         routeTextColor={textColor}>
                         <h4>{routeTitle}</h4>
-                        <StopArticle routeColor={color} mode={mode}>
-                          <header className={isHomeStopPred ? 'selected' : undefined}>
+                        <StopArticle
+                          mode={mode}
+                          routeColor={color}
+                          className={isHomeStopPred ? 'selected' : undefined}>
+                          <header>
                             <ReactColorA11y colorPaletteKey={mode}>
                               <h5>
                                 <Link
