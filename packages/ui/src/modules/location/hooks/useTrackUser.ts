@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { marker, divIcon, latLng, circleMarker } from 'leaflet'
+import { marker, divIcon, latLng } from 'leaflet'
 import { PB80T } from '@busmap/components/colors'
 
 import { useMap } from '@core/contexts/map.js'
@@ -17,35 +17,39 @@ const icon = divIcon({
   iconAnchor: [14, 28],
   popupAnchor: [0, -28]
 })
-const user = marker([0, 0], { icon })
-const userCircle = circleMarker([0, 0], {
-  color: PB80T,
-  weight: 1,
-  fillColor: PB80T,
-  fillOpacity: 0.4,
-  radius: 13
+const circle = divIcon({
+  html: `
+    <svg viewBox="0 0 100 100" width="28" height="28">
+      <circle cx="50" cy="50" r="48" stroke-width="2" stroke="${PB80T}" fill="${PB80T}" fill-opacity="0.4" />
+    </svg>
+  `,
+  className: 'busmap-user-circle',
+  iconSize: [28, 28],
+  iconAnchor: [14, 14]
 })
+const user = marker([0, 0], { icon })
+const userCircle = marker([0, 0], { icon: circle })
 const useTrackUser = () => {
   const map = useMap()
   const { position } = useLocation()
 
   useEffect(() => {
     if (map) {
+      userCircle.addTo(map)
       user
         .addTo(map)
         .bindPopup(`Your location within ${Intl.NumberFormat().format(0)} meters.`)
-      userCircle.addTo(map)
     }
   }, [map])
 
   useEffect(() => {
     if (position) {
+      userCircle.setLatLng(latLng(position.point.lat, position.point.lon))
       user
         .setLatLng(latLng(position.point.lat, position.point.lon))
         .setPopupContent(
           `Your location within ${Intl.NumberFormat().format(position.accuracy)} meters.`
         )
-      userCircle.setLatLng(latLng(position.point.lat, position.point.lon))
     }
   }, [position])
 }

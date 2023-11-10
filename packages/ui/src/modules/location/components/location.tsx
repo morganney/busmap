@@ -139,30 +139,33 @@ const Location = memo(function Location({ active = false }: LocationProps) {
         Object.keys(group[agencyTitle]).forEach((routeTitle, idx) => {
           const route = routeConfigs[idx]
           const locationPreds: LocationPrediction[] = []
-          // Add additional data like colors and direction
-          group[agencyTitle][routeTitle].forEach(pred => {
-            const dir = route.directions.find(dir => dir.stops.includes(pred.stop.id))
-            const stop = route.stops.find(stop => stop.id === pred.stop.id)
 
-            if (stop) {
-              locationPreds.push({
-                ...pred,
-                route: {
-                  ...pred.route,
-                  color: route.color,
-                  textColor: route.textColor
-                },
-                direction: {
-                  id: dir?.id,
-                  title: dir?.title ?? dir?.shortTitle ?? ''
-                },
-                stop: {
-                  ...stop,
-                  distance: pred.stop.distance
-                }
-              })
-            }
-          })
+          if (route) {
+            // Add additional data like colors and direction
+            group[agencyTitle][routeTitle].forEach(pred => {
+              const dir = route.directions.find(dir => dir.stops.includes(pred.stop.id))
+              const stop = route.stops.find(stop => stop.id === pred.stop.id)
+
+              if (stop) {
+                locationPreds.push({
+                  ...pred,
+                  route: {
+                    ...pred.route,
+                    color: route.color,
+                    textColor: route.textColor
+                  },
+                  direction: {
+                    id: dir?.id,
+                    title: dir?.title ?? dir?.shortTitle ?? ''
+                  },
+                  stop: {
+                    ...stop,
+                    distance: pred.stop.distance
+                  }
+                })
+              }
+            })
+          }
 
           pres[agencyTitle][routeTitle] = locationPreds
         })
