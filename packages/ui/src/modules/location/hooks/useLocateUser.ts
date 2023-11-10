@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { marker } from 'leaflet'
 
 import { useMap } from '@core/contexts/map.js'
@@ -8,7 +8,7 @@ import { useLocation } from '../contexts/location'
 
 const useLocateUser = (active: boolean) => {
   const map = useMap()
-  const bookmark = useRef(useHomeStop())
+  const homeStop = useHomeStop()
   const { dispatch } = useLocation()
 
   useEffect(() => {
@@ -32,13 +32,13 @@ const useLocateUser = (active: boolean) => {
 
   useEffect(() => {
     if (active && map) {
-      map.locate({ setView: !bookmark.current, watch: true })
+      map.locate({ setView: !homeStop, watch: true })
     }
 
     if (!active && map) {
       map.stopLocate()
     }
-  }, [active, map, dispatch])
+  }, [active, map, homeStop, dispatch])
 }
 
 export { useLocateUser }

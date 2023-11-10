@@ -1,13 +1,19 @@
 import styled from 'styled-components'
-import { memo, useEffect, useMemo } from 'react'
+import ReactColorA11y from 'react-color-a11y'
+import { memo, useEffect, useMemo, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { latLng, latLngBounds } from 'leaflet'
 import { useQuery } from '@tanstack/react-query'
+import { Tooltip } from '@busmap/components/tooltip'
+import { MapMarked } from '@busmap/components/icons/mapMarked'
 
 import { get as getRoute } from '@core/api/rb/route.js'
 import { Loading } from '@core/components/loading.js'
 import { Minutes } from '@core/components/predictionFormats/minutes.js'
+import { Time } from '@core/components/predictionFormats/time.js'
 import { useMap } from '@core/contexts/map.js'
 import { useHomeStop } from '@core/hooks/useHomeStop.js'
+import { usePredictionsSettings } from '@module/settings/contexts/predictions.js'
 import { groupBy } from '@module/util.js'
 import {
   AgenciesWrap,
@@ -22,10 +28,22 @@ import { get as getPredictions } from '../api/predictions.js'
 import { useLocation } from '../contexts/location.js'
 import { useLocateUser } from '../hooks/useLocateUser.js'
 
-import type { Route, Prediction } from '@core/types.js'
+import type { MouseEvent } from 'react'
+import type { Route, Prediction, RouteName, Stop } from '@core/types.js'
 
 interface LocationProps {
   active: boolean
+}
+interface LocationPrediction extends Prediction {
+  route: RouteName & {
+    color: string
+    textColor: string
+  }
+  direction: {
+    id?: string
+    title: string
+  }
+  stop: Stop & { distance: number | null }
 }
 
 const Section = styled.section`
@@ -56,11 +74,14 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   const map = useMap()
   const homeStop = useHomeStop()
   const { mode } = useTheme()
+  const { format } = usePredictionsSettings()
   const { permission, position } = useLocation()
   const { data: predictions } = useQuery({
     queryKey: ['location', [position?.lat, position?.lon]],
     queryFn: () => getPredictions(position),
-    enabled: permission === 'granted'
+    enabled: permission === 'granted' && active,
+    refetchOnWindowFocus: true,
+    refetchInterval: 10_000
   })
   const group = useMemo(() => {
     if (predictions) {
@@ -77,7 +98,8 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     return predictions
   }, [predictions])
   const { data: routeConfigs } = useQuery({
-    queryKey: ['configs', position?.lat, position?.lon],
+    // Make sure the route configs update when the group data does
+    queryKey: ['configs', ...Object.keys(group ?? {})],
     queryFn: () => {
       const requests: Promise<Route>[] = []
 
@@ -96,8 +118,62 @@ const Location = memo(function Location({ active = false }: LocationProps) {
 
       return Promise.all(requests)
     },
-    enabled: Boolean(group)
+    enabled: Boolean(group),
+    staleTime: 20 * 60 * 1000
   })
+  const uiGroup = useMemo(() => {
+    if (group && routeConfigs) {
+      const pres: Record<string, Record<string, LocationPrediction[]>> = {}
+
+      Object.keys(group).forEach(agencyTitle => {
+        pres[agencyTitle] = {}
+        Object.keys(group[agencyTitle]).forEach((routeTitle, idx) => {
+          const route = routeConfigs[idx]
+          const locationPreds: LocationPrediction[] = []
+          // Add additional data like colors and direction
+          group[agencyTitle][routeTitle].forEach(pred => {
+            const dir = route.directions.find(dir => dir.stops.includes(pred.stop.id))
+            const stop = route.stops.find(stop => stop.id === pred.stop.id)
+
+            if (stop) {
+              locationPreds.push({
+                ...pred,
+                route: {
+                  ...pred.route,
+                  color: route.color,
+                  textColor: route.textColor
+                },
+                direction: {
+                  id: dir?.id,
+                  title: dir?.title ?? dir?.shortTitle ?? ''
+                },
+                stop: {
+                  ...stop,
+                  distance: pred.stop.distance
+                }
+              })
+            }
+          })
+
+          pres[agencyTitle][routeTitle] = locationPreds
+        })
+      })
+
+      return pres
+    }
+
+    return undefined
+  }, [group, routeConfigs])
+  const onClickSelectedNearby = useCallback(
+    (evt: MouseEvent<HTMLButtonElement>) => {
+      const { lat, lon } = evt.currentTarget.dataset
+      const latLon = latLng(Number(lat), Number(lon))
+
+      map?.setView(latLon, Math.max(map.getZoom() ?? 1, 16))
+    },
+    [map]
+  )
+  const PredFormat = format === 'minutes' ? Minutes : Time
 
   useLocateUser(active && permission !== 'denied')
 
@@ -114,8 +190,8 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     return <p>Permission denied.</p>
   }
 
-  if (group && routeConfigs) {
-    if (!Object.keys(group).length) {
+  if (uiGroup) {
+    if (!Object.keys(uiGroup).length) {
       return <p>No predictions available at this time for your location.</p>
     }
 
@@ -123,41 +199,66 @@ const Location = memo(function Location({ active = false }: LocationProps) {
       <Section>
         <h2>Nearby Stops</h2>
         <AgenciesWrap>
-          {Object.keys(group).map(agencyTitle => (
+          {Object.keys(uiGroup).map(agencyTitle => (
             <AgencySection key={agencyTitle} mode={mode}>
               <h3>{agencyTitle}</h3>
               <RouteWrap>
-                {Object.keys(group[agencyTitle]).map((routeTitle, idx) => {
-                  const route = routeConfigs[idx]
+                {Object.keys(uiGroup[agencyTitle]).map(routeTitle => {
+                  return uiGroup[agencyTitle][routeTitle].map(pred => {
+                    const { color, textColor } = pred.route
+                    const isHomeStopPred =
+                      pred.agency.id === homeStop?.params.agency &&
+                      pred.route.id === homeStop?.params.route &&
+                      pred.direction.id === homeStop?.params.direction &&
+                      pred.stop.id === homeStop?.params.stop
 
-                  return group[agencyTitle][routeTitle].map(pred => {
                     return (
                       <RouteSection
                         key={`${pred.route.id}-${pred.stop.id}`}
-                        routeColor={route.color}
-                        routeTextColor={route.textColor}>
+                        routeColor={color}
+                        routeTextColor={textColor}>
                         <h4>{routeTitle}</h4>
-                        <StopArticle routeColor={route.color} mode={mode}>
-                          <header>
-                            <h5>{pred.stop.title}</h5>
+                        <StopArticle routeColor={color} mode={mode}>
+                          <header className={isHomeStopPred ? 'selected' : undefined}>
+                            <ReactColorA11y colorPaletteKey={mode}>
+                              <h5>
+                                <Link
+                                  to={`/stop/${pred.agency.id}/${pred.route.id}/${pred.direction.id}/${pred.stop.id}`}>
+                                  {pred.stop.title}
+                                </Link>
+                              </h5>
+                              {isHomeStopPred && (
+                                <Tooltip title="Locate selected stop.">
+                                  <button
+                                    data-lat={pred.stop.lat}
+                                    data-lon={pred.stop.lon}
+                                    onClick={onClickSelectedNearby}>
+                                    <MapMarked size="small" color={color} />
+                                  </button>
+                                </Tooltip>
+                              )}
+                            </ReactColorA11y>
                             {pred.values[0]?.direction.title && (
                               <h6>{pred.values[0].direction.title}</h6>
                             )}
                           </header>
                           <ul>
-                            {pred.values.map(({ minutes, affectedByLayover }, pidx) => (
-                              <li key={`${minutes}-${pidx}`}>
-                                {minutes === 0 ? (
-                                  <em>Now</em>
-                                ) : (
-                                  <Minutes
-                                    minutes={minutes}
-                                    affectedByLayover={affectedByLayover}
-                                  />
-                                )}
-                                <span>•</span>
-                              </li>
-                            ))}
+                            {pred.values.map(
+                              ({ minutes, epochTime, affectedByLayover }, pidx) => (
+                                <li key={`${minutes}-${pidx}`}>
+                                  {minutes === 0 ? (
+                                    <em>Now</em>
+                                  ) : (
+                                    <PredFormat
+                                      minutes={minutes}
+                                      epochTime={epochTime}
+                                      affectedByLayover={affectedByLayover}
+                                    />
+                                  )}
+                                  <span>•</span>
+                                </li>
+                              )
+                            )}
                           </ul>
                           <footer>
                             <em>{pred.stop.distance}</em>
