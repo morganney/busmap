@@ -217,7 +217,7 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
             preds: preds.current,
             dimensions: iconDimensions.current
           })
-          marker.getPopup()?.setContent(getVehiclePopupContent(marker, route))
+          marker.setPopupContent(getVehiclePopupContent(marker, route))
           marker.setLatLng(latLng(vehicle.lat, vehicle.lon))
         } else {
           const div = document.createElement('div')
