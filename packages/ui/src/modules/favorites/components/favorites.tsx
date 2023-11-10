@@ -93,6 +93,7 @@ const Favorites = memo(function Favorites() {
     },
     [map]
   )
+  const PredFormat = format === 'minutes' ? Minutes : Time
 
   useEffect(() => {
     workerRef.current = new Worker(new URL('../worker.ts', import.meta.url), {
@@ -166,7 +167,6 @@ const Favorites = memo(function Favorites() {
                         fav.route.id === homeStop?.params.route &&
                         fav.direction.id === homeStop?.params.direction &&
                         fav.stop.id === homeStop?.params.stop
-                      const PredFormat = format === 'minutes' ? Minutes : Time
                       const preds =
                         predictionsMap[getPredsKey(agencyTitle, routeTitle, fav.stop.id)]
 
@@ -177,8 +177,7 @@ const Favorites = memo(function Favorites() {
                           routeTextColor={textColor}>
                           <h4 title={routeTitle}>{routeTitle}</h4>
                           <StopArticle routeColor={color} mode={mode}>
-                            <header
-                              className={isHomeStopFav ? 'fav-selected' : undefined}>
+                            <header className={isHomeStopFav ? 'selected' : undefined}>
                               <ReactColorA11y colorPaletteKey={mode}>
                                 <h5>
                                   <Link

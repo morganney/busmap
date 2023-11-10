@@ -84,7 +84,7 @@ const StopArticle = styled.article<{ routeColor: string; mode: Mode }>`
       margin: 0;
     }
 
-    &.fav-selected {
+    &.selected {
       > div {
         display: flex;
         align-items: center;
