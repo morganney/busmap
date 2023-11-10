@@ -176,8 +176,11 @@ const Favorites = memo(function Favorites() {
                           routeColor={color}
                           routeTextColor={textColor}>
                           <h4 title={routeTitle}>{routeTitle}</h4>
-                          <StopArticle routeColor={color} mode={mode}>
-                            <header className={isHomeStopFav ? 'selected' : undefined}>
+                          <StopArticle
+                            mode={mode}
+                            routeColor={color}
+                            className={isHomeStopFav ? 'selected' : undefined}>
+                            <header>
                               <ReactColorA11y colorPaletteKey={mode}>
                                 <h5>
                                   <Link

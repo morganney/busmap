@@ -83,8 +83,10 @@ const StopArticle = styled.article<{ routeColor: string; mode: Mode }>`
       font-weight: normal;
       margin: 0;
     }
+  }
 
-    &.selected {
+  &.selected {
+    header {
       > div {
         display: flex;
         align-items: center;
