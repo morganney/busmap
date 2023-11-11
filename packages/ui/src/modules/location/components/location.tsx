@@ -115,12 +115,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
             const pred = group[agency][route][0]
 
             if (pred) {
-              requests.push(
-                getRoute(
-                  pred.agency.id.replace(/sfmta-cis/, 'sfmuni-sandbox'),
-                  pred.route.id
-                )
-              )
+              requests.push(getRoute(pred.agency.id, pred.route.id))
             }
           })
         })
@@ -233,7 +228,6 @@ const Location = memo(function Location({ active = false }: LocationProps) {
                 {Object.keys(uiGroup[agencyTitle]).map(routeTitle => {
                   return uiGroup[agencyTitle][routeTitle].map(pred => {
                     const { color, textColor } = pred.route
-                    const agencyId = pred.agency.id.replace(/sfmta-cis/, 'sfmuni-sandbox')
                     const isHomeStopPred =
                       pred.agency.id === homeStop?.params.agency &&
                       pred.route.id === homeStop?.params.route &&
@@ -254,7 +248,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
                             <ReactColorA11y colorPaletteKey={mode}>
                               <h5>
                                 <Link
-                                  to={`/stop/${agencyId}/${pred.route.id}/${pred.direction.id}/${pred.stop.id}`}>
+                                  to={`/stop/${pred.agency.id}/${pred.route.id}/${pred.direction.id}/${pred.stop.id}`}>
                                   {pred.stop.title}
                                 </Link>
                               </h5>
