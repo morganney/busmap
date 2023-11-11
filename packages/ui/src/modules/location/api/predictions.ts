@@ -13,6 +13,10 @@ const get = async (point?: Point) => {
     `${ROOT}/locations/${point.lat},${point.lon}/predictions`
   )
 
+  preds.forEach(pred => {
+    pred.agency.id = pred.agency.id.replace(/sfmta-cis/, 'sfmuni-sandbox')
+  })
+
   return preds
 }
 

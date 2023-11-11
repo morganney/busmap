@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom'
 import { latLng, latLngBounds } from 'leaflet'
 import { useQuery } from '@tanstack/react-query'
 import { Tooltip } from '@busmap/components/tooltip'
+import { Alert } from '@busmap/components/alert'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
 
+import { queryClient } from '@core/queryClient.js'
 import { get as getRoute } from '@core/api/rb/route.js'
 import { Loading } from '@core/components/loading.js'
 import { Minutes } from '@core/components/predictionFormats/minutes.js'
@@ -79,10 +81,10 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   const { mode } = useTheme()
   const { format } = usePredictionsSettings()
   const { permission, position } = useLocation()
-  const { data: predictions } = useQuery({
+  const { data: predictions, error: predictionsError } = useQuery({
     queryKey: ['location', [position?.point.lat, position?.point.lon]],
     queryFn: () => getPredictions(position?.point),
-    enabled: permission === 'granted' && active,
+    enabled: Boolean(permission === 'granted' && active && position),
     refetchOnWindowFocus: true,
     refetchInterval: 10_000
   })
@@ -100,7 +102,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
 
     return predictions
   }, [predictions])
-  const { data: routeConfigs } = useQuery({
+  const { data: routeConfigs, error: routeConfigsError } = useQuery({
     // Make sure the route configs update when the group data does
     queryKey: ['configs', ...Object.keys(group ?? {})],
     queryFn: () => {
@@ -193,8 +195,20 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     }
   }, [active, homeStop, permission, map])
 
+  useEffect(() => {
+    if (Array.isArray(routeConfigs)) {
+      routeConfigs.forEach(route => {
+        queryClient.setQueryData(['route', route.id, route.title], route)
+      })
+    }
+  }, [routeConfigs])
+
   if (permission === 'denied') {
     return <p>Permission denied.</p>
+  }
+
+  if (predictionsError || routeConfigsError) {
+    return <Alert message="There was an error loading your location data." type="error" />
   }
 
   if (uiGroup) {
