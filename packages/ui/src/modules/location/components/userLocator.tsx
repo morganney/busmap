@@ -10,7 +10,7 @@ import { useLocation } from '../contexts/location.js'
 
 const Button = styled.button`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 4px;
   font-size: 12px;
 `

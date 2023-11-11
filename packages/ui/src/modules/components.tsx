@@ -86,6 +86,13 @@ const StopArticle = styled.article<{ routeColor: string; mode: Mode }>`
   }
 
   &.selected {
+    background-image: radial-gradient(
+      ellipse at left top,
+      transparent,
+      transparent 79.9%,
+      ${({ routeColor }) => `${routeColor}55`} 80%
+    );
+
     header {
       > div {
         display: flex;

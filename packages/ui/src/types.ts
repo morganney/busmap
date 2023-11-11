@@ -1,6 +1,11 @@
 import type { Dispatch } from 'react'
 
 // Restbus Model types
+interface Hypertext {
+  from: object[]
+  self: object[]
+  to: object[]
+}
 interface Point {
   lat: number
   lon: number
@@ -55,6 +60,7 @@ interface Direction extends DirectionName {
 interface RouteName {
   id: string
   title: string
+  _links?: Hypertext
 }
 interface Route extends RouteName {
   shortTitle: string | null
@@ -64,6 +70,7 @@ interface Route extends RouteName {
   stops: Stop[]
   directions: Direction[]
   paths: Path[]
+  _links?: Hypertext
 }
 interface Pred {
   epochTime: number
@@ -85,11 +92,7 @@ interface Prediction {
   stop: StopName & { distance: number | null }
   messages: Message[]
   values: Pred[]
-  _links?: {
-    from: object[]
-    self: object[]
-    to: object[]
-  }
+  _links?: Hypertext
 }
 interface Selection {
   agency: Agency

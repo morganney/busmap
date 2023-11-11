@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { marker, divIcon, latLng } from 'leaflet'
-import { PB80T } from '@busmap/components/colors'
+import { SLB20T } from '@busmap/components/colors'
 
 import { useMap } from '@core/contexts/map.js'
 
@@ -20,7 +20,7 @@ const icon = divIcon({
 const circle = divIcon({
   html: `
     <svg viewBox="0 0 100 100" width="28" height="28">
-      <circle cx="50" cy="50" r="48" stroke-width="2" stroke="${PB80T}" fill="${PB80T}" fill-opacity="0.4" />
+      <circle cx="50" cy="50" r="48" stroke-width="2" stroke="${SLB20T}" fill="${SLB20T}" fill-opacity="0.4" />
     </svg>
   `,
   className: 'busmap-user-circle',

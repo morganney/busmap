@@ -12,6 +12,10 @@ const getAll = async (agencyId?: string) => {
 
   const routes = await transport.fetch<RouteName[]>(`${ROOT}/agencies/${agencyId}/routes`)
 
+  routes.forEach(route => {
+    delete route._links
+  })
+
   return routes
 }
 const get = async (agencyId?: string, routeId?: string) => {
@@ -22,6 +26,8 @@ const get = async (agencyId?: string, routeId?: string) => {
   const route = await transport.fetch<Route>(
     `${ROOT}/agencies/${agencyId}/routes/${routeId}`
   )
+
+  delete route._links
 
   return route
 }

@@ -66,7 +66,12 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     error: routeError,
     isLoading: isRouteLoading
   } = useQuery({
-    queryKey: ['route', routeName?.id],
+    /**
+     * Use two attributes from a route to prevent collisions across agencies.
+     * Not using agency id here to prevent prematurely triggering a route
+     * request with a mismatching agency/route pair resulting in 404's.
+     */
+    queryKey: ['route', routeName?.id, routeName?.title],
     queryFn: () => getRoute(agency?.id, routeName?.id),
     enabled: Boolean(agency) && Boolean(routeName),
     staleTime: 20 * 60 * 1000
