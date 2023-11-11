@@ -31,7 +31,7 @@ const useLocateUser = (active: boolean) => {
 
   useEffect(() => {
     if (active && map) {
-      map.locate({ setView: !homeStop, watch: true, maximumAge: 30 * 1000 })
+      map.locate({ setView: !homeStop, watch: true })
     }
 
     if (!active && map) {

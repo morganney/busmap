@@ -207,7 +207,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     return <p>Permission denied.</p>
   }
 
-  if (predictionsError || routeConfigsError) {
+  if ((predictionsError || routeConfigsError) && !group) {
     return <Alert message="There was an error loading your location data." type="error" />
   }
 

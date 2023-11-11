@@ -12,12 +12,20 @@ const get = async (point?: Point) => {
   const preds = await transport.fetch<Prediction[]>(
     `${ROOT}/locations/${point.lat},${point.lon}/predictions`
   )
+  const predictions: Prediction[] = []
 
   preds.forEach(pred => {
     pred.agency.id = pred.agency.id.replace(/sfmta-cis/, 'sfmuni-sandbox')
+
+    /**
+     * Not able to support SF Bay Ferry agency.
+     */
+    if (pred.agency.id !== 'bawt') {
+      predictions.push(pred)
+    }
   })
 
-  return preds
+  return predictions
 }
 
 export { get }
