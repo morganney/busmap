@@ -98,6 +98,7 @@ const VehicleSettings: FC = () => {
       </FormItem>
       <FormItem
         label="Color predicted"
+        tip="Associates a prediction time with its vehicle via colors."
         direction="horizontal-rev"
         justifyContent="flex-end"
         fontWeight="normal">

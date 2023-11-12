@@ -2,12 +2,12 @@ import styled from 'styled-components'
 import MuiAlert from '@mui/material/Alert'
 import { forwardRef } from 'react'
 
-import type { FC, SyntheticEvent } from 'react'
+import type { FC, SyntheticEvent, ReactNode } from 'react'
 
 interface AlertProps {
   type?: 'warning' | 'success' | 'error' | 'info'
   variant?: 'filled' | 'outlined' | 'standard'
-  message: string
+  children: ReactNode
   onClose?: (evt: SyntheticEvent | Event | CustomEvent) => void
 }
 type AlertRef = HTMLDivElement
@@ -15,15 +15,18 @@ type AlertRef = HTMLDivElement
 const AlertBase = styled(MuiAlert)`
   &.MuiAlert-standard {
     /* example of how to override mui styles */
+    .MuiAlert-message {
+      width: 100%;
+    }
   }
 `
 const Alert: FC<AlertProps> = forwardRef<AlertRef, AlertProps>(function Alert(
-  { message, onClose, type = 'info', variant = 'standard' },
+  { children, onClose, type = 'info', variant = 'standard' },
   ref
 ) {
   return (
     <AlertBase ref={ref} severity={type} variant={variant} onClose={onClose}>
-      {message}
+      {children}
     </AlertBase>
   )
 })
