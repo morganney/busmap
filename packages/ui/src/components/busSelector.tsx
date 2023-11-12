@@ -132,8 +132,16 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     if (agency && route && direction) {
       dispatch({ type: 'stop', value: undefined })
       vehiclesDispatch({ type: 'reset' })
+      navigate(
+        generatePath('/stop/:agency/:route/:direction', {
+          agency: agency.id,
+          route: route.id,
+          direction: direction.id
+        }),
+        { replace: true }
+      )
     }
-  }, [dispatch, vehiclesDispatch, agency, route, direction])
+  }, [navigate, dispatch, vehiclesDispatch, agency, route, direction])
   const error = getFirstDataError([routesError, routeError])
   const isLoading = isRoutesLoading || isRouteLoading
 
@@ -193,13 +201,13 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   useEffect(() => {
     if (homeStop) {
       const { params } = homeStop
-
       /**
        * This is where selector state and url params
        * are all in synnc except the stop params/state.
        *
-       * Make sure stop is not falsy so clearing a
-       * selected stop does not trigger this branch.
+       * Make sure stop is not falsy so that clearing a
+       * selected stop does not trigger this branch,
+       * and only navigation or changing selections does.
        */
       if (
         stop &&
@@ -243,6 +251,12 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
 
           if (stopDirection && stopStop) {
             dispatch({ type: 'direction', value: stopDirection })
+            dispatch({ type: 'stop', value: stopStop })
+          }
+        } else {
+          const stopStop = route?.stops.find(({ id }) => id === params.stop)
+
+          if (stopStop) {
             dispatch({ type: 'stop', value: stopStop })
           }
         }
