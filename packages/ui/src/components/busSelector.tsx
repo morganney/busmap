@@ -191,12 +191,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   }, [routeConfig, map, dispatch, vehiclesDispatch])
 
   useEffect(() => {
-    /**
-     * This is a /stop route where stop state
-     * and url param are out of sync. Maybe
-     * an initial page load or favorites link.
-     */
-    if (homeStop && stop?.id !== homeStop.params.stop) {
+    if (homeStop) {
       const { params } = homeStop
 
       /**

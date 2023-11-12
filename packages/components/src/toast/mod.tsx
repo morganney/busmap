@@ -73,9 +73,9 @@ const Toaster: FC<{ anchor?: Positions; kind?: Variant }> = ({ anchor, kind }) =
       <Alert
         type={type ?? 'info'}
         variant={variant ?? kind ?? 'standard'}
-        message={message ?? ''}
-        onClose={onClose}
-      />
+        onClose={onClose}>
+        {message ?? ''}
+      </Alert>
     </Snackbar>
   )
 }

@@ -207,8 +207,8 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     return <p>Permission denied.</p>
   }
 
-  if (predictionsError || routeConfigsError) {
-    return <Alert message="There was an error loading your location data." type="error" />
+  if ((predictionsError || routeConfigsError) && !group) {
+    return <Alert type="error">There was an error loading your location data.</Alert>
   }
 
   if (uiGroup) {
@@ -297,6 +297,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
             </AgencySection>
           ))}
         </AgenciesWrap>
+        <UserLocator asAlert />
       </Section>
     )
   }
