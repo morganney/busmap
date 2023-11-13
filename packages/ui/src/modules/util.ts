@@ -32,3 +32,4 @@ const same = (a: Selection, b: Selection): boolean => {
 }
 
 export { groupBy, same }
+export type { Selection }
