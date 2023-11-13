@@ -50,8 +50,11 @@ const Button: StoryFn<typeof Alert> = args => {
     </Alert>
   )
 }
+const CustomIcon: StoryFn<typeof Alert> = args => {
+  return <Alert {...args} icon={<StreetView />} />
+}
 
-export { Primary, Close, Button }
+export { Primary, Close, Button, CustomIcon }
 export default {
   title: 'Alert',
   component: Alert,
@@ -68,6 +71,9 @@ export default {
     variant: {
       control: 'select',
       options: ['filled', 'standard', 'outlined']
+    },
+    icon: {
+      control: false
     }
   }
 }

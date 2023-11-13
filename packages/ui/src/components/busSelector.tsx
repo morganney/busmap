@@ -82,7 +82,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
         type: 'agency',
         value: selected
       })
-      navigate('/', { replace: true })
+      navigate(generatePath('/stop/:agency', { agency: selected.id }), { replace: true })
     },
     [dispatch, navigate]
   )
@@ -90,7 +90,10 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     (selected: RouteName) => {
       if (agency) {
         setRouteName(selected)
-        navigate('/', { replace: true })
+        navigate(
+          generatePath('/stop/:agency/:route', { agency: agency.id, route: selected.id }),
+          { replace: true }
+        )
       }
     },
     [agency, navigate]
@@ -103,7 +106,14 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           value: selected
         })
         vehiclesDispatch({ type: 'reset' })
-        navigate('/', { replace: true })
+        navigate(
+          generatePath('/stop/:agency/:route/:direction', {
+            agency: agency.id,
+            route: route.id,
+            direction: selected.id
+          }),
+          { replace: true }
+        )
       }
     },
     [dispatch, vehiclesDispatch, navigate, agency, route]
@@ -262,7 +272,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
         }
       }
     }
-  }, [homeStop, dispatch, agencies, agency, routeName, routes, route, direction, stop])
+  }, [dispatch, homeStop, agencies, agency, routeName, routes, route, direction, stop])
 
   if (error instanceof Error) {
     return (

@@ -7,6 +7,24 @@
     transform: translateX(100%);
   }
 }
+@keyframes pulselight {
+  from {
+    box-shadow: 0 0 0 0 #33333333;
+  }
+
+  to {
+    box-shadow: 0 0 0 14px #33333300;
+  }
+}
+@keyframes pulsedark {
+  from {
+    box-shadow: 0 0 0 0 #e5e5e533;
+  }
+
+  to {
+    box-shadow: 0 0 0 14px #e5e5e500;
+  }
+}
 :root {
   --color-light: #333333;
   --field-bg-color-light: #ffffff;
@@ -94,6 +112,13 @@ body.busmap-dark aside {
   fill: currentColor;
   stroke: #666666;
   stroke-width: 2px;
+}
+.busmap-user-circle {
+  border-radius: 50%;
+  animation: pulselight 2s infinite;
+}
+body.busmap-dark .busmap-user-circle {
+  animation: pulsedark 2s infinite;
 }
 .busmap-stop-icon svg {
   position: absolute;
