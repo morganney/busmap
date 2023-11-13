@@ -211,8 +211,8 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     )
   }
 
-  if ((predictionsError || routeConfigsError) && !group) {
-    return <Alert type="error">There was an error loading your location data.</Alert>
+  if (predictionsError || routeConfigsError) {
+    return <Alert type="error">There was an error getting data for your location.</Alert>
   }
 
   if (uiGroup) {
