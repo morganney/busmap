@@ -6,8 +6,8 @@ import { SY30T } from '@busmap/components/colors'
 
 import { useGlobals } from '@core/globals.js'
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
+import { same } from '@module/util.js'
 
-import { same } from '../util.js'
 import { MAX_FAVORITES } from '../common.js'
 
 import type { FC } from 'react'
