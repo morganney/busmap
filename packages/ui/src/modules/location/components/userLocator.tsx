@@ -10,6 +10,8 @@ import { SO40T, PB80T } from '@busmap/components/colors'
 import { useMap } from '@core/contexts/map.js'
 import { useGlobals } from '@core/globals.js'
 
+import { Pulse } from './pulse.js'
+
 import { useLocation } from '../contexts/location.js'
 
 import type { FC } from 'react'
@@ -55,6 +57,10 @@ const AlertWrap = styled.div`
 
   p {
     margin: 0;
+    line-height: 1;
+  }
+
+  > div:last-child {
     line-height: 1;
   }
 `
@@ -135,6 +141,7 @@ const UserLocator: FC<UserLocatorProps> = ({ withDistance = false }) => {
 
   return (
     <Info>
+      <Pulse />
       <p>Monitoring your location.</p>
       <Tooltip title="Locate me.">
         <button onClick={onClick}>
