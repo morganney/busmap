@@ -4,7 +4,8 @@ import { latLng } from 'leaflet'
 import { Tooltip } from '@busmap/components/tooltip'
 import { Alert } from '@busmap/components/alert'
 import { StreetView } from '@busmap/components/icons/streetView'
-import { SO40T } from '@busmap/components/colors'
+import { Route } from '@busmap/components/icons/route'
+import { SO40T, PB80T } from '@busmap/components/colors'
 
 import { useMap } from '@core/contexts/map.js'
 import { useGlobals } from '@core/globals.js'
@@ -48,19 +49,22 @@ const UserLocator: FC<UserLocatorProps> = ({ asAlert = false }) => {
 
   if (asAlert) {
     if (stop && map && position) {
+      const distanceInMiles =
+        map.distance(
+          latLng(position.point.lat, position.point.lon),
+          latLng(stop.lat, stop.lon)
+        ) / 1609
+      const digits = Math.round(distanceInMiles).toString().length
+      const sigDig = digits > 2 ? digits : 2
+
       return (
         <Wrap>
-          <Alert type="info">
+          <Alert type="info" icon={<Route color={PB80T} />}>
             <AlertWrap>
               <p>
                 {Intl.NumberFormat(['en-US', 'es-US', 'es-CL'], {
-                  maximumSignificantDigits: 4
-                }).format(
-                  map.distance(
-                    latLng(position.point.lat, position.point.lon),
-                    latLng(stop.lat, stop.lon)
-                  ) / 1609
-                )}{' '}
+                  maximumSignificantDigits: sigDig
+                }).format(distanceInMiles)}{' '}
                 miles away from <strong>{stop.title}</strong>.
               </p>
               <Tooltip title="Locate me.">
