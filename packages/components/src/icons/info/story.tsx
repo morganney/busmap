@@ -1,19 +1,18 @@
-import { Route } from './mod.js'
+import { Info } from './mod.js'
 
 import type { StoryFn } from '@storybook/react'
 
-const Primary: StoryFn<typeof Route> = args => {
-  return <Route {...args} />
+const Primary: StoryFn<typeof Info> = args => {
+  return <Info {...args} />
 }
 
 export default {
-  title: 'Icons/Route',
-  component: Route,
+  title: 'Icons/Info',
+  component: Info,
   args: {
     outlined: false,
     size: 'medium',
     color: '#c1c1c1',
-    cursor: 'auto',
     tabIndex: 0
   },
   argTypes: {

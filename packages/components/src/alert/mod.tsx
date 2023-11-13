@@ -9,23 +9,32 @@ interface AlertProps {
   variant?: 'filled' | 'outlined' | 'standard'
   children: ReactNode
   icon?: ReactNode
+  fullWidth?: boolean
   onClose?: (evt: SyntheticEvent | Event | CustomEvent) => void
 }
 type AlertRef = HTMLDivElement
 
-const AlertBase = styled(MuiAlert)`
+const AlertBase = styled(MuiAlert)<{ $fullWidth: boolean }>`
   &.MuiAlert-standard {
+    width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
+
     .MuiAlert-message {
       width: 100%;
     }
   }
 `
 const Alert: FC<AlertProps> = forwardRef<AlertRef, AlertProps>(function Alert(
-  { children, icon, onClose, type = 'info', variant = 'standard' },
+  { children, icon, onClose, type = 'info', variant = 'standard', fullWidth = false },
   ref
 ) {
   return (
-    <AlertBase ref={ref} severity={type} variant={variant} icon={icon} onClose={onClose}>
+    <AlertBase
+      ref={ref}
+      severity={type}
+      variant={variant}
+      icon={icon}
+      $fullWidth={fullWidth}
+      onClose={onClose}>
       {children}
     </AlertBase>
   )

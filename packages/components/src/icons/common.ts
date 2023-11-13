@@ -7,6 +7,7 @@ import type { Size } from '../types.js'
 
 interface IconProps {
   color?: string
+  cursor?: string
   size?: Size
   onClick?: () => void
   onKeyDown?: (evt: KeyboardEvent<HTMLSpanElement>) => void

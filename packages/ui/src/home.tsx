@@ -194,6 +194,7 @@ const Home: FC<HomeProps> = () => {
             stop={stop}
             route={route}
             preds={preds}
+            locateActive={state.locate}
             messages={messages}
             timestamp={state.timestamp}
           />

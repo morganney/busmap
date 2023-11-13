@@ -4,6 +4,7 @@ import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
 import { useTheme } from '@module/settings/contexts/theme.js'
 import { useVehicleSettings } from '@module/settings/contexts/vehicle.js'
 import { usePredictionsSettings } from '@module/settings/contexts/predictions.js'
+import { UserLocator } from '@module/location/components/userLocator.js'
 
 import { VehicleLocator } from './vehicleLocator.js'
 
@@ -17,6 +18,7 @@ interface PredictionsProps {
   preds?: Prediction[]
   stop?: Stop
   route?: Route
+  locateActive: boolean
   isFetching: boolean
   timestamp: number
   messages: Prediction['messages']
@@ -200,7 +202,8 @@ const Predictions: FC<PredictionsProps> = ({
   preds,
   stop,
   messages,
-  timestamp
+  timestamp,
+  locateActive
 }) => {
   const { mode } = useTheme()
   const { format } = usePredictionsSettings()
@@ -221,6 +224,7 @@ const Predictions: FC<PredictionsProps> = ({
             <h2>Next {title}</h2>
             <h3>{route.title}</h3>
           </header>
+          {locateActive && <UserLocator withDistance />}
           {messages.length > 0 && (
             <Messages mode={mode}>
               <summary>Messages 💬</summary>

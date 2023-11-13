@@ -15,13 +15,37 @@ import { useLocation } from '../contexts/location.js'
 import type { FC } from 'react'
 
 interface UserLocatorProps {
-  asAlert?: boolean
+  withDistance?: boolean
 }
 
+const btn = `
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+`
 const Wrap = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+
+  header + & {
+    margin: 18px 0 6px;
+  }
+`
+const Info = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 0;
+
+  p {
+    margin: 0;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 600;
+  }
 `
 const AlertWrap = styled.div`
   display: flex;
@@ -34,10 +58,25 @@ const AlertWrap = styled.div`
     line-height: 1;
   }
 `
-const UserLocator: FC<UserLocatorProps> = ({ asAlert = false }) => {
+const StopButton = styled.button`
+  ${btn};
+  padding: 2px 1px;
+  font-weight: 600;
+  color: #014361;
+  text-align: start;
+
+  &:hover {
+    background: #014361cc;
+    color: white;
+  }
+`
+const StreetViewButton = styled.button`
+  ${btn};
+`
+const UserLocator: FC<UserLocatorProps> = ({ withDistance = false }) => {
   const map = useMap()
   const { stop } = useGlobals()
-  const { position } = useLocation()
+  const { position, permission } = useLocation()
   const onClick = useCallback(() => {
     if (position && map) {
       map.setView(
@@ -46,8 +85,20 @@ const UserLocator: FC<UserLocatorProps> = ({ asAlert = false }) => {
       )
     }
   }, [position, map])
+  const onClickLocateStop = useCallback(() => {
+    if (map && stop) {
+      const { lat, lon } = stop
+      const latLon = latLng(lat, lon)
 
-  if (asAlert) {
+      map.setView(latLon, Math.max(map.getZoom(), 16))
+    }
+  }, [map, stop])
+
+  if (permission !== 'granted') {
+    return null
+  }
+
+  if (withDistance) {
     if (stop && map && position) {
       const distanceInMiles =
         map.distance(
@@ -59,18 +110,19 @@ const UserLocator: FC<UserLocatorProps> = ({ asAlert = false }) => {
 
       return (
         <Wrap>
-          <Alert type="info" icon={<Route color={PB80T} />}>
+          <Alert icon={<Route color={PB80T} cursor="auto" />} fullWidth>
             <AlertWrap>
               <p>
                 {Intl.NumberFormat(['en-US', 'es-US', 'es-CL'], {
                   maximumSignificantDigits: sigDig
                 }).format(distanceInMiles)}{' '}
-                miles away from <strong>{stop.title}</strong>.
+                miles away from{' '}
+                <StopButton onClick={onClickLocateStop}>{stop.title}.</StopButton>
               </p>
               <Tooltip title="Locate me.">
-                <button onClick={onClick}>
+                <StreetViewButton onClick={onClick}>
                   <StreetView size="small" color={SO40T} />
-                </button>
+                </StreetViewButton>
               </Tooltip>
             </AlertWrap>
           </Alert>
@@ -82,13 +134,14 @@ const UserLocator: FC<UserLocatorProps> = ({ asAlert = false }) => {
   }
 
   return (
-    <Wrap>
+    <Info>
+      <p>Monitoring your location.</p>
       <Tooltip title="Locate me.">
         <button onClick={onClick}>
           <StreetView size="small" color={SO40T} />
         </button>
       </Tooltip>
-    </Wrap>
+    </Info>
   )
 }
 

@@ -204,7 +204,11 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   }, [routeConfigs])
 
   if (permission === 'denied') {
-    return <p>Permission denied.</p>
+    return (
+      <Alert type="warning">
+        <strong>Location permission denied.</strong> Check your OS or browser settings.
+      </Alert>
+    )
   }
 
   if ((predictionsError || routeConfigsError) && !group) {
@@ -297,7 +301,6 @@ const Location = memo(function Location({ active = false }: LocationProps) {
             </AgencySection>
           ))}
         </AgenciesWrap>
-        <UserLocator asAlert />
       </Section>
     )
   }
