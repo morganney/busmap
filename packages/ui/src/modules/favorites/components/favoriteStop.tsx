@@ -6,12 +6,28 @@ import { SY30T } from '@busmap/components/colors'
 
 import { useGlobals } from '@core/globals.js'
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
+import { same } from '@module/util.js'
 
-import { same } from '../util.js'
 import { MAX_FAVORITES } from '../common.js'
 
 import type { FC } from 'react'
+import type { RouteName, DirectionName } from '@core/types.js'
+import type { Selection } from '@module/util.js'
 import type { Favorite } from '../types.js'
+
+interface SelectionMeta extends Selection {
+  route: RouteName & {
+    color: string
+    textColor: string
+    shortTitle?: string
+  }
+  direction: DirectionName & {
+    shortTitle?: string
+  }
+}
+interface FavoriteStopProps {
+  selection?: SelectionMeta
+}
 
 const Tip = styled(Tooltip)`
   display: flex;
@@ -22,10 +38,11 @@ const Button = styled.button`
   margin: 0;
   background: none;
 `
-const FavoriteStop: FC = () => {
+const FavoriteStop: FC<FavoriteStopProps> = ({ selection }) => {
+  const globals = useGlobals()
+  const { agency, route, direction, stop } = selection ?? globals
   const { favorites } = useStorage()
   const storageDispatch = useStorageDispatch()
-  const { agency, route, direction, stop } = useGlobals()
   const favorite = useMemo(() => {
     return favorites.find(fav => {
       if (route && direction && stop && agency) {

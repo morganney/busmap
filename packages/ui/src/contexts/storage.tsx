@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useMemo } from 'react'
 
-import { same } from '@module/favorites/util.js'
+import { same } from '@module/util.js'
 import { MAX_FAVORITES } from '@module/favorites/common.js'
 import { isAMode, isASpeedUnit, isAPredictionFormat } from '@module/settings/util.js'
 

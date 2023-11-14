@@ -25,6 +25,7 @@ import {
   StopArticle
 } from '@module/components.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
+import { FavoriteStop } from '@module/favorites/components/favoriteStop.js'
 
 import { UserLocator } from './userLocator.js'
 
@@ -45,7 +46,7 @@ interface LocationPrediction extends Prediction {
     textColor: string
   }
   direction: {
-    id?: string
+    id: string
     title: string
   }
   stop: Stop & { distance: number | null }
@@ -142,7 +143,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
               const dir = route.directions.find(dir => dir.stops.includes(pred.stop.id))
               const stop = route.stops.find(stop => stop.id === pred.stop.id)
 
-              if (stop) {
+              if (stop && dir) {
                 locationPreds.push({
                   ...pred,
                   route: {
@@ -151,8 +152,8 @@ const Location = memo(function Location({ active = false }: LocationProps) {
                     textColor: route.textColor
                   },
                   direction: {
-                    id: dir?.id,
-                    title: dir?.title ?? dir?.shortTitle ?? ''
+                    id: dir.id,
+                    title: dir.title ?? dir.shortTitle ?? ''
                   },
                   stop: {
                     ...stop,
@@ -211,8 +212,8 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     )
   }
 
-  if ((predictionsError || routeConfigsError) && !group) {
-    return <Alert type="error">There was an error loading your location data.</Alert>
+  if (predictionsError || routeConfigsError) {
+    return <Alert type="error">There was an error getting data for your location.</Alert>
   }
 
   if (uiGroup) {
@@ -290,7 +291,21 @@ const Location = memo(function Location({ active = false }: LocationProps) {
                             )}
                           </ul>
                           <footer>
-                            <em>{pred.stop.distance}</em>
+                            <ul>
+                              <li>
+                                <em>{pred.stop.distance}</em>
+                              </li>
+                              <li>
+                                <FavoriteStop
+                                  selection={{
+                                    agency: pred.agency,
+                                    route: pred.route,
+                                    direction: pred.direction,
+                                    stop: pred.stop
+                                  }}
+                                />
+                              </li>
+                            </ul>
                           </footer>
                         </StopArticle>
                       </RouteSection>

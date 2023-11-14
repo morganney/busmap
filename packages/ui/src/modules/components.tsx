@@ -58,9 +58,30 @@ const StopArticle = styled.article<{ routeColor: string; mode: Mode }>`
     border-bottom: none;
   }
 
-  footer {
-    > div {
-      display: inline-block;
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    gap: 6px;
+    line-height: 1;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 15px;
+    font-weight: bold;
+
+    em {
+      ${blinkStyles};
+    }
+  }
+
+  li:last-child {
+    > span:last-child {
+      display: none;
     }
   }
 
@@ -82,6 +103,17 @@ const StopArticle = styled.article<{ routeColor: string; mode: Mode }>`
       font-size: 12px;
       font-weight: normal;
       margin: 0;
+    }
+  }
+
+  footer {
+    > div {
+      display: inline-block;
+    }
+
+    em {
+      animation: none;
+      font-style: italic;
     }
   }
 
@@ -109,33 +141,6 @@ const StopArticle = styled.article<{ routeColor: string; mode: Mode }>`
             cursor: auto;
           }
         }
-      }
-    }
-  }
-
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    gap: 6px;
-    line-height: 1;
-
-    li {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 15px;
-      font-weight: bold;
-
-      em {
-        ${blinkStyles};
-      }
-    }
-
-    li:last-child {
-      span:last-child {
-        display: none;
       }
     }
   }
