@@ -174,6 +174,12 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
 
   useEffect(() => {
     if (routeConfig) {
+      const fitRouteBounds = () => {
+        const { sw, ne } = routeConfig.bounds
+
+        map?.fitBounds(latLngBounds(latLng(sw.lat, sw.lon), latLng(ne.lat, ne.lon)))
+      }
+
       dispatch({ type: 'route', value: routeConfig })
       vehiclesDispatch({ type: 'set', value: undefined })
 
@@ -196,13 +202,11 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           }
 
           delete bookmark.current.stop
+        } else {
+          fitRouteBounds()
         }
       } else {
-        const bnds = routeConfig.bounds
-
-        map?.fitBounds(
-          latLngBounds(latLng(bnds.sw.lat, bnds.sw.lon), latLng(bnds.ne.lat, bnds.ne.lon))
-        )
+        fitRouteBounds()
         dispatch({ type: 'direction', value: routeConfig.directions[0] })
       }
     }
