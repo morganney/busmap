@@ -120,6 +120,10 @@ body.busmap-dark aside {
 body.busmap-dark .busmap-user-circle {
   animation: pulsedark 2s infinite;
 }
+.busmap-user-circle,
+.busmap-user {
+  transition: transform 1s linear;
+}
 .busmap-stop-icon svg {
   position: absolute;
   top: 0;
