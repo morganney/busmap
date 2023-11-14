@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import ReactColorA11y from 'react-color-a11y'
-import { memo, useEffect, useMemo, useCallback } from 'react'
+import { memo, useEffect, useMemo, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { latLng, latLngBounds } from 'leaflet'
 import { useQuery } from '@tanstack/react-query'
@@ -51,6 +51,7 @@ interface LocationPrediction extends Prediction {
   }
   stop: Stop & { distance: number | null }
 }
+type Presentation = Record<string, Record<string, LocationPrediction[]>>
 
 const Section = styled.section`
   display: flex;
@@ -82,10 +83,11 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   const { mode } = useTheme()
   const { format } = usePredictionsSettings()
   const { permission, position } = useLocation()
+  const presentation = useRef<Presentation>()
   const { data: predictions, error: predictionsError } = useQuery({
     queryKey: ['location', [position?.point.lat, position?.point.lon]],
     queryFn: () => getPredictions(position?.point),
-    enabled: Boolean(permission === 'granted' && active && position),
+    enabled: Boolean(permission === 'granted' && active && position?.point),
     refetchOnWindowFocus: true,
     refetchInterval: 10_000
   })
@@ -100,8 +102,6 @@ const Location = memo(function Location({ active = false }: LocationProps) {
 
       return outer
     }
-
-    return predictions
   }, [predictions])
   const { data: routeConfigs, error: routeConfigsError } = useQuery({
     // Make sure the route configs update when the group data does
@@ -129,7 +129,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   })
   const uiGroup = useMemo(() => {
     if (group && routeConfigs) {
-      const pres: Record<string, Record<string, LocationPrediction[]>> = {}
+      const pres: Presentation = {}
 
       Object.keys(group).forEach(agencyTitle => {
         pres[agencyTitle] = {}
@@ -168,10 +168,11 @@ const Location = memo(function Location({ active = false }: LocationProps) {
         })
       })
 
-      return pres
+      presentation.current = pres
     }
 
-    return undefined
+    // Show any previous (stale) predictions while position or routeConfigs are loading
+    return presentation.current
   }, [group, routeConfigs])
   const onClickSelectedNearby = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
@@ -184,8 +185,9 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   )
   const PredFormat = format === 'minutes' ? Minutes : Time
 
-  useTrackUser()
   useLocateUser(active && permission !== 'denied')
+
+  useTrackUser()
 
   useEffect(() => {
     if (active && permission === 'denied' && !homeStop && map) {
@@ -217,14 +219,13 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   }
 
   if (uiGroup) {
-    if (!Object.keys(uiGroup).length) {
-      return <p>No predictions available at this time for your location.</p>
-    }
-
     return (
       <Section>
         <h2>Nearby Stops</h2>
         <UserLocator />
+        {predictions && !predictions.length && (
+          <p>No predictions available at this time for your location.</p>
+        )}
         <AgenciesWrap>
           {Object.keys(uiGroup).map(agencyTitle => (
             <AgencySection key={agencyTitle} mode={mode}>
