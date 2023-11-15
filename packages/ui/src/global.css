@@ -89,6 +89,7 @@ aside {
   border-bottom: 1px solid var(--home-border-color-light);
   transform: translateX(0);
   transition: transform 0.25s ease;
+  display: none;
 }
 aside.collapsed {
   transform: translateX(100%);

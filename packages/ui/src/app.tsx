@@ -10,28 +10,38 @@ import { LocationProvider } from './modules/location/contexts/location.js'
 import { SettingsProvider } from './modules/settings/contexts/settings.js'
 import { router } from './router.js'
 import { queryClient } from './queryClient.js'
+/**
+ * Won't really work until react router stops enforcing
+ * error handling logic on us.
+ *
+ * @see https://github.com/remix-run/react-router/issues/10257
+ * @see https://github.com/remix-run/react-router/discussions/10166
+ */
+import { ErrorBoundary } from './components/error/boundary.js'
 
 import type { FC } from 'react'
 
 const BusMap: FC = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <StorageProvider>
-        <GlobalsProvider>
-          <MapProvider>
-            <LocationProvider>
-              <SettingsProvider>
-                <VehiclesProvider>
-                  <PredictionsProvider>
-                    <RouterProvider router={router} />
-                  </PredictionsProvider>
-                </VehiclesProvider>
-              </SettingsProvider>
-            </LocationProvider>
-          </MapProvider>
-        </GlobalsProvider>
-      </StorageProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <StorageProvider>
+          <GlobalsProvider>
+            <MapProvider>
+              <LocationProvider>
+                <SettingsProvider>
+                  <VehiclesProvider>
+                    <PredictionsProvider>
+                      <RouterProvider router={router} />
+                    </PredictionsProvider>
+                  </VehiclesProvider>
+                </SettingsProvider>
+              </LocationProvider>
+            </MapProvider>
+          </GlobalsProvider>
+        </StorageProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   )
 }
 

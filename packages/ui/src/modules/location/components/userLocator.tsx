@@ -87,7 +87,7 @@ const UserLocator: FC<UserLocatorProps> = ({ withDistance = false }) => {
     if (position && map) {
       map.setView(
         latLng(position.point.lat, position.point.lon),
-        Math.max(map.getZoom(), 16)
+        Math.max(map.getZoom() ?? 1, 16)
       )
     }
   }, [position, map])
