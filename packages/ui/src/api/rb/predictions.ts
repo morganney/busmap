@@ -1,4 +1,4 @@
-import { ROOT } from './common.js'
+import { ROOT, modifyMuniTitle } from './common.js'
 
 import { transport } from '../transport.js'
 import { errors } from '../errors.js'
@@ -13,6 +13,11 @@ const getForStop = async (agencyId?: string, routeId?: string, stopId?: string) 
   const preds = await transport.fetch<Prediction[]>(
     `${ROOT}/agencies/${agencyId}/routes/${routeId}/stops/${stopId}/predictions`
   )
+
+  preds.forEach(pred => {
+    modifyMuniTitle(pred.agency)
+    delete pred._links
+  })
 
   return preds
 }

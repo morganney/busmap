@@ -1,4 +1,4 @@
-import { ROOT } from './common.js'
+import { ROOT, modifyMuniTitle } from './common.js'
 
 import { transport } from '../transport.js'
 import { errors } from '../errors.js'
@@ -19,11 +19,12 @@ const getForTuples = async (
     { signal }
   )
 
-  return preds.map(pred => {
+  preds.forEach(pred => {
+    modifyMuniTitle(pred.agency)
     delete pred._links
-
-    return pred
   })
+
+  return preds
 }
 
 export { getForTuples }
