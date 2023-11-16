@@ -38,6 +38,7 @@ interface Agency {
   id: string
   title: string
   region: string
+  _links?: Hypertext
 }
 interface StopName {
   id: string

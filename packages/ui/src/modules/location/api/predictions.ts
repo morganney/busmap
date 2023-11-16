@@ -16,6 +16,7 @@ const get = async (point?: Point) => {
 
   preds.forEach(pred => {
     pred.agency.id = pred.agency.id.replace(/sfmta-cis/, 'sfmuni-sandbox')
+    pred.agency.title = pred.agency.title.replace('SF Muni', 'San Francisco Muni')
 
     /**
      * Not able to support SF Bay Ferry agency.
