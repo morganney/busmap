@@ -1,13 +1,14 @@
 import { createRoot } from 'react-dom/client'
 import { StrictMode } from 'react'
+import { RouterProvider } from 'react-router-dom'
 
-import { BusMap } from './app.js'
+import { router } from './router.js'
 
 const rootEl = document.querySelector('main') as HTMLElement
 const root = createRoot(rootEl)
 
 root.render(
   <StrictMode>
-    <BusMap />
+    <RouterProvider router={router} />
   </StrictMode>
 )

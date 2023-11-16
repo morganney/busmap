@@ -1,4 +1,4 @@
-import { useReducer, useCallback, useEffect, useRef } from 'react'
+import { useReducer, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createPortal } from 'react-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
@@ -13,6 +13,7 @@ import { useHomeStop } from './hooks/useHomeStop.js'
 import { useTheme } from './modules/settings/contexts/theme.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
+import { ErrorAgencies } from './components/error/agencies.js'
 import { Location } from './modules/location/components/location.js'
 import { Settings } from './modules/settings/components/settings.js'
 import { Favorites } from './modules/favorites/components/favorites.js'
@@ -23,7 +24,7 @@ import { getAll as getAllAgencies } from './api/rb/agency.js'
 import { getAll as getAllVehicles } from './api/rb/vehicles.js'
 import { getForStop } from './api/rb/predictions.js'
 
-import type { ReactNode, FC } from 'react'
+import type { FC } from 'react'
 
 interface HomeState {
   locate: boolean
@@ -43,6 +44,7 @@ interface LocateUser {
   value: boolean
 }
 type HomeAction = CollapsedChanged | PredTimestampChanged | LocateUser
+
 const initialState: HomeState = { collapsed: false, timestamp: 0, locate: false }
 const asideNode = document.querySelector('body > aside') as HTMLElement
 const reducer = (state: HomeState, action: HomeAction) => {
@@ -70,10 +72,7 @@ const Wrap = styled.div`
     min-height: 100px;
   }
 `
-interface HomeProps {
-  children?: ReactNode
-}
-const Home: FC<HomeProps> = () => {
+const Home: FC = () => {
   const { mode } = useTheme()
   const bookmark = useRef(useHomeStop())
   const vehiclesDispatch = useVehiclesDispatch()
@@ -112,6 +111,14 @@ const Home: FC<HomeProps> = () => {
   const tabsBackground = mode === 'dark' ? PB50T : undefined
   const tabsColor = mode === 'dark' ? PB90T : undefined
 
+  useLayoutEffect(() => {
+    asideNode.style.display = 'block'
+
+    return () => {
+      asideNode.style.display = 'none'
+    }
+  }, [])
+
   useEffect(() => {
     if (state.collapsed) {
       asideNode.classList.add('collapsed')
@@ -144,10 +151,7 @@ const Home: FC<HomeProps> = () => {
 
   if (agenciesError instanceof Error) {
     return createPortal(
-      <div>
-        <p>Unable to load transit agencies:</p>
-        <p>{agenciesError.message}</p>
-      </div>,
+      <ErrorAgencies error={agenciesError} />,
       document.querySelector('body > aside') as HTMLElement
     )
   }
@@ -208,4 +212,4 @@ const Home: FC<HomeProps> = () => {
 }
 
 export { Home }
-export type { HomeProps, HomeState }
+export type { HomeState }

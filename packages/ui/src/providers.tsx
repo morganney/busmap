@@ -1,5 +1,4 @@
 import { QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider } from 'react-router-dom'
 
 import { GlobalsProvider } from './globals.js'
 import { MapProvider } from './contexts/map.js'
@@ -8,12 +7,11 @@ import { VehiclesProvider } from './contexts/vehicles.js'
 import { PredictionsProvider } from './contexts/predictions.js'
 import { LocationProvider } from './modules/location/contexts/location.js'
 import { SettingsProvider } from './modules/settings/contexts/settings.js'
-import { router } from './router.js'
 import { queryClient } from './queryClient.js'
 
-import type { FC } from 'react'
+import type { FC, ReactNode } from 'react'
 
-const BusMap: FC = () => {
+const Providers: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <StorageProvider>
@@ -22,9 +20,7 @@ const BusMap: FC = () => {
             <LocationProvider>
               <SettingsProvider>
                 <VehiclesProvider>
-                  <PredictionsProvider>
-                    <RouterProvider router={router} />
-                  </PredictionsProvider>
+                  <PredictionsProvider>{children}</PredictionsProvider>
                 </VehiclesProvider>
               </SettingsProvider>
             </LocationProvider>
@@ -35,4 +31,4 @@ const BusMap: FC = () => {
   )
 }
 
-export { BusMap }
+export { Providers }

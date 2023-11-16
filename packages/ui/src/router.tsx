@@ -1,12 +1,31 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, useRouteError } from 'react-router-dom'
 
 import { Root } from './root.js'
 import { Home } from './home.js'
+import { Providers } from './providers.js'
+import { ErrorBoundary } from './components/error/boundary.js'
+import { NotFound } from './components/error/notFound.js'
 
+/**
+ * Required until RR allows errors to bubble up outside
+ * of the <RouterProvider />
+ *
+ * @see https://github.com/remix-run/react-router/issues/10257
+ */
+const ErrorElement = () => {
+  const error = useRouteError()
+
+  if (error instanceof Error) {
+    return <ErrorBoundary error={error} />
+  }
+
+  return <ErrorBoundary error={new Error('An unknown error occured.')} />
+}
 const router = createBrowserRouter([
   {
     id: 'root',
     element: <Root />,
+    errorElement: <ErrorElement />,
     children: [
       {
         id: 'home',
@@ -21,6 +40,15 @@ const router = createBrowserRouter([
         ]
       }
     ]
+  },
+  {
+    id: 'not-found',
+    path: '*',
+    element: (
+      <Providers>
+        <NotFound />
+      </Providers>
+    )
   }
 ])
 

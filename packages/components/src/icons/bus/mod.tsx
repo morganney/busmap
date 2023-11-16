@@ -8,6 +8,7 @@ import type { IconProps } from '../common.js'
 const Bus: FC<IconProps> = ({
   onClick,
   className,
+  cursor,
   size = 'medium',
   color = 'black',
   tabIndex = 0
@@ -29,6 +30,7 @@ const Bus: FC<IconProps> = ({
   return (
     <Icon
       color={color}
+      cursor={cursor}
       size={size}
       className={className}
       tabIndex={tabIndex}
