@@ -2,6 +2,7 @@ import { createBrowserRouter, useRouteError } from 'react-router-dom'
 
 import { Root } from './root.js'
 import { Home } from './home.js'
+import { Providers } from './providers.js'
 import { ErrorBoundary } from './components/error/boundary.js'
 import { NotFound } from './components/error/notFound.js'
 
@@ -43,7 +44,11 @@ const router = createBrowserRouter([
   {
     id: 'not-found',
     path: '*',
-    element: <NotFound />
+    element: (
+      <Providers>
+        <NotFound />
+      </Providers>
+    )
   }
 ])
 

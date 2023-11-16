@@ -6,7 +6,7 @@ import type { Agency } from '../../types.js'
 
 const get = async (id: string) => {
   const agency = await transport.fetch<Agency>(`${ROOT}/agencies/${id}`)
-  throw 'foo'
+
   return agency
 }
 const getAll = async () => {

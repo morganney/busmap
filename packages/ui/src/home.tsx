@@ -13,6 +13,7 @@ import { useHomeStop } from './hooks/useHomeStop.js'
 import { useTheme } from './modules/settings/contexts/theme.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
+import { ErrorAgencies } from './components/error/agencies.js'
 import { Location } from './modules/location/components/location.js'
 import { Settings } from './modules/settings/components/settings.js'
 import { Favorites } from './modules/favorites/components/favorites.js'
@@ -150,10 +151,7 @@ const Home: FC = () => {
 
   if (agenciesError instanceof Error) {
     return createPortal(
-      <div>
-        <p>Unable to load transit agencies:</p>
-        <p>{agenciesError.message}</p>
-      </div>,
+      <ErrorAgencies error={agenciesError} />,
       document.querySelector('body > aside') as HTMLElement
     )
   }

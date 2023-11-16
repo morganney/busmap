@@ -3,7 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { Toaster, toast } from '@busmap/components/toast'
 
 import { Layout } from './layout.js'
-import { ErrorBoundary } from './components/error/boundary.js'
+import { Providers } from './providers.js'
 import { useMap } from './contexts/map.js'
 import { useTheme } from './modules/settings/contexts/theme.js'
 
@@ -46,12 +46,12 @@ const Root = () => {
   }, [mode])
 
   return (
-    <ErrorBoundary>
+    <Providers>
       <Toaster anchor="bottom left" />
       <Layout>
         <Outlet />
       </Layout>
-    </ErrorBoundary>
+    </Providers>
   )
 }
 

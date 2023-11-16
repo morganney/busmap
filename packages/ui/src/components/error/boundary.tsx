@@ -40,7 +40,7 @@ const Wrap = styled.div`
 const Grid = styled.div`
   display: grid;
   gap: 20px;
-  font-size: 14px;
+  font-size: 16px;
   min-width: 260px;
 
   h2 {
@@ -101,8 +101,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, State> {
               <span>Something broke</span>
             </h2>
             <p>
-              My wife says this page isn&apos;t necessary because I should just build the app
-              right, but here you are nevertheless.
+              My wife says this page isn&apos;t necessary because I should just build the
+              app right, but here you are nevertheless.
             </p>
             <p>
               Something is broken. You can <a href="/">click here</a> to recover from the
