@@ -33,7 +33,7 @@ const Wrap = styled.div`
   gap: 8px;
 
   header + & {
-    margin: 18px 0 6px;
+    padding: 6px 0;
   }
 `
 const Info = styled.div`

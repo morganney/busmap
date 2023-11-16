@@ -35,6 +35,7 @@ const Section = styled.section`
     display: flex;
     flex-direction: column;
     gap: 3px;
+    margin: 0 0 12px;
 
     h2 {
       margin: 0;
@@ -222,7 +223,7 @@ const Predictions: FC<PredictionsProps> = ({
         <Section>
           <header>
             <h2>Next {title}</h2>
-            <h3>{route.title}</h3>
+            <h3>{stop.title}</h3>
           </header>
           {locateActive && <UserLocator withDistance />}
           {messages.length > 0 && (
@@ -257,7 +258,7 @@ const Predictions: FC<PredictionsProps> = ({
                     />
                   )}
                   <span>
-                    {stop.title} &bull; {direction.title}
+                    {route.title} &bull; {direction.title}
                   </span>
                 </li>
               )
