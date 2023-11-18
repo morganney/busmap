@@ -1,15 +1,14 @@
-import { useReducer, useCallback, useEffect, useLayoutEffect, useRef } from 'react'
+import { useReducer, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { createPortal } from 'react-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import { toast } from '@busmap/components/toast'
-import { PB50T, PB90T } from '@busmap/components/colors'
+import { PB50T, PB90T, PB80T, PB10T } from '@busmap/components/colors'
 import styled from 'styled-components'
 
 import { useGlobals } from './globals.js'
 import { usePredictions } from './contexts/predictions.js'
 import { useVehiclesDispatch } from './contexts/vehicles.js'
-import { useHomeStop } from './hooks/useHomeStop.js'
 import { useTheme } from './modules/settings/contexts/theme.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
@@ -19,46 +18,49 @@ import { Settings } from './modules/settings/components/settings.js'
 import { Favorites } from './modules/favorites/components/favorites.js'
 import { Info } from './components/info.js'
 import { Predictions } from './components/predictions.js'
-import { Anchor } from './components/anchor.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
 import { getAll as getAllVehicles } from './api/rb/vehicles.js'
 import { getForStop } from './api/rb/predictions.js'
 
 import type { FC } from 'react'
+import type { Mode } from './modules/settings/types.js'
 
 interface HomeState {
-  locate: boolean
-  collapsed: boolean
   timestamp: number
-}
-interface CollapsedChanged {
-  type: 'collapsed'
-  value: boolean
 }
 interface PredTimestampChanged {
   type: 'timestamp'
   value: number
 }
-interface LocateUser {
-  type: 'locate'
-  value: boolean
-}
-type HomeAction = CollapsedChanged | PredTimestampChanged | LocateUser
+type HomeAction = PredTimestampChanged
 
-const initialState: HomeState = { collapsed: false, timestamp: 0, locate: false }
-const asideNode = document.querySelector('body > aside') as HTMLElement
+const initialState: HomeState = { timestamp: 0 }
 const reducer = (state: HomeState, action: HomeAction) => {
   switch (action.type) {
-    case 'locate':
-      return { ...state, locate: action.value }
-    case 'collapsed':
-      return { ...state, collapsed: action.value }
     case 'timestamp':
       return { ...state, timestamp: action.value }
     default:
       return state
   }
 }
+const Aside = styled.aside<{ mode: Mode; collapsed: boolean }>`
+  position: fixed;
+  top: 0;
+  left: 79px;
+  z-index: 999;
+  height: 100%;
+  width: 33%;
+  min-width: 275px;
+  max-width: 425px;
+  background: ${({ mode }) => (mode === 'light' ? '#ffffffcc' : `${PB10T}cc`)};
+  border-right: 1px solid ${({ mode }) => (mode === 'light' ? PB80T : PB50T)};
+  transform: ${({ collapsed }) => (!collapsed ? 'translateX(0)' : 'translateX(-100%)')};
+  transition: transform 0.25s ease;
+
+  @media (width >= 380px) {
+    min-width: 340px;
+  }
+`
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
@@ -68,16 +70,19 @@ const Wrap = styled.div`
   height: 100%;
   overflow-y: auto;
 
+  div[aria-label='Navigation Tabs'] {
+    display: none;
+  }
+
   #panel-locate {
     min-height: 100px;
   }
 `
 const Home: FC = () => {
   const { mode } = useTheme()
-  const bookmark = useRef(useHomeStop())
   const vehiclesDispatch = useVehiclesDispatch()
   const { dispatch: predsDispatch } = usePredictions()
-  const { agency, route, stop } = useGlobals()
+  const { agency, route, stop, collapsed, page } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
   const { data: agencies, error: agenciesError } = useQuery({
     queryKey: ['agencies'],
@@ -98,34 +103,9 @@ const Home: FC = () => {
     refetchOnWindowFocus: true,
     refetchInterval: 10_000
   })
-  const onClickAnchor = useCallback(() => {
-    dispatch({ type: 'collapsed', value: !state.collapsed })
-  }, [state.collapsed])
-  const onSelectTab = useCallback(
-    (selected: string) => {
-      dispatch({ type: 'locate', value: selected === 'locate' })
-    },
-    [dispatch]
-  )
   const messages = preds?.length ? preds[0].messages : []
   const tabsBackground = mode === 'dark' ? PB50T : undefined
   const tabsColor = mode === 'dark' ? PB90T : undefined
-
-  useLayoutEffect(() => {
-    asideNode.style.display = 'block'
-
-    return () => {
-      asideNode.style.display = 'none'
-    }
-  }, [])
-
-  useEffect(() => {
-    if (state.collapsed) {
-      asideNode.classList.add('collapsed')
-    } else {
-      asideNode.classList.remove('collapsed')
-    }
-  }, [state.collapsed])
 
   useEffect(() => {
     if (preds) {
@@ -156,20 +136,19 @@ const Home: FC = () => {
     )
   }
 
-  return createPortal(
-    agencies ? (
-      <>
-        <Anchor onClick={onClickAnchor} collapsed={state.collapsed} />
+  return (
+    <Aside mode={mode} collapsed={collapsed}>
+      {agencies ? (
         <Wrap>
           <Tabs
-            initialTab={bookmark.current ? 'select' : 'locate'}
+            label="Navigation Tabs"
+            initialTab={page}
             position="end"
             fontSize="14px"
             gap="16px"
             borderRadius="5px 5px 0 0"
             color={tabsColor}
-            background={tabsBackground}
-            onSelect={onSelectTab}>
+            background={tabsBackground}>
             <TabList>
               <Tab name="locate">📍</Tab>
               <Tab name="favorites">⭐</Tab>
@@ -178,7 +157,7 @@ const Home: FC = () => {
               <Tab name="info">ℹ️</Tab>
             </TabList>
             <TabPanel name="locate">
-              <Location active={state.locate} />
+              <Location active={page === 'locate'} />
             </TabPanel>
             <TabPanel name="favorites">
               <Favorites />
@@ -198,16 +177,15 @@ const Home: FC = () => {
             stop={stop}
             route={route}
             preds={preds}
-            locateActive={state.locate}
+            locateActive={page === 'locate'}
             messages={messages}
             timestamp={state.timestamp}
           />
         </Wrap>
-      </>
-    ) : (
-      <Loading text="Loading agencies..." />
-    ),
-    asideNode
+      ) : (
+        <Loading text="Loading agencies..." />
+      )}
+    </Aside>
   )
 }
 

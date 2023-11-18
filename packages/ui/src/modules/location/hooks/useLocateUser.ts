@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef } from 'react'
 import debounce from 'lodash.debounce'
 
 import { useMap } from '@core/contexts/map.js'
-import { useHomeStop } from '@core/hooks/useHomeStop.js'
 
 import { useLocation } from '../contexts/location'
 
@@ -10,8 +9,7 @@ import type { LocationEvent } from 'leaflet'
 
 const useLocateUser = (active: boolean) => {
   const map = useMap()
-  const homeStop = useHomeStop()
-  const viewSet = useRef(Boolean(homeStop))
+  const viewSet = useRef(false)
   const { dispatch } = useLocation()
   const onLocationChanged = useMemo(() => {
     return debounce(
@@ -30,14 +28,22 @@ const useLocateUser = (active: boolean) => {
           type: 'locationChanged',
           value: { accuracy, point: { lat, lon } }
         })
+
+        if (!viewSet.current && map) {
+          map.setView(latlng, Math.max(map.getZoom() ?? 1, 15))
+          viewSet.current = true
+        }
       },
       10_000,
       { leading: true, trailing: false }
     )
-  }, [dispatch])
+  }, [dispatch, map])
 
   useEffect(() => {
     if (map) {
+      map.on('load', () => {
+        viewSet.current = true
+      })
       map.on('locationfound', onLocationChanged)
       map.on('locationerror', err => {
         if (err.code === 1 || /denied/i.test(err.message)) {
@@ -50,20 +56,16 @@ const useLocateUser = (active: boolean) => {
   useEffect(() => {
     if (active && map) {
       map.locate({
-        setView: !viewSet.current,
+        setView: false,
         watch: true,
         maximumAge: 5_000
       })
-
-      if (!viewSet.current) {
-        viewSet.current = true
-      }
     }
 
     if (!active && map) {
       map.stopLocate()
     }
-  }, [active, map, homeStop, dispatch])
+  }, [active, map, dispatch])
 }
 
 export { useLocateUser }

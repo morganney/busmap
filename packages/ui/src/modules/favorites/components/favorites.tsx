@@ -13,6 +13,7 @@ import { useMap } from '@core/contexts/map.js'
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 import { useHomeStop } from '@core/hooks/useHomeStop.js'
 import { useTheme } from '@core/modules/settings/contexts/theme.js'
+import { Page } from '@core/components/page.js'
 import { Details } from '@core/components/details.js'
 import { Minutes } from '@core/components/predictionFormats/minutes.js'
 import { Time } from '@core/components/predictionFormats/time.js'
@@ -44,16 +45,7 @@ const Empty = styled.div`
     margin: 0;
   }
 `
-const Section = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  h2 {
-    font-size: 22px;
-    margin: 0;
-  }
-
+const Section = styled(Page)`
   button {
     margin: 0;
     padding: 0;
@@ -129,8 +121,7 @@ const Favorites = memo(function Favorites() {
   }, [favorites])
 
   return (
-    <Section>
-      <h2>Favorite Stops</h2>
+    <Section title="Favorite Stops">
       {!favorites.length ? (
         <Empty>
           <span>⭐⭐⭐</span>

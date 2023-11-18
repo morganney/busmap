@@ -10,6 +10,7 @@ import { MapMarked } from '@busmap/components/icons/mapMarked'
 
 import { queryClient } from '@core/queryClient.js'
 import { get as getRoute } from '@core/api/rb/route.js'
+import { Page } from '@core/components/page.js'
 import { Loading } from '@core/components/loading.js'
 import { Minutes } from '@core/components/predictionFormats/minutes.js'
 import { Time } from '@core/components/predictionFormats/time.js'
@@ -53,16 +54,7 @@ interface LocationPrediction extends Prediction {
 }
 type Presentation = Record<string, Record<string, LocationPrediction[]>>
 
-const Section = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  h2 {
-    font-size: 22px;
-    margin: 0;
-  }
-
+const Section = styled(Page)`
   button {
     margin: 0;
     padding: 0;
@@ -220,8 +212,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
 
   if (uiGroup) {
     return (
-      <Section>
-        <h2>Nearby Stops</h2>
+      <Section title="Nearby Stops">
         <UserLocator />
         {predictions && !predictions.length && (
           <p>No predictions available at this time for your location.</p>

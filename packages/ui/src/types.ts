@@ -103,6 +103,7 @@ interface Selection {
 }
 
 // Busmap types
+type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info'
 interface BoundsChanged {
   type: 'bounds'
   value: Bounds
@@ -135,6 +136,14 @@ interface PredForVehChanged {
   type: 'predForVeh'
   value?: Vehicle
 }
+interface PageChanged {
+  type: 'page'
+  value: Page
+}
+interface CollapsedChanged {
+  type: 'collapsed'
+  value: boolean
+}
 type BusmapAction =
   | BoundsChanged
   | CenterChanged
@@ -144,8 +153,12 @@ type BusmapAction =
   | StopChanged
   | PredForVehChanged
   | SelectedChanged
+  | PageChanged
+  | CollapsedChanged
 interface BusmapGlobals {
   dispatch: Dispatch<BusmapAction>
+  page: Page
+  collapsed: boolean
   center: Point
   bounds: Bounds
   agency?: Agency
@@ -157,6 +170,7 @@ interface BusmapGlobals {
 }
 
 export type {
+  Page,
   Point,
   Bounds,
   Path,

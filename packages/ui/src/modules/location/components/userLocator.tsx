@@ -40,7 +40,6 @@ const Info = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 6px 0;
 
   p {
     margin: 0;
