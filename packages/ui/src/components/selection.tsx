@@ -1,20 +1,18 @@
 import styled, { keyframes } from 'styled-components'
 import { useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@busmap/components/skeleton'
 
 import { getForStop } from '../api/rb/predictions.js'
+import { useGlobals } from '../globals.js'
 
 import type { FC } from 'react'
 import type { Popup } from 'leaflet'
-import type { Agency, Stop, Route, Direction } from '../types.js'
 
 interface SelectionProps {
-  agency: Agency
-  route: Route
-  direction: Direction
-  stop: Stop
   popup: Popup
+  node: HTMLDivElement
 }
 
 const blink = keyframes`
@@ -77,12 +75,14 @@ const Definition = styled.dl`
     }
   }
 `
-const Selection: FC<SelectionProps> = ({ stop, agency, route, direction, popup }) => {
+const Selection: FC<SelectionProps> = ({ popup, node }) => {
+  const { selected } = useGlobals()
   const { data, error, isFetching } = useQuery({
-    queryKey: ['preds', agency.id, route.id, stop.id],
-    queryFn: () => getForStop(agency.id, route.id, stop.id),
+    queryKey: ['preds', selected?.agency.id, selected?.route.id, selected?.stop.id],
+    queryFn: () => getForStop(selected?.agency.id, selected?.route.id, selected?.stop.id),
     refetchOnWindowFocus: true,
-    refetchInterval: 10_000
+    refetchInterval: 10_000,
+    enabled: Boolean(selected)
   })
   const arrivals = !data?.length
     ? []
@@ -108,31 +108,39 @@ const Selection: FC<SelectionProps> = ({ stop, agency, route, direction, popup }
     }
   }, [popup])
 
-  if (error) {
-    const msg = error instanceof Error ? error.message : 'An unexpected error occured.'
-
-    return <p>Unable to retrieve arrival times for this stop. {msg}</p>
+  if (!selected) {
+    return null
   }
 
-  return (
-    <Definition>
-      <dt>Route</dt>
-      <dd>{route.title}</dd>
-      <dt>Direction</dt>
-      <dd>{direction.title}</dd>
-      <dt>Stop</dt>
-      <dd>{stop.title}</dd>
-      <dt>Arrivals</dt>
-      <dd>
-        {isFetching ? (
-          <Skeleton display="block" />
-        ) : arrivals?.length ? (
-          arrivals
-        ) : (
-          'No arrivals'
-        )}
-      </dd>
-    </Definition>
+  return createPortal(
+    <>
+      {error ? (
+        <p>
+          Unable to retrieve arrival times for this stop.{' '}
+          {error instanceof Error ? error.message : 'An unexpected error occured.'}
+        </p>
+      ) : (
+        <Definition>
+          <dt>Route</dt>
+          <dd>{selected.route.title}</dd>
+          <dt>Direction</dt>
+          <dd>{selected.direction.title}</dd>
+          <dt>Stop</dt>
+          <dd>{selected.stop.title}</dd>
+          <dt>Arrivals</dt>
+          <dd>
+            {isFetching ? (
+              <Skeleton display="block" />
+            ) : arrivals?.length ? (
+              arrivals
+            ) : (
+              'No arrivals'
+            )}
+          </dd>
+        </Definition>
+      )}
+    </>,
+    node
   )
 }
 

@@ -190,21 +190,21 @@ interface TabListProps {
   margin?: string
 }
 interface ListProps {
-  direction: Direction
+  $direction: Direction
   position: Position
   border: string
   margin?: string
   background?: string
 }
 
-const getBorder = ({ border, direction }: ListProps) => {
-  return `border-${direction === 'row' ? 'bottom' : 'right'}: ${border}`
+const getBorder = ({ border, $direction }: ListProps) => {
+  return `border-${$direction === 'row' ? 'bottom' : 'right'}: ${border}`
 }
 const List = styled.div<ListProps>`
   ${getBorder};
   margin: ${({ margin }) => margin ?? 0};
   display: flex;
-  flex-direction: ${({ direction }) => direction};
+  flex-direction: ${({ $direction }) => $direction};
   align-items: center;
   background: ${({ background }) => background};
   justify-content: ${({ position }) =>
@@ -241,7 +241,7 @@ const TabList: FC<TabListProps> = ({ children, margin, background = 'none' }) =>
     <List
       role="tablist"
       aria-label={label}
-      direction={direction}
+      $direction={direction}
       position={position}
       border={border}
       background={background}
@@ -266,22 +266,22 @@ interface ButtonProps {
   fluid: boolean
   fontSize: string
   color: string
-  direction: Direction
+  $direction: Direction
   background: string
   border: string
   borderRadius: string
 }
 
-const getNullBorder = ({ direction }: ButtonProps) => {
-  if (direction === 'row') {
+const getNullBorder = ({ $direction }: ButtonProps) => {
+  if ($direction === 'row') {
     return 'border-bottom: none'
   }
 
   return 'border-right: none'
 }
-const getMargin = ({ fluid, direction }: ButtonProps) => {
+const getMargin = ({ fluid, $direction }: ButtonProps) => {
   if (fluid) {
-    if (direction === 'row') {
+    if ($direction === 'row') {
       return '0 0 -1px 0'
     }
 
@@ -290,8 +290,8 @@ const getMargin = ({ fluid, direction }: ButtonProps) => {
 
   return '0'
 }
-const getPadding = ({ fluid, direction }: ButtonProps) => {
-  if (direction === 'column') {
+const getPadding = ({ fluid, $direction }: ButtonProps) => {
+  if ($direction === 'column') {
     if (fluid) {
       // Compensate for -2px margin when fluid to cover border
       return '8px 13px 8px 11px'
@@ -305,7 +305,7 @@ const getPadding = ({ fluid, direction }: ButtonProps) => {
 const Button = styled.button<ButtonProps>`
   cursor: pointer;
   line-height: 1;
-  width: ${({ direction }) => (direction === 'row' ? 'auto' : '100%')};
+  width: ${({ $direction }) => ($direction === 'row' ? 'auto' : '100%')};
   margin: ${getMargin};
   padding: ${getPadding};
   color: ${({ active, color }) => (active ? color : 'inherit')};
@@ -362,7 +362,7 @@ const Tab: FC<TabProps> = ({ children, name }) => {
       active={active}
       color={color}
       fluid={fluid}
-      direction={direction}
+      $direction={direction}
       fontSize={fontSize}
       background={background}
       border={border}

@@ -1,9 +1,7 @@
 import { useEffect, useLayoutEffect } from 'react'
-import { createPortal } from 'react-dom'
 import { useLocation } from 'react-router-dom'
 import { toast } from '@busmap/components/toast'
 
-import { useGlobals } from './globals.js'
 import { Selection } from './components/selection.js'
 import { useInitMap } from './hooks/useInitMap.js'
 import { useRouteLayer } from './hooks/useRouteLayer.js'
@@ -20,7 +18,6 @@ interface LayoutProps {
 
 const Layout: FC<LayoutProps> = ({ children }) => {
   const location = useLocation()
-  const { selected } = useGlobals()
   const { mode } = useTheme()
   const { map, selectionNode, popup, routeLayer, vehiclesLayer } = useInitMap()
 
@@ -61,25 +58,12 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   useZoomSelectedStop({ map })
   useZoomPredForVehicle({ map })
 
-  if (selected) {
-    return (
-      <>
-        {children}
-        {createPortal(
-          <Selection
-            agency={selected.agency}
-            stop={selected.stop}
-            route={selected.route}
-            direction={selected.direction}
-            popup={popup}
-          />,
-          selectionNode
-        )}
-      </>
-    )
-  }
-
-  return children
+  return (
+    <>
+      {children}
+      <Selection node={selectionNode} popup={popup} />
+    </>
+  )
 }
 
 export { Layout }

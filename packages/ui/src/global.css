@@ -54,9 +54,7 @@ html {
 body {
   color: var(--color-light);
   position: relative;
-  display: grid;
   margin: 0;
-  background: #e0e0e0cc;
   font-family: 'Roboto', Arial, sans-serif;
   font-weight: 400;
   font-style: normal;
@@ -75,30 +73,16 @@ body.busmap-dark .leaflet-control-zoom-out,
 body.busmap-dark .leaflet-control-attribution {
   filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
-aside {
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 999;
+main {
+  display: flex;
   height: 100%;
-  width: 33%;
-  min-width: 320px;
-  max-width: 425px;
-  background: var(--home-bg-color-light);
-  border-left: 1px solid var(--home-border-color-light);
-  border-bottom: 1px solid var(--home-border-color-light);
-  transform: translateX(0);
-  transition: transform 0.25s ease;
+  justify-content: center;
+}
+#map {
+  width: 100%;
+}
+body.busmap-error #map {
   display: none;
-}
-aside.collapsed {
-  transform: translateX(100%);
-  transition-timing-function: ease;
-}
-body.busmap-dark aside {
-  background: var(--home-bg-color-dark);
-  border-left: 1px solid var(--home-border-color-dark);
-  border-bottom: 1px solid var(--home-border-color-dark);
 }
 .leaflet-container {
   background: transparent;
@@ -229,10 +213,4 @@ body.busmap-dark .busmap-vehicle::before {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-@media screen and (min-width: 380px) {
-  aside {
-    min-width: 350px;
-  }
 }

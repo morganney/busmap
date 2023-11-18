@@ -31,16 +31,16 @@ const user = marker([0, 0], { icon })
 const userCircle = marker([0, 0], { icon: circle })
 const useTrackUser = () => {
   const map = useMap()
-  const { position } = useLocation()
+  const { position, permission } = useLocation()
 
   useEffect(() => {
-    if (map) {
+    if (map && permission === 'granted') {
       userCircle.addTo(map)
       user
         .addTo(map)
         .bindPopup(`Your location within ${Intl.NumberFormat().format(0)} meters.`)
     }
-  }, [map])
+  }, [map, permission])
 
   useEffect(() => {
     if (position) {

@@ -4,6 +4,7 @@ import { useNavigate, generatePath } from 'react-router-dom'
 import { latLng, latLngBounds } from 'leaflet'
 import styled from 'styled-components'
 
+import { Page } from './page.js'
 import { Agencies } from './selectors/agencies.js'
 import { Routes } from './selectors/routes.js'
 import { Directions } from './selectors/directions.js'
@@ -288,36 +289,38 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   }
 
   return (
-    <Form
-      onSubmit={evt => {
-        evt.preventDefault()
-      }}>
-      <Agencies
-        agencies={agencies}
-        selected={agency}
-        onSelect={onSelectAgency}
-        isDisabled={isLoading}
-      />
-      <Routes
-        routes={routes}
-        selected={routeName}
-        onSelect={onSelectRoute}
-        isDisabled={isLoading || !agency}
-      />
-      <Directions
-        directions={route?.directions}
-        selected={direction}
-        onSelect={onSelectDirection}
-        isDisabled={isLoading || !agency || !route}
-      />
-      <Stops
-        stops={stops}
-        selected={stop}
-        onClear={onClearStop}
-        onSelect={onSelectStop}
-        isDisabled={isLoading || !agency || !route || !direction}
-      />
-    </Form>
+    <Page title="Bus Selector">
+      <Form
+        onSubmit={evt => {
+          evt.preventDefault()
+        }}>
+        <Agencies
+          agencies={agencies}
+          selected={agency}
+          onSelect={onSelectAgency}
+          isDisabled={isLoading}
+        />
+        <Routes
+          routes={routes}
+          selected={routeName}
+          onSelect={onSelectRoute}
+          isDisabled={isLoading || !agency}
+        />
+        <Directions
+          directions={route?.directions}
+          selected={direction}
+          onSelect={onSelectDirection}
+          isDisabled={isLoading || !agency || !route}
+        />
+        <Stops
+          stops={stops}
+          selected={stop}
+          onClear={onClearStop}
+          onSelect={onSelectStop}
+          isDisabled={isLoading || !agency || !route || !direction}
+        />
+      </Form>
+    </Page>
   )
 })
 

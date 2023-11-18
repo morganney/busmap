@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import { Page } from './page.js'
+
 import circleSvg from '../../assets/svg/circled.svg'
 
 import type { FC } from 'react'
@@ -66,36 +68,38 @@ const RouteVehicle = styled.div`
 `
 const Info: FC = () => {
   return (
-    <List>
-      <figure>
-        <svg viewBox="0 0 30 6" width="30px" height="6px">
-          <rect width="30" height="6" fill={color} />
-        </svg>
-        <figcaption>Route plotted by its color.</figcaption>
-      </figure>
-      <figure>
-        <img src={circleSvg} alt="stop marker icon" height="12px" />
-        <figcaption>
-          Route stop. Click or tap to get real-time arrival predictions.
-        </figcaption>
-      </figure>
-      <figure>
-        <RouteVehicle>
-          <span>A</span>
-          <span>➞</span>
-        </RouteVehicle>
-        <figcaption>
-          Vehicle labeled by route name and heading. Click or tap to get more details.
-        </figcaption>
-      </figure>
-      <figure>
-        <OtsVehicle />
-        <figcaption>
-          Unpredictable vehicle, possibly out of service or lost GPS signal. The heading
-          may be incorrect.
-        </figcaption>
-      </figure>
-    </List>
+    <Page title="Map Info">
+      <List>
+        <figure>
+          <svg viewBox="0 0 30 6" width="30px" height="6px">
+            <rect width="30" height="6" fill={color} />
+          </svg>
+          <figcaption>Route plotted by its color.</figcaption>
+        </figure>
+        <figure>
+          <img src={circleSvg} alt="stop marker icon" height="12px" />
+          <figcaption>
+            Route stop. Click or tap to get real-time arrival predictions.
+          </figcaption>
+        </figure>
+        <figure>
+          <RouteVehicle>
+            <span>A</span>
+            <span>➞</span>
+          </RouteVehicle>
+          <figcaption>
+            Vehicle labeled by route name and heading. Click or tap to get more details.
+          </figcaption>
+        </figure>
+        <figure>
+          <OtsVehicle />
+          <figcaption>
+            Unpredictable vehicle, possibly out of service or lost GPS signal. The heading
+            may be incorrect.
+          </figcaption>
+        </figure>
+      </List>
+    </Page>
   )
 }
 

@@ -5,8 +5,12 @@ import type { BusmapGlobals, BusmapAction } from './types.js'
 
 type BusmapState = Omit<BusmapGlobals, 'dispatch'>
 
-const defaultGlobals = {
+const urlParts = window.location.pathname.split('/').filter(Boolean)
+const isHomeStop = urlParts[0] === 'stop' && urlParts.length <= 5
+const defaultGlobals: BusmapGlobals = {
   dispatch: () => {},
+  page: isHomeStop ? 'select' : 'locate',
+  collapsed: false,
   center: { lat: 37.7775, lon: -122.416389 },
   bounds: {
     sw: {
@@ -22,6 +26,10 @@ const defaultGlobals = {
 const Globals = createContext<BusmapGlobals>(defaultGlobals)
 const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
   switch (action.type) {
+    case 'page':
+      return { ...state, page: action.value }
+    case 'collapsed':
+      return { ...state, collapsed: action.value }
     case 'bounds':
       return { ...state, bounds: action.value }
     case 'agency':

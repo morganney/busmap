@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 import { Bus } from '@busmap/components/icons/bus'
 
 import { useStorage } from '@core/contexts/storage.js'
@@ -50,11 +49,11 @@ const FavoritesList: FC = () => {
           {favorites.slice(0, 3).map((fav, idx) => (
             <li key={idx}>
               <Bus size="large" cursor="auto" />
-              <Link
-                to={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
+              <a
+                href={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
                 <span>{fav.stop.title}</span>
                 <span>{fav.direction.title}</span>
-              </Link>
+              </a>
             </li>
           ))}
         </ul>
