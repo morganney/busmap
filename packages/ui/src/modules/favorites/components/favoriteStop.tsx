@@ -26,6 +26,7 @@ interface SelectionMeta extends Selection {
   }
 }
 interface FavoriteStopProps {
+  size?: 'small' | 'medium'
   selection?: SelectionMeta
 }
 
@@ -38,7 +39,7 @@ const Button = styled.button`
   margin: 0;
   background: none;
 `
-const FavoriteStop: FC<FavoriteStopProps> = ({ selection }) => {
+const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => {
   const globals = useGlobals()
   const { agency, route, direction, stop } = selection ?? globals
   const { favorites } = useStorage()
@@ -75,7 +76,7 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection }) => {
     return (
       <Tip title={favorite ? 'Remove favorite.' : 'Add favorite.'}>
         <Button>
-          <Star size="small" color={SY30T} outlined={!favorite} onClick={onClick} />
+          <Star size={size} color={SY30T} outlined={!favorite} onClick={onClick} />
         </Button>
       </Tip>
     )

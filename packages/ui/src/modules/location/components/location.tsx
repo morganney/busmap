@@ -289,6 +289,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
                               </li>
                               <li>
                                 <FavoriteStop
+                                  size="small"
                                   selection={{
                                     agency: pred.agency,
                                     route: pred.route,

@@ -46,19 +46,20 @@ const reducer = (state: HomeState, action: HomeAction) => {
 const Aside = styled.aside<{ mode: Mode; collapsed: boolean }>`
   position: fixed;
   top: 0;
-  left: 79px;
+  left: 49px;
   z-index: 999;
   height: 100%;
-  width: 33%;
-  min-width: 275px;
+  width: calc(100% - 49px);
   max-width: 425px;
   background: ${({ mode }) => (mode === 'light' ? '#ffffffcc' : `${PB10T}cc`)};
   border-right: 1px solid ${({ mode }) => (mode === 'light' ? PB80T : PB50T)};
   transform: ${({ collapsed }) => (!collapsed ? 'translateX(0)' : 'translateX(-100%)')};
   transition: transform 0.25s ease;
 
-  @media (width >= 380px) {
-    min-width: 340px;
+  @media (width >= 431px) {
+    left: 79px;
+    width: calc(33% + 79px);
+    min-width: 325px;
   }
 `
 const Wrap = styled.div`
@@ -151,19 +152,19 @@ const Home: FC = () => {
             background={tabsBackground}>
             <TabList>
               <Tab name="locate">📍</Tab>
-              <Tab name="favorites">⭐</Tab>
               <Tab name="select">🚌</Tab>
+              <Tab name="favorites">⭐</Tab>
               <Tab name="settings">⚙️</Tab>
               <Tab name="info">ℹ️</Tab>
             </TabList>
             <TabPanel name="locate">
               <Location active={page === 'locate'} />
             </TabPanel>
-            <TabPanel name="favorites">
-              <Favorites />
-            </TabPanel>
             <TabPanel name="select">
               <BusSelector agencies={agencies} />
+            </TabPanel>
+            <TabPanel name="favorites">
+              <Favorites />
             </TabPanel>
             <TabPanel name="settings">
               <Settings />

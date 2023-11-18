@@ -31,12 +31,12 @@ const Nav = styled.nav<{ mode: Mode }>`
 
   ul {
     margin: 0;
-    padding: 0;
+    padding: 5px 0 0;
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    width: 78px;
+    width: 48px;
     height: 100%;
   }
 
@@ -76,6 +76,15 @@ const Nav = styled.nav<{ mode: Mode }>`
         color: ${({ mode }) => (mode === 'light' ? PB30T : `${PB90T}`)};
       }
     }
+
+    span:first-child {
+      width: 16px;
+      height: 16px;
+    }
+
+    span:last-child {
+      display: none;
+    }
   }
 
   li:last-child {
@@ -86,6 +95,23 @@ const Nav = styled.nav<{ mode: Mode }>`
 
       svg {
         color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
+      }
+    }
+  }
+
+  @media (width >= 431px) {
+    ul {
+      width: 78px;
+    }
+
+    button {
+      span:first-child {
+        width: 24px;
+        height: 24px;
+      }
+
+      span:last-child {
+        display: block;
       }
     }
   }
@@ -117,15 +143,6 @@ const Navigation: FC = () => {
             <span>Nearby Stops</span>
           </button>
         </li>
-        <li title="Favorites">
-          <button
-            data-name="favorites"
-            onClick={onClick}
-            className={page === 'favorites' ? 'active' : undefined}>
-            <Star />
-            <span>Favorites</span>
-          </button>
-        </li>
         <li title="Bus Selector">
           <button
             data-name="select"
@@ -133,6 +150,15 @@ const Navigation: FC = () => {
             className={page === 'select' ? 'active' : undefined}>
             <Bus />
             <span>Bus Selector</span>
+          </button>
+        </li>
+        <li title="Favorites">
+          <button
+            data-name="favorites"
+            onClick={onClick}
+            className={page === 'favorites' ? 'active' : undefined}>
+            <Star />
+            <span>Favorites</span>
           </button>
         </li>
         <li title="Settings">
