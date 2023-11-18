@@ -28,8 +28,13 @@
       referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="/src/global.css" />
   </head>
-  <body class="busmap-light">
+  <body>
     <main></main>
     <script type="module" src="/src/index.tsx"></script>
   </body>
+  <script>
+    document.body.classList.add(
+      `busmap-${localStorage.getItem('busmap-themeMode') || 'light'}`
+    )
+  </script>
 </html>
