@@ -17,7 +17,7 @@ import {
 } from '@busmap/components/colors'
 
 import { useGlobals } from '@core/globals.js'
-import { useTheme } from '@module/settings/contexts/theme'
+import { useTheme } from '@module/settings/contexts/theme.js'
 
 import type { FC, MouseEvent } from 'react'
 import type { Page } from '@core/types.js'
