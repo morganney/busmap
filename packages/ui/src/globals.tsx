@@ -9,7 +9,6 @@ const urlParts = window.location.pathname.split('/').filter(Boolean)
 const isHomeStop = urlParts[0] === 'stop' && urlParts.length <= 5
 const defaultGlobals: BusmapGlobals = {
   dispatch: () => {},
-  // Fix: Causes home page to not set the map view on inital load
   page: isHomeStop ? 'select' : 'locate',
   collapsed: false,
   center: { lat: 37.7775, lon: -122.416389 },
