@@ -1,5 +1,14 @@
 services:
+  session:
+    build:
+      context: .
+      target: redis
+    container_name: session
+    volumes:
+      - session:/data
   api:
+    depends_on:
+      - session
     build:
       context: .
       target: busmap
@@ -88,6 +97,7 @@ services:
       - "443:443"
 
 volumes:
+  session:
   shared_node_modules:
   api_node_modules:
   ui_node_modules:
