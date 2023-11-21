@@ -1,9 +1,12 @@
 import { env } from 'node:process'
 import http from 'node:http'
 
+import makeDebug from 'debug'
 import error from 'http-errors'
 import express from 'express'
 import session from 'express-session'
+import RedisStore from 'connect-redis'
+import { createClient } from 'redis'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import restbus from 'restbus'
@@ -24,7 +27,22 @@ const sess: SessionOptions = {
     sameSite: 'strict'
   }
 }
+const debug = makeDebug('busmap')
 const app = express()
+
+if (env.BM_SESSION_STORE === 'redis') {
+  debug('initializing redis store')
+  const client = createClient({ url: env.BM_REDIS_HOST })
+
+  try {
+    await client.connect()
+    // TTL for the redis session keys is derived from cookie.maxAge
+    sess.store = new RedisStore({ client })
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(`Redis client failed to connect: ${err}`)
+  }
+}
 
 app.set('trust proxy', 1)
 app.use(env.NODE_ENV === 'production' ? morgan('combined') : morgan('dev'))

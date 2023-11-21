@@ -1,3 +1,6 @@
+FROM redis:7.2.3 AS redis
+EXPOSE 6739
+
 FROM node:20.9-bookworm-slim AS busmap
 WORKDIR /app
 COPY package-lock.json package.json .
