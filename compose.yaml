@@ -10,10 +10,11 @@ services:
       - api_node_modules:/app/packages/api/node_modules
     ports:
       - "3000:3000"
+    env_file: ./packages/api/.env
     entrypoint:
       - npm
       - run
-      - start
+      - dev
       - -w
       - api
   ui:

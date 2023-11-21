@@ -34,7 +34,7 @@ const getFavoritePreds = async (timeSinceLastFetch: number) => {
       timeToNextFetch = timeSinceLastFetch + INTERVAL
     } catch (err) {
       cancelAnimationFrame(timeoutId)
-      timeToNextFetch = 0
+      timeToNextFetch = timeSinceLastFetch + INTERVAL
 
       if (err instanceof Error && err.name !== 'AbortError') {
         postMessage({ error: err })
@@ -83,8 +83,11 @@ addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
   if (action === 'stop') {
     controller.abort()
     cancelAnimationFrame(timeoutId)
-    tupleRequests = []
     timeToNextFetch = 0
+  }
+
+  if (action === 'restart' && tupleRequests.length) {
+    restartFavoritesPoll()
   }
 
   if (action === 'close') {

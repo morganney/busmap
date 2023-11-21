@@ -1,4 +1,4 @@
-FROM node:bookworm-slim AS busmap
+FROM node:20.9-bookworm-slim AS busmap
 WORKDIR /app
 COPY package-lock.json package.json .
 COPY packages/api/package.json /app/packages/api/package.json

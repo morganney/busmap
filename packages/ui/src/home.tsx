@@ -1,6 +1,5 @@
 import { useReducer, useEffect } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { createPortal } from 'react-dom'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import { toast } from '@busmap/components/toast'
 import { PB50T, PB90T, PB80T, PB10T } from '@busmap/components/colors'
@@ -130,16 +129,11 @@ const Home: FC = () => {
     }
   }, [vehiclesDispatch, vehicles])
 
-  if (agenciesError instanceof Error) {
-    return createPortal(
-      <ErrorAgencies error={agenciesError} />,
-      document.querySelector('body > aside') as HTMLElement
-    )
-  }
-
   return (
     <Aside mode={mode} collapsed={collapsed}>
-      {agencies ? (
+      {agenciesError instanceof Error ? (
+        <ErrorAgencies error={agenciesError} />
+      ) : agencies ? (
         <Wrap>
           <Tabs
             label="Navigation Tabs"
