@@ -1,7 +1,8 @@
 import { errors } from './errors.js'
 
-const defaultInit = {
-  method: 'GET'
+const defaultInit: RequestInit = {
+  method: 'GET',
+  credentials: 'include'
 }
 const transport = {
   async fetch<T>(endpoint: string, options: RequestInit = defaultInit) {
@@ -9,7 +10,7 @@ const transport = {
     const resp = await fetch(endpoint, init)
 
     if (!resp.ok) {
-      throw errors.create(init.method, resp.status, resp.statusText)
+      throw errors.create(init.method ?? 'UNKNOWN', resp.status, resp.statusText)
     }
 
     const data: T = await resp.json()

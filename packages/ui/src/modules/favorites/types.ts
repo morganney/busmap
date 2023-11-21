@@ -22,7 +22,7 @@ interface WorkerMessage {
   predictionsMap: PredictionsMap
 }
 interface ThreadMessage {
-  action: 'update' | 'stop' | 'close'
+  action: 'update' | 'stop' | 'close' | 'restart'
   favoritesByAgencyId?: FavoriteGroup
 }
 
