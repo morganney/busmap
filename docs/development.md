@@ -18,3 +18,7 @@ A separate container can be started to run Storybook for `packages/components` a
 It can also be run locally.
 
 * `npm run storybook -w @busmap/components`
+
+### API
+
+The API server can be configured by defining variables in the root `.env` file, or directly on the CLI when running `docker compose up`.

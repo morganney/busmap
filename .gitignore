@@ -4,3 +4,5 @@ node_modules
 coverage
 stats.html
 packages/web/certs/*.pem
+.env
+!packages/api/.env
