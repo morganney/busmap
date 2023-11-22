@@ -6,17 +6,16 @@ import type { Agency } from '../../types.js'
 
 const modify = (agency: Agency) => {
   modifyMuniTitle(agency)
-  delete agency._links
 }
 const get = async (id: string) => {
-  const agency = await transport.fetch<Agency>(`${ROOT}/agencies/${id}`)
+  const agency = await transport.fetch<Agency>(`${ROOT}/agencies/${id}?links=false`)
 
   modify(agency)
 
   return agency
 }
 const getAll = async () => {
-  const agencies = await transport.fetch<Agency[]>(`${ROOT}/agencies`)
+  const agencies = await transport.fetch<Agency[]>(`${ROOT}/agencies?links=false`)
 
   agencies.forEach(agency => {
     modify(agency)

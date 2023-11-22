@@ -24,7 +24,7 @@ const sess: SessionOptions = {
     maxAge: oneDayMs,
     httpOnly: true,
     secure: env.BM_COOKIE_SECURE === 'true',
-    sameSite: env.BM_COOKIE_SAMESITE as CookieOptions['sameSite'] ?? 'strict'
+    sameSite: (env.BM_COOKIE_SAMESITE as CookieOptions['sameSite']) ?? 'strict'
   }
 }
 const debug = makeDebug('busmap')

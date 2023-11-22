@@ -10,11 +10,9 @@ const getAll = async (agencyId?: string) => {
     throw errors.create('GET', 400, 'Bad Request')
   }
 
-  const routes = await transport.fetch<RouteName[]>(`${ROOT}/agencies/${agencyId}/routes`)
-
-  routes.forEach(route => {
-    delete route._links
-  })
+  const routes = await transport.fetch<RouteName[]>(
+    `${ROOT}/agencies/${agencyId}/routes?links=false`
+  )
 
   return routes
 }
@@ -24,10 +22,8 @@ const get = async (agencyId?: string, routeId?: string) => {
   }
 
   const route = await transport.fetch<Route>(
-    `${ROOT}/agencies/${agencyId}/routes/${routeId}`
+    `${ROOT}/agencies/${agencyId}/routes/${routeId}?links=false`
   )
-
-  delete route._links
 
   return route
 }
