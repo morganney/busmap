@@ -11,12 +11,11 @@ const getForStop = async (agencyId?: string, routeId?: string, stopId?: string) 
   }
 
   const preds = await transport.fetch<Prediction[]>(
-    `${ROOT}/agencies/${agencyId}/routes/${routeId}/stops/${stopId}/predictions`
+    `${ROOT}/agencies/${agencyId}/routes/${routeId}/stops/${stopId}/predictions?links=false`
   )
 
   preds.forEach(pred => {
     modifyMuniTitle(pred.agency)
-    delete pred._links
   })
 
   return preds

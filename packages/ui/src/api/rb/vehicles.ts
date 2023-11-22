@@ -11,7 +11,7 @@ const getAll = async (agencyId?: Agency['id'], routeId?: Route['id']) => {
   }
 
   const vehicles = await transport.fetch<Vehicle[]>(
-    `${ROOT}/agencies/${agencyId}/routes/${routeId}/vehicles`
+    `${ROOT}/agencies/${agencyId}/routes/${routeId}/vehicles?links=false`
   )
 
   return vehicles
@@ -23,7 +23,7 @@ const get = async (agencyId?: Agency['id'], vehicleId?: Vehicle['id']) => {
   }
 
   const vehicle = await transport.fetch<Vehicle>(
-    `${ROOT}/agencies/${agencyId}/vehicles/${vehicleId}`
+    `${ROOT}/agencies/${agencyId}/vehicles/${vehicleId}?links=false`
   )
 
   return vehicle

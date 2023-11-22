@@ -34,7 +34,7 @@
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0",
     "redis": "^4.6.10",
-    "restbus": "^2.1.0"
+    "restbus": "^2.2.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",

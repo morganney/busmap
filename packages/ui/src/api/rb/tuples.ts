@@ -15,13 +15,12 @@ const getForTuples = async (
   }
 
   const preds = await transport.fetch<Prediction[]>(
-    `${ROOT}/agencies/${agencyId}/tuples/${tuples.join(',')}/predictions`,
+    `${ROOT}/agencies/${agencyId}/tuples/${tuples.join(',')}/predictions?links=false`,
     { signal }
   )
 
   preds.forEach(pred => {
     modifyMuniTitle(pred.agency)
-    delete pred._links
   })
 
   return preds
