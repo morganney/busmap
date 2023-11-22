@@ -11,20 +11,20 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import restbus from 'restbus'
 
-import type { SessionOptions } from 'express-session'
+import type { SessionOptions, CookieOptions } from 'express-session'
 
 const oneDayMs = 86_400_000
 const sess: SessionOptions = {
   name: 'busmap.sid',
-  secret: env.BM_COOKIE_SECRET as string,
+  secret: env.BM_COOKIE_SECRET as SessionOptions['secret'],
   resave: false,
   saveUninitialized: false,
   unset: 'destroy',
   cookie: {
     maxAge: oneDayMs,
     httpOnly: true,
-    secure: true,
-    sameSite: 'strict'
+    secure: env.BM_COOKIE_SECURE === 'true',
+    sameSite: env.BM_COOKIE_SAMESITE as CookieOptions['sameSite'] ?? 'strict'
   }
 }
 const debug = makeDebug('busmap')
@@ -48,17 +48,18 @@ app.set('trust proxy', 1)
 app.use(env.NODE_ENV === 'production' ? morgan('combined') : morgan('dev'))
 app.use(helmet())
 app.use(session(sess))
-app.use((req, res, next) => {
-  if (req.session && req.session.isSet === undefined) {
-    req.session.isSet = true
+app.use('/', (req, res, next) => {
+  if (req.session.isInitialized === undefined) {
+    req.session.isInitialized = true
+    req.session.save(next)
+  } else {
+    next()
   }
-
-  next()
 })
 app.use(
   '/restbus',
   (req, res, next) => {
-    if (req.session?.isSet) {
+    if (req.session.isInitialized) {
       next()
     } else {
       res.status(401).json(new error.Unauthorized())
