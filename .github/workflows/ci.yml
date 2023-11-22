@@ -30,6 +30,8 @@ jobs:
       - name: Circular Dependencies
         run: npm run cycles
       - name: Build Docker
+        env:
+          BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
         run: docker compose build
       - name: Build Components
         run: npm run build -w @busmap/components
