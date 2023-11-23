@@ -32,6 +32,9 @@ jobs:
       - name: Build Docker
         env:
           BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
+          BM_POSTGRES_PASSWORD: ${{ secrets.BM_POSTGRES_PASSWORD }}
+          BM_POSTGRES_USER: ${{ secrets.BM_POSTGRES_USER }}
+          BM_POSTGRES_DB: ${{ secrets.BM_POSTGRES_DB }}
         run: docker compose build
       - name: Build Components
         run: npm run build -w @busmap/components

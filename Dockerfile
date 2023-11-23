@@ -1,3 +1,9 @@
+FROM postgres:16.1-bookworm as postgres
+EXPOSE 5432
+
+FROM adminer:4.8.1 as adminer
+EXPOSE 8080
+
 FROM redis:7.2.3 AS redis
 EXPOSE 6739
 
