@@ -1,4 +1,24 @@
 services:
+  db:
+    build:
+      context: .
+      target: postgres
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: ${BM_POSTGRES_PASSWORD:?err}
+      POSTGRES_USER: ${BM_POSTGRES_USER:?err}
+      POSTGRES_DB: ${BM_POSTGRES_DB:?err}
+    volumes:
+      - db:/var/lib/postgresql/data
+  adminer:
+    depends_on:
+      - db
+    build:
+      context: .
+      target: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
   session:
     build:
       context: .
@@ -8,6 +28,7 @@ services:
       - session:/data
   api:
     depends_on:
+      - db
       - session
     build:
       context: .
@@ -97,6 +118,7 @@ services:
       - "443:443"
 
 volumes:
+  db:
   session:
   shared_node_modules:
   api_node_modules:

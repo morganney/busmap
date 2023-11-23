@@ -165,13 +165,13 @@ const getVehiclePopupContent = (marker: VehicleMarker, route: Route) => {
       <dt>ID</dt>
       <dd>${vehicle.id}</dd>
       <dt>Speed</dt>
-      <dd>${speed} (${speedUnit})</dd>
+      <dd>${speed} ${speedUnit}</dd>
       <dt>Heading</dt>
-      <dd>${vehicle.heading} (deg)</dd>
+      <dd>${vehicle.heading} deg</dd>
       <dt>Predictable</dt>
       <dd>${vehicle.predictable}</dd>
       <dt>Last Report</dt>
-      <dd>${vehicle.secsSinceReport} (sec)</dd>
+      <dd>${vehicle.secsSinceReport} sec</dd>
     </dl>
   `
 }
