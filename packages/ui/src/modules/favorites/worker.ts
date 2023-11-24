@@ -5,7 +5,8 @@ import { groupBy } from '@module/util.js'
 
 import { getPredsKey } from './util.js'
 
-import type { ThreadMessage } from './types.js'
+import type { Prediction } from '@core/types.js'
+import type { ThreadMessage, ErrorsMap } from './types.js'
 
 interface TupleRequest {
   agencyId: string
@@ -21,16 +22,31 @@ let controller = new AbortController()
 const getFavoritePreds = async (timeSinceLastFetch: number) => {
   if (timeToNextFetch <= timeSinceLastFetch) {
     try {
-      const preds = await Promise.all(
+      const results = await Promise.allSettled(
         tupleRequests.map(({ agencyId, tuples }) =>
           getForTuples(agencyId, tuples, controller.signal)
         )
       )
-      const predictionsMap = groupBy(preds.flat(), pred =>
+      const successes: Prediction[][] = []
+      const errors: ErrorsMap = {}
+
+      results.forEach((result, idx) => {
+        if (result.status === 'fulfilled') {
+          successes.push(result.value)
+        } else {
+          errors[tupleRequests[idx].agencyId] = result.reason
+        }
+      })
+
+      const predictions = groupBy(successes.flat(), pred =>
         getPredsKey(pred.agency.title, pred.route.title, pred.stop.id)
       )
 
-      postMessage({ error: undefined, predictionsMap })
+      postMessage({
+        errors,
+        predictions,
+        error: undefined
+      })
       timeToNextFetch = timeSinceLastFetch + INTERVAL
     } catch (err) {
       cancelAnimationFrame(timeoutId)

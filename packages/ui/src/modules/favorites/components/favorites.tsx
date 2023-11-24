@@ -5,6 +5,7 @@ import { latLng } from 'leaflet'
 import { Link } from 'react-router-dom'
 import { toast } from '@busmap/components/toast'
 import { Tooltip } from '@busmap/components/tooltip'
+import { Alert } from '@busmap/components/alert'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
 import { Trash } from '@busmap/components/icons/trash'
 import { PB50T } from '@busmap/components/colors'
@@ -32,6 +33,7 @@ import { MAX_FAVORITES } from '../common.js'
 
 import type { MouseEvent } from 'react'
 import type {
+  ErrorsMap,
   WorkerMessage,
   PredictionsMap,
   AgencyRouteFavoritesGroup
@@ -62,7 +64,8 @@ const Favorites = memo(function Favorites() {
   const { favorites } = useStorage()
   const storageDispatch = useStorageDispatch()
   const { format } = usePredictionsSettings()
-  const [predictionsMap, setPredictionsMap] = useState<PredictionsMap>({})
+  const [errors, setErrors] = useState<ErrorsMap>({})
+  const [predictions, setPredictions] = useState<PredictionsMap>({})
   const agencyRouteGroup = useMemo(() => {
     const outer: AgencyRouteFavoritesGroup = {}
 
@@ -95,7 +98,8 @@ const Favorites = memo(function Favorites() {
 
     workerRef.current.addEventListener('message', (evt: MessageEvent<WorkerMessage>) => {
       if (!evt.data.error) {
-        setPredictionsMap(evt.data.predictionsMap)
+        setPredictions(evt.data.predictions)
+        setErrors(evt.data.errors)
       }
 
       if (evt.data.error) {
@@ -159,7 +163,7 @@ const Favorites = memo(function Favorites() {
                         fav.direction.id === homeStop?.params.direction &&
                         fav.stop.id === homeStop?.params.stop
                       const preds =
-                        predictionsMap[getPredsKey(agencyTitle, routeTitle, fav.stop.id)]
+                        predictions[getPredsKey(agencyTitle, routeTitle, fav.stop.id)]
 
                       return (
                         <RouteSection
@@ -218,6 +222,10 @@ const Favorites = memo(function Favorites() {
                                     )
                                   )}
                               </ul>
+                            ) : errors[fav.agency.id] ? (
+                              <Alert type="error" variant="outlined">
+                                Error loading predictions.
+                              </Alert>
                             ) : (
                               <span>No predictions.</span>
                             )}

@@ -17,30 +17,36 @@ const errors = {
   },
 
   getMethod(error: Error) {
-    const matches = error.message.match(this.regex)
+    if (error instanceof Error) {
+      const matches = error.message.match(this.regex)
 
-    if (matches && matches.groups) {
-      return matches.groups.method
+      if (matches && matches.groups) {
+        return matches.groups.method
+      }
     }
 
     return ''
   },
 
   getStatus(error: Error) {
-    const matches = error.message.match(this.regex)
+    if (error instanceof Error) {
+      const matches = error.message.match(this.regex)
 
-    if (matches) {
-      return parseInt(matches.groups?.status ?? '0')
+      if (matches) {
+        return parseInt(matches.groups?.status ?? '0')
+      }
     }
 
     return 0
   },
 
   getMessage(error: Error) {
-    const matches = error.message.match(this.regex)
+    if (error instanceof Error) {
+      const matches = error.message.match(this.regex)
 
-    if (matches && matches.groups) {
-      return matches.groups.message.trim()
+      if (matches && matches.groups) {
+        return matches.groups.message.trim()
+      }
     }
 
     return ''

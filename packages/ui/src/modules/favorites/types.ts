@@ -17,9 +17,13 @@ type AgencyRouteFavoritesGroup = Record<
   Record<RouteName['title'], Favorite[]>
 >
 type PredictionsMap = Record<string, Prediction[] | undefined>
+// Maps agencyId to the associated PromiseRejectedResult.reason from Promise.allSettled.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ErrorsMap = Record<string, any>
 interface WorkerMessage {
   error?: Error
-  predictionsMap: PredictionsMap
+  errors: ErrorsMap
+  predictions: PredictionsMap
 }
 interface ThreadMessage {
   action: 'update' | 'stop' | 'close' | 'restart'
@@ -31,5 +35,6 @@ export type {
   AgencyRouteFavoritesGroup,
   PredictionsMap,
   WorkerMessage,
-  ThreadMessage
+  ThreadMessage,
+  ErrorsMap
 }

@@ -75,7 +75,6 @@ const Label = styled.label<LabelProps>`
   font-size: ${({ fontSize }) => fontSize};
 
   span:first-child {
-    white-space: nowrap;
     font-weight: ${({ fontWeight }) => fontWeight ?? 600};
   }
 
