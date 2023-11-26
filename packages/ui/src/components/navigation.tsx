@@ -7,6 +7,8 @@ import { Cog } from '@busmap/components/icons/cog'
 import { InfoCircle } from '@busmap/components/icons/infoCircle'
 import { Exchange } from '@busmap/components/icons/exchange'
 import {
+  SO,
+  SDB10S,
   PB70T,
   PB80T,
   PB30T,
@@ -18,6 +20,8 @@ import {
 
 import { useGlobals } from '@core/globals.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
+
+import logoSvg from '../../assets/svg/logo.svg?raw'
 
 import type { FC, MouseEvent } from 'react'
 import type { Page } from '@core/types.js'
@@ -31,7 +35,7 @@ const Nav = styled.nav<{ mode: Mode }>`
 
   ul {
     margin: 0;
-    padding: 5px 0 0;
+    padding: 12px 0 0;
     list-style: none;
     display: flex;
     flex-direction: column;
@@ -87,6 +91,23 @@ const Nav = styled.nav<{ mode: Mode }>`
     }
   }
 
+  li:first-child {
+    a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: ${({ mode }) => (mode === 'light' ? SDB10S : SO)};
+
+      svg {
+        width: 40px;
+
+        path.bus {
+          fill: ${({ mode }) => (mode === 'light' ? PB90T : DARK_MODE_FIELD)};
+        }
+      }
+    }
+  }
+
   li:last-child {
     margin-top: auto;
 
@@ -99,7 +120,7 @@ const Nav = styled.nav<{ mode: Mode }>`
     }
   }
 
-  @media (width >= 431px) {
+  @media (width >= 431px) and (height >= 536px) {
     ul {
       width: 78px;
     }
@@ -112,6 +133,12 @@ const Nav = styled.nav<{ mode: Mode }>`
 
       span:last-child {
         display: block;
+      }
+    }
+
+    li:first-child a {
+      svg {
+        width: 64px;
       }
     }
   }
@@ -134,6 +161,11 @@ const Navigation: FC = () => {
   return (
     <Nav mode={mode}>
       <ul>
+        <li>
+          <a href="/" title="BusMap">
+            <span dangerouslySetInnerHTML={{ __html: logoSvg }} />
+          </a>
+        </li>
         <li title="Nearby Stops">
           <button
             data-name="locate"
