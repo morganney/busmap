@@ -49,13 +49,13 @@ const Aside = styled.aside<{ mode: Mode; collapsed: boolean }>`
   z-index: 999;
   height: 100%;
   width: calc(100% - 49px);
-  max-width: 425px;
+  max-width: 385px;
   background: ${({ mode }) => (mode === 'light' ? '#ffffffcc' : `${PB10T}cc`)};
   border-right: 1px solid ${({ mode }) => (mode === 'light' ? PB80T : PB50T)};
   transform: ${({ collapsed }) => (!collapsed ? 'translateX(0)' : 'translateX(-100%)')};
   transition: transform 0.25s ease;
 
-  @media (width >= 431px) {
+  @media (width >= 431px) and (height >= 536px) {
     left: 79px;
     width: calc(33% + 79px);
     min-width: 325px;

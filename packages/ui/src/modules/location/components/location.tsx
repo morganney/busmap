@@ -313,7 +313,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     )
   }
 
-  return <Loading text="Attempting to locate your position..." />
+  return <Loading text="Locating your position..." />
 })
 
 export { Location }
