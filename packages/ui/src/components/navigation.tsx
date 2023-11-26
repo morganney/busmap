@@ -8,7 +8,7 @@ import { InfoCircle } from '@busmap/components/icons/infoCircle'
 import { Exchange } from '@busmap/components/icons/exchange'
 import {
   SO,
-  SDB10S,
+  SDB,
   PB70T,
   PB80T,
   PB30T,
@@ -96,7 +96,7 @@ const Nav = styled.nav<{ mode: Mode }>`
       display: flex;
       align-items: center;
       justify-content: center;
-      color: ${({ mode }) => (mode === 'light' ? SDB10S : SO)};
+      color: ${({ mode }) => (mode === 'light' ? SDB : SO)};
 
       svg {
         width: 40px;
@@ -162,9 +162,7 @@ const Navigation: FC = () => {
     <Nav mode={mode}>
       <ul>
         <li>
-          <a href="/" title="BusMap">
-            <span dangerouslySetInnerHTML={{ __html: logoSvg }} />
-          </a>
+          <a href="/" title="BusMap" dangerouslySetInnerHTML={{ __html: logoSvg }} />
         </li>
         <li title="Nearby Stops">
           <button
