@@ -8,6 +8,8 @@ services:
       POSTGRES_PASSWORD: ${BM_POSTGRES_PASSWORD:?err}
       POSTGRES_USER: ${BM_POSTGRES_USER:?err}
       POSTGRES_DB: ${BM_POSTGRES_DB:?err}
+      SSO_GOOG_CLIENT_ID: ${SSO_GOOG_CLIENT_ID:?err}
+      SSO_GOOG_CLIENT_SECRET: ${SSO_GOOG_CLIENT_SECRET:?err}
     volumes:
       - db:/var/lib/postgresql/data
   adminer:
@@ -61,6 +63,8 @@ services:
       - components_node_modules:/app/packages/components/node_modules
     ports:
       - "5173:5173"
+    environment:
+      RESTBUS_HOST: ${RESTBUS_HOST}
     entrypoint:
       - npm
       - run
