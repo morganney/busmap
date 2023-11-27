@@ -1,4 +1,5 @@
 FROM postgres:16.1-bookworm as postgres
+COPY initdb.d /docker-entrypoint-initdb.d
 EXPOSE 5432
 
 FROM adminer:4.8.1 as adminer
