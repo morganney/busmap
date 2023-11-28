@@ -130,8 +130,8 @@ const Favorites = memo(function Favorites() {
         <Empty>
           <span>⭐⭐⭐</span>
           <p>
-            You can select up to {MAX_FAVORITES} favorite stops from the bus selector tab.
-            Their arrival or departure prediction times will be displayed here.
+            You can select up to {MAX_FAVORITES} favorite stops from the Selector tab.
+            Their predicted arrival or departure times will be displayed here.
           </p>
           <span>⭐⭐⭐</span>
         </Empty>
@@ -142,8 +142,8 @@ const Favorites = memo(function Favorites() {
               <summary>Maximum favorites reached.</summary>
               <p>
                 You have reached your maximum of {MAX_FAVORITES} favorite stops. To select
-                another favorite stop you can remove a current favorite, or create an
-                account to increase your maximum limit.
+                another favorite stop you can remove a current favorite, or sign in to
+                increase your maximum limit.
               </p>
             </Details>
           )}

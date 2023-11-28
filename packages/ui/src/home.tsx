@@ -9,14 +9,15 @@ import { useGlobals } from './globals.js'
 import { usePredictions } from './contexts/predictions.js'
 import { useVehiclesDispatch } from './contexts/vehicles.js'
 import { useTheme } from './modules/settings/contexts/theme.js'
-import { BusSelector } from './components/busSelector.js'
-import { Loading } from './components/loading.js'
-import { ErrorAgencies } from './components/error/agencies.js'
 import { Location } from './modules/location/components/location.js'
 import { Settings } from './modules/settings/components/settings.js'
 import { Favorites } from './modules/favorites/components/favorites.js'
+import { SignIn } from './components/signIn.js'
+import { BusSelector } from './components/busSelector.js'
+import { Loading } from './components/loading.js'
 import { Info } from './components/info.js'
 import { Predictions } from './components/predictions.js'
+import { ErrorAgencies } from './components/error/agencies.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
 import { getAll as getAllVehicles } from './api/rb/vehicles.js'
 import { getForStop } from './api/rb/predictions.js'
@@ -145,12 +146,16 @@ const Home: FC = () => {
             color={tabsColor}
             background={tabsBackground}>
             <TabList>
+              <Tab name="signin">Sign In</Tab>
               <Tab name="locate">📍</Tab>
               <Tab name="select">🚌</Tab>
               <Tab name="favorites">⭐</Tab>
               <Tab name="settings">⚙️</Tab>
               <Tab name="info">ℹ️</Tab>
             </TabList>
+            <TabPanel name="signin">
+              <SignIn />
+            </TabPanel>
             <TabPanel name="locate">
               <Location active={page === 'locate'} />
             </TabPanel>
