@@ -6,9 +6,11 @@ import { Bus } from '@busmap/components/icons/bus'
 import { Cog } from '@busmap/components/icons/cog'
 import { InfoCircle } from '@busmap/components/icons/infoCircle'
 import { Exchange } from '@busmap/components/icons/exchange'
+import { SignIn } from '@busmap/components/icons/signIn'
 import {
   SO,
   SDB,
+  PB10T,
   PB70T,
   PB80T,
   PB30T,
@@ -35,11 +37,11 @@ const Nav = styled.nav<{ mode: Mode }>`
 
   ul {
     margin: 0;
-    padding: 12px 0 0;
+    padding: 6px 0 0;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
     width: 48px;
     height: 100%;
   }
@@ -65,19 +67,19 @@ const Nav = styled.nav<{ mode: Mode }>`
     }
 
     &.active {
-      color: ${({ mode }) => (mode === 'light' ? PB30T : `${PB90T}`)};
+      color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
 
       svg {
-        color: ${({ mode }) => (mode === 'light' ? PB30T : `${PB90T}`)};
+        color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
       }
     }
 
     &:hover {
       cursor: pointer;
-      color: ${({ mode }) => (mode === 'light' ? PB30T : `${PB90T}`)};
+      color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
 
       svg {
-        color: ${({ mode }) => (mode === 'light' ? PB30T : `${PB90T}`)};
+        color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
       }
     }
 
@@ -86,7 +88,7 @@ const Nav = styled.nav<{ mode: Mode }>`
       height: 16px;
     }
 
-    span:last-child {
+    span:nth-of-type(2) {
       display: none;
     }
   }
@@ -108,16 +110,54 @@ const Nav = styled.nav<{ mode: Mode }>`
     }
   }
 
-  li:last-child {
-    margin-top: auto;
+  li:nth-child(2) {
+    margin: 6px 0;
+    border: 1px solid ${({ mode }) => (mode === 'light' ? PB80T : PB50T)};
+    border-right: none;
+    border-left: none;
+    background: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
 
     button {
-      color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
+      padding: 3px 5px;
+      white-space: nowrap;
+      flex-direction: row;
+      justify-content: center;
+      color: ${({ mode }) => (mode === 'light' ? PB70T : PB40T)};
 
-      svg {
-        color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
+      span {
+        width: auto;
+        height: auto;
+        font-weight: bold;
+
+        &:last-child {
+          width: 10px;
+          height: 10px;
+        }
+      }
+
+      &:hover {
+        svg {
+          color: ${({ mode }) => (mode === 'light' ? PB70T : PB40T)};
+        }
       }
     }
+
+    &.active {
+      width: calc(100% + 1px);
+      background: ${({ mode }) => (mode === 'light' ? '#fffc' : `${PB10T}cc`)};
+
+      button {
+        color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
+
+        svg {
+          color: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
+        }
+      }
+    }
+  }
+
+  li:last-child {
+    margin-top: auto;
   }
 
   @media (width >= 431px) and (height >= 536px) {
@@ -131,7 +171,7 @@ const Nav = styled.nav<{ mode: Mode }>`
         height: 24px;
       }
 
-      span:last-child {
+      span:nth-of-type(2) {
         display: block;
       }
     }
@@ -161,25 +201,31 @@ const Navigation: FC = () => {
   return (
     <Nav mode={mode}>
       <ul>
-        <li>
-          <a href="/" title="BusMap" dangerouslySetInnerHTML={{ __html: logoSvg }} />
+        <li title="Busmap">
+          <a href="/" dangerouslySetInnerHTML={{ __html: logoSvg }} />
         </li>
-        <li title="Nearby Stops">
+        <li title="Sign In" className={page === 'signin' ? 'active' : undefined}>
+          <button data-name="signin" onClick={onClick}>
+            <span>Sign in</span>
+            <SignIn />
+          </button>
+        </li>
+        <li title="Nearby">
           <button
             data-name="locate"
             onClick={onClick}
             className={page === 'locate' ? 'active' : undefined}>
             <MapPin />
-            <span>Nearby Stops</span>
+            <span>Nearby</span>
           </button>
         </li>
-        <li title="Bus Selector">
+        <li title="Selector">
           <button
             data-name="select"
             onClick={onClick}
             className={page === 'select' ? 'active' : undefined}>
             <Bus />
-            <span>Bus Selector</span>
+            <span>Selector</span>
           </button>
         </li>
         <li title="Favorites">
@@ -210,7 +256,7 @@ const Navigation: FC = () => {
           </button>
         </li>
         <li>
-          <button onClick={onClickToggle}>
+          <button onClick={onClickToggle} className={!collapsed ? 'active' : undefined}>
             <Exchange />
             <span>{collapsed ? 'Open' : 'Close'}</span>
           </button>

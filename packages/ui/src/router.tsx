@@ -3,6 +3,7 @@ import { createBrowserRouter, useRouteError } from 'react-router-dom'
 import { Root } from './root.js'
 import { Home } from './home.js'
 import { Providers } from './providers.js'
+import { AuthnCallback } from './components/authnCallback.js'
 import { ErrorBoundary } from './components/error/boundary.js'
 import { NotFound } from './components/error/notFound.js'
 
@@ -38,6 +39,11 @@ const router = createBrowserRouter([
             element: <Home />
           }
         ]
+      },
+      {
+        id: 'authn',
+        path: '/authn-callback',
+        element: <AuthnCallback />
       }
     ]
   },

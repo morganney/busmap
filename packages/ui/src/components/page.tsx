@@ -17,6 +17,10 @@ const Section = styled.section`
     font-size: 22px;
     margin: 0;
   }
+
+  p {
+    margin: 0;
+  }
 `
 const Page: FC<PageProps> = ({ title, children, className }) => {
   return (

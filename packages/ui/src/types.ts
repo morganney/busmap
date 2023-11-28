@@ -103,7 +103,7 @@ interface Selection {
 }
 
 // Busmap types
-type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info'
+type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info' | 'signin'
 interface BoundsChanged {
   type: 'bounds'
   value: Bounds
