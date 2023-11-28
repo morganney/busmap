@@ -1,4 +1,8 @@
 import styled from 'styled-components'
+import { useCallback } from 'react'
+import { latLng } from 'leaflet'
+import { Tooltip } from '@busmap/components/tooltip'
+import { MapMarked } from '@busmap/components/icons/mapMarked'
 import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
 
 import { useTheme } from '@module/settings/contexts/theme.js'
@@ -8,6 +12,7 @@ import { UserLocator } from '@module/location/components/userLocator.js'
 
 import { VehicleLocator } from './vehicleLocator.js'
 
+import { useMap } from '../contexts/map.js'
 import { PredictedVehiclesColors, blinkStyles } from '../common.js'
 
 import type { FC } from 'react'
@@ -34,7 +39,7 @@ const Section = styled.section`
   header {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     margin: 0 0 12px;
 
     h2 {
@@ -46,7 +51,9 @@ const Section = styled.section`
       margin: 0;
       font-size: 14px;
       font-weight: normal;
-      line-height: 1;
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
     }
   }
 `
@@ -206,9 +213,18 @@ const Predictions: FC<PredictionsProps> = ({
   timestamp,
   locateActive
 }) => {
+  const map = useMap()
   const { mode } = useTheme()
   const { format } = usePredictionsSettings()
   const { markPredictedVehicles } = useVehicleSettings()
+  const onClickIcon = useCallback(() => {
+    if (map && stop) {
+      const { lat, lon } = stop
+      const latLon = latLng(lat, lon)
+
+      map.setView(latLon, Math.max(map.getZoom(), 16))
+    }
+  }, [stop, map])
   const Format = format === 'minutes' ? Minutes : Time
 
   if (Array.isArray(preds) && stop && route) {
@@ -223,7 +239,12 @@ const Predictions: FC<PredictionsProps> = ({
         <Section>
           <header>
             <h2>Next {title}</h2>
-            <h3>{stop.title}</h3>
+            <h3>
+              <span>{stop.title}</span>
+              <Tooltip title="Locate selected stop.">
+                <MapMarked size="small" onClick={onClickIcon} />
+              </Tooltip>
+            </h3>
           </header>
           {locateActive && <UserLocator withDistance />}
           {messages.length > 0 && (

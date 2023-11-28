@@ -205,10 +205,7 @@ const Navigation: FC = () => {
           <a href="/" dangerouslySetInnerHTML={{ __html: logoSvg }} />
         </li>
         <li title="Sign In" className={page === 'signin' ? 'active' : undefined}>
-          <button
-            data-name="signin"
-            onClick={onClick}
-            className={page === 'signin' ? 'active' : undefined}>
+          <button data-name="signin" onClick={onClick}>
             <span>Sign in</span>
             <SignIn />
           </button>

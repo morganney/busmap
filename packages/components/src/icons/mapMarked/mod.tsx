@@ -8,6 +8,7 @@ import type { IconProps } from '../common.js'
 const MapMarked: FC<IconProps> = ({
   onClick,
   className,
+  cursor,
   size = 'medium',
   color = 'black',
   tabIndex = 0
@@ -29,6 +30,7 @@ const MapMarked: FC<IconProps> = ({
   return (
     <Icon
       color={color}
+      cursor={cursor}
       size={size}
       className={className}
       tabIndex={tabIndex}
