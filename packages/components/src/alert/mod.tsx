@@ -15,7 +15,7 @@ interface AlertProps {
 type AlertRef = HTMLDivElement
 
 const AlertBase = styled(MuiAlert)<{ $fullWidth: boolean }>`
-  &.MuiAlert-standard {
+  &.MuiAlert-root {
     width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
 
     .MuiAlert-message {

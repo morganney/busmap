@@ -11,6 +11,8 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import restbus from 'restbus'
 
+import { authn } from './routes/authn.js'
+
 import type { SessionOptions, CookieOptions } from 'express-session'
 
 const oneDayMs = 86_400_000
@@ -48,14 +50,16 @@ app.set('trust proxy', 1)
 app.use(env.NODE_ENV === 'production' ? morgan('combined') : morgan('dev'))
 app.use(helmet())
 app.use(session(sess))
-app.use('/', (req, res, next) => {
+app.use((req, res, next) => {
   if (req.session.isInitialized === undefined) {
+    debug('initializing session', req.sessionID)
     req.session.isInitialized = true
     req.session.save(next)
   } else {
     next()
   }
 })
+app.use('/authn', authn)
 app.use(
   '/restbus',
   (req, res, next) => {

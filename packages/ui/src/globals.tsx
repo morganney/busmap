@@ -26,6 +26,8 @@ const defaultGlobals: BusmapGlobals = {
 const Globals = createContext<BusmapGlobals>(defaultGlobals)
 const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
   switch (action.type) {
+    case 'user':
+      return { ...state, user: action.value }
     case 'page':
       return { ...state, page: action.value }
     case 'collapsed':

@@ -33,10 +33,10 @@
   <body>
     <main></main>
     <script type="module" src="/src/index.tsx"></script>
+    <script>
+      document.body.classList.add(
+        `busmap-${localStorage.getItem('busmap-themeMode') || 'light'}`
+      )
+    </script>
   </body>
-  <script>
-    document.body.classList.add(
-      `busmap-${localStorage.getItem('busmap-themeMode') || 'light'}`
-    )
-  </script>
 </html>

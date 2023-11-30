@@ -50,9 +50,8 @@ const Info = styled.div`
 `
 const AlertWrap = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 
   p {
     margin: 0;
@@ -61,18 +60,7 @@ const AlertWrap = styled.div`
 
   > div:last-child {
     line-height: 1;
-  }
-`
-const StopButton = styled.button`
-  ${btn};
-  padding: 2px 1px;
-  font-weight: 600;
-  color: #014361;
-  text-align: start;
-
-  &:hover {
-    background: #014361cc;
-    color: white;
+    margin-left: auto;
   }
 `
 const StreetViewButton = styled.button`
@@ -90,14 +78,6 @@ const UserLocator: FC<UserLocatorProps> = ({ withDistance = false }) => {
       )
     }
   }, [position, map])
-  const onClickLocateStop = useCallback(() => {
-    if (map && stop) {
-      const { lat, lon } = stop
-      const latLon = latLng(lat, lon)
-
-      map.setView(latLon, Math.max(map.getZoom(), 16))
-    }
-  }, [map, stop])
 
   if (permission !== 'granted') {
     return null
@@ -115,14 +95,18 @@ const UserLocator: FC<UserLocatorProps> = ({ withDistance = false }) => {
 
       return (
         <Wrap>
-          <Alert icon={<Route color={PB80T} cursor="auto" />} fullWidth>
+          <Alert icon={false} fullWidth>
             <AlertWrap>
+              <Route color={PB80T} cursor="auto" />
               <p>
-                {Intl.NumberFormat(['en-US', 'es-US', 'es-CL'], {
-                  maximumSignificantDigits: sigDig
-                }).format(distanceInMiles)}{' '}
-                miles away from{' '}
-                <StopButton onClick={onClickLocateStop}>{stop.title}.</StopButton>
+                You are{' '}
+                <strong>
+                  {Intl.NumberFormat(['en-US', 'es-US', 'es-CL'], {
+                    maximumSignificantDigits: sigDig
+                  }).format(distanceInMiles)}{' '}
+                  miles
+                </strong>{' '}
+                away.
               </p>
               <Tooltip title="Locate me.">
                 <StreetViewButton onClick={onClick}>
