@@ -20,7 +20,7 @@ const sess: SessionOptions = {
   name: 'busmap.sid',
   secret: env.BM_COOKIE_SECRET as SessionOptions['secret'],
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
   unset: 'destroy',
   cookie: {
     maxAge: oneDayMs,
@@ -50,20 +50,11 @@ app.set('trust proxy', 1)
 app.use(env.NODE_ENV === 'production' ? morgan('combined') : morgan('dev'))
 app.use(helmet())
 app.use(session(sess))
-app.use((req, res, next) => {
-  if (req.session.isInitialized === undefined) {
-    debug('initializing session', req.sessionID)
-    req.session.isInitialized = true
-    req.session.save(next)
-  } else {
-    next()
-  }
-})
 app.use('/authn', authn)
 app.use(
   '/restbus',
   (req, res, next) => {
-    if (req.session.isInitialized) {
+    if (req.sessionID) {
       next()
     } else {
       res.status(401).json(new error.Unauthorized())

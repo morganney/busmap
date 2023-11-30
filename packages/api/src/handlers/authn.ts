@@ -89,7 +89,7 @@ const authn = {
     req: Request,
     res: Response
   ): Response<{ isLoggedIn: boolean; user: User | null }> {
-    if (req.session?.isInitialized && req.session?.user) {
+    if (req.session?.user) {
       return res.json({
         isLoggedIn: true,
         user: JSON.parse(req.session.user)
