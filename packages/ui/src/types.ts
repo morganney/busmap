@@ -103,6 +103,13 @@ interface Selection {
 }
 
 // Busmap types
+interface User {
+  sub: string
+  email: string
+  fullName: string
+  givenName: string
+  familyName: string
+}
 type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info' | 'signin'
 interface BoundsChanged {
   type: 'bounds'
@@ -144,7 +151,12 @@ interface CollapsedChanged {
   type: 'collapsed'
   value: boolean
 }
+interface UserChanged {
+  type: 'user'
+  value: User
+}
 type BusmapAction =
+  | UserChanged
   | BoundsChanged
   | CenterChanged
   | AgencyChanged
@@ -157,6 +169,7 @@ type BusmapAction =
   | CollapsedChanged
 interface BusmapGlobals {
   dispatch: Dispatch<BusmapAction>
+  user?: User
   page: Page
   collapsed: boolean
   center: Point
@@ -170,6 +183,7 @@ interface BusmapGlobals {
 }
 
 export type {
+  User,
   Page,
   Point,
   Bounds,

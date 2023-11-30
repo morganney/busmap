@@ -8,12 +8,12 @@ export default defineConfig(() => {
   const proxy = !env.RESTBUS_HOST
     ? undefined
     : {
-        '/restbus': {
-          target: env.RESTBUS_HOST
-        }
+        '/authn': env.RESTBUS_HOST,
+        '/restbus': env.RESTBUS_HOST
       }
 
   return {
+    envDir: resolve('../..'),
     build: {
       target: ['chrome118', 'safari16', 'edge118', 'firefox118'],
       rollupOptions: {
