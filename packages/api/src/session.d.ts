@@ -8,6 +8,6 @@ declare module 'express-session' {
      * If so, this is the JSON.stringify version of
      * a UI User shape.
      */
-    user?: string
+    user?: string | null
   }
 }

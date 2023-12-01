@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 
-import { post, get } from '@core/api/authn.js'
+import { login } from '@core/api/authn.js'
+import { useGlobals } from '@core/globals.js'
 import { MAX_FAVORITES } from '@module/favorites/common.js'
 
 import { Page } from './page.js'
@@ -9,15 +10,7 @@ import type { FC } from 'react'
 
 const SignIn: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const getStatus = async () => {
-      // TODO Sign in UX
-      await get()
-    }
-
-    getStatus()
-  }, [])
+  const { dispatch } = useGlobals()
 
   useEffect(() => {
     if (google && ref.current) {
@@ -26,9 +19,10 @@ const SignIn: FC = () => {
         client_id: import.meta.env.VITE_GOOG_CLIENT_ID,
         nonce: btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))),
         callback: async response => {
-          await post(response.credential)
+          const user = await login(response.credential)
 
-          // TODO Sign in UX
+          dispatch({ type: 'user', value: user })
+          dispatch({ type: 'page', value: 'profile' })
         }
       })
       google.accounts.id.renderButton(ref.current, {
@@ -38,7 +32,7 @@ const SignIn: FC = () => {
         }
       })
     }
-  }, [])
+  }, [dispatch])
 
   return (
     <Page title="Sign In">

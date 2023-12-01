@@ -110,7 +110,7 @@ interface User {
   givenName: string
   familyName: string
 }
-type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info' | 'signin'
+type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info' | 'signin' | 'profile'
 interface BoundsChanged {
   type: 'bounds'
   value: Bounds
@@ -153,7 +153,7 @@ interface CollapsedChanged {
 }
 interface UserChanged {
   type: 'user'
-  value: User
+  value?: User
 }
 type BusmapAction =
   | UserChanged

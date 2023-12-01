@@ -5,7 +5,7 @@ import { OAuth2Client } from 'google-auth-library'
 
 import { sql } from '../db.js'
 
-import type { Request, Response } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 import type { TokenPayload } from 'google-auth-library'
 
 interface User {
@@ -85,19 +85,41 @@ const authn = {
     return res.status(401).json(new error.Unauthorized())
   },
 
+  logout(req: Request, res: Response, next: NextFunction) {
+    const user = req.session.user
+
+    req.session.user = null
+    req.session.save(err => {
+      if (err) {
+        next(err)
+      }
+
+      req.session.regenerate(err => {
+        if (err) {
+          next(err)
+        } else {
+          res.json({
+            success: true,
+            user: user ? JSON.parse(user) : {}
+          })
+        }
+      })
+    })
+  },
+
   status(
     req: Request,
     res: Response
-  ): Response<{ isLoggedIn: boolean; user: User | null }> {
+  ): Response<{ isSignedIn: boolean; user: User | null }> {
     if (req.session?.user) {
       return res.json({
-        isLoggedIn: true,
+        isSignedIn: true,
         user: JSON.parse(req.session.user)
       })
     }
 
     return res.json({
-      isLoggedIn: false,
+      isSignedIn: false,
       user: null
     })
   }

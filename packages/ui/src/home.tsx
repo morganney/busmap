@@ -13,9 +13,9 @@ import { Location } from './modules/location/components/location.js'
 import { Settings } from './modules/settings/components/settings.js'
 import { Favorites } from './modules/favorites/components/favorites.js'
 import { SignIn } from './components/signIn.js'
+import { Profile } from './components/profile.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
-import { Info } from './components/info.js'
 import { Predictions } from './components/predictions.js'
 import { ErrorAgencies } from './components/error/agencies.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
@@ -151,7 +151,7 @@ const Home: FC = () => {
               <Tab name="select">🚌</Tab>
               <Tab name="favorites">⭐</Tab>
               <Tab name="settings">⚙️</Tab>
-              <Tab name="info">ℹ️</Tab>
+              <Tab name="profile">👤</Tab>
             </TabList>
             <TabPanel name="signin">
               <SignIn />
@@ -168,8 +168,8 @@ const Home: FC = () => {
             <TabPanel name="settings">
               <Settings />
             </TabPanel>
-            <TabPanel name="info">
-              <Info />
+            <TabPanel name="profile">
+              <Profile />
             </TabPanel>
           </Tabs>
           <Predictions

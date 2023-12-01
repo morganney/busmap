@@ -2,7 +2,7 @@ import { env } from 'node:process'
 import http from 'node:http'
 
 import makeDebug from 'debug'
-import error from 'http-errors'
+import errors from 'http-errors'
 import express from 'express'
 import session from 'express-session'
 import RedisStore from 'connect-redis'
@@ -12,10 +12,11 @@ import helmet from 'helmet'
 import restbus from 'restbus'
 
 import { authn } from './routes/authn.js'
+import { error } from './handlers/error.js'
 
 import type { SessionOptions, CookieOptions } from 'express-session'
 
-const oneDayMs = 86_400_000
+const oneHourMs = 3_600_000
 const sess: SessionOptions = {
   name: 'busmap.sid',
   secret: env.BM_COOKIE_SECRET as SessionOptions['secret'],
@@ -23,7 +24,7 @@ const sess: SessionOptions = {
   saveUninitialized: true,
   unset: 'destroy',
   cookie: {
-    maxAge: oneDayMs,
+    maxAge: 12 * oneHourMs,
     httpOnly: true,
     secure: env.BM_COOKIE_SECURE === 'true',
     sameSite: (env.BM_COOKIE_SAMESITE as CookieOptions['sameSite']) ?? 'strict'
@@ -47,21 +48,19 @@ if (env.BM_SESSION_STORE === 'redis') {
 }
 
 app.set('trust proxy', 1)
-app.use(env.NODE_ENV === 'production' ? morgan('combined') : morgan('dev'))
+
+if (env.NODE_ENV === 'production') {
+  app.use(morgan('combined'))
+}
+
 app.use(helmet())
 app.use(session(sess))
 app.use('/authn', authn)
-app.use(
-  '/restbus',
-  (req, res, next) => {
-    if (req.sessionID) {
-      next()
-    } else {
-      res.status(401).json(new error.Unauthorized())
-    }
-  },
-  restbus.middleware()
-)
+app.use('/restbus', restbus.middleware())
+app.use((req, res) => {
+  res.status(404).json(new errors.NotFound())
+})
+app.use(error.handler)
 
 http.createServer(app).listen(3000, () => {
   // eslint-disable-next-line no-console
