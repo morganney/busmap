@@ -1,8 +1,8 @@
 import { transport } from './transport.js'
 
-import type { User } from '@core/types.js'
+import type { User, Status } from '@core/types.js'
 
-const post = async (credential: string) => {
+const login = async (credential: string) => {
   const user = await transport.fetch<User>('/authn/login', {
     method: 'POST',
     body: JSON.stringify({ credential })
@@ -10,12 +10,20 @@ const post = async (credential: string) => {
 
   return user
 }
-const get = async () => {
-  const status = await transport.fetch<{ isLoggedIn: boolean; user: User | null }>(
-    '/authn/status'
-  )
+const status = async () => {
+  const status = await transport.fetch<Status>('/authn/status')
 
   return status
 }
+const logout = async () => {
+  const result = await transport.fetch<{ success: boolean; user: User }>(
+    '/authn/logout',
+    {
+      method: 'POST'
+    }
+  )
 
-export { post, get }
+  return result
+}
+
+export { login, status, logout }

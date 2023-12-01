@@ -1,10 +1,10 @@
 import styled from 'styled-components'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { MapPin } from '@busmap/components/icons/mapPin'
 import { Star } from '@busmap/components/icons/star'
 import { Bus } from '@busmap/components/icons/bus'
 import { Cog } from '@busmap/components/icons/cog'
-import { InfoCircle } from '@busmap/components/icons/infoCircle'
+import { User as UserIcon } from '@busmap/components/icons/user'
 import { Exchange } from '@busmap/components/icons/exchange'
 import { SignIn } from '@busmap/components/icons/signIn'
 import {
@@ -26,10 +26,14 @@ import { useTheme } from '@module/settings/contexts/theme.js'
 import logoSvg from '../../assets/svg/logo.svg?raw'
 
 import type { FC, MouseEvent } from 'react'
-import type { Page } from '@core/types.js'
+import type { Page, Status } from '@core/types.js'
 import type { Mode } from '@module/settings/types.js'
 
-const Nav = styled.nav<{ mode: Mode }>`
+interface NavigationProps {
+  status: Status
+}
+
+const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   position: relative;
   z-index: 9999;
   background: ${({ mode }) => (mode === 'light' ? PB90T : DARK_MODE_FIELD)};
@@ -116,6 +120,7 @@ const Nav = styled.nav<{ mode: Mode }>`
     border-right: none;
     border-left: none;
     background: ${({ mode }) => (mode === 'light' ? PB30T : PB90T)};
+    display: ${({ isSignedIn }) => (isSignedIn ? 'none' : 'list-item')};
 
     button {
       padding: 3px 5px;
@@ -160,6 +165,10 @@ const Nav = styled.nav<{ mode: Mode }>`
     margin-top: auto;
   }
 
+  li[title='Profile'] {
+    display: ${({ isSignedIn }) => (isSignedIn ? 'list-item' : 'none')};
+  }
+
   @media (width >= 431px) and (height >= 536px) {
     ul {
       width: 78px;
@@ -183,8 +192,8 @@ const Nav = styled.nav<{ mode: Mode }>`
     }
   }
 `
-const Navigation: FC = () => {
-  const { dispatch, page, collapsed } = useGlobals()
+const Navigation: FC<NavigationProps> = ({ status }) => {
+  const { dispatch, page, collapsed, user } = useGlobals()
   const { mode } = useTheme()
   const onClick = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
@@ -198,8 +207,14 @@ const Navigation: FC = () => {
     dispatch({ type: 'collapsed', value: !collapsed })
   }, [dispatch, collapsed])
 
+  useEffect(() => {
+    if (status?.user) {
+      dispatch({ type: 'user', value: status.user })
+    }
+  }, [dispatch, status])
+
   return (
-    <Nav mode={mode}>
+    <Nav mode={mode} isSignedIn={Boolean(user)}>
       <ul>
         <li title="Busmap">
           <a href="/" dangerouslySetInnerHTML={{ __html: logoSvg }} />
@@ -246,13 +261,13 @@ const Navigation: FC = () => {
             <span>Settings</span>
           </button>
         </li>
-        <li title="Map Info">
+        <li title="Profile">
           <button
-            data-name="info"
+            data-name="profile"
             onClick={onClick}
-            className={page === 'info' ? 'active' : undefined}>
-            <InfoCircle />
-            <span>Map Info</span>
+            className={page === 'profile' ? 'active' : undefined}>
+            <UserIcon />
+            <span>Profile</span>
           </button>
         </li>
         <li>
