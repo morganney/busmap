@@ -1,6 +1,14 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { SessionData } from 'express-session'
 
+interface SessionUser {
+  sub: string
+  email: string
+  givenName: string
+  familyName: string
+  fullName: string
+}
+
 declare module 'express-session' {
   interface SessionData {
     /**
@@ -8,6 +16,6 @@ declare module 'express-session' {
      * If so, this is the JSON.stringify version of
      * a UI User shape.
      */
-    user?: string | null
+    user?: SessionUser | null
   }
 }

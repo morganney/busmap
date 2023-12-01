@@ -72,7 +72,7 @@ const authn = {
               fullName: user.full_name
             }
 
-            req.session.user = JSON.stringify(sessUser)
+            req.session.user = sessUser
 
             return res.json(sessUser)
           } catch (err) {
@@ -100,25 +100,22 @@ const authn = {
         } else {
           res.json({
             success: true,
-            user: user ? JSON.parse(user) : {}
+            user: user ?? {}
           })
         }
       })
     })
   },
 
-  status(
-    req: Request,
-    res: Response
-  ): Response<{ isSignedIn: boolean; user: User | null }> {
+  status(req: Request, res: Response) {
     if (req.session?.user) {
       return res.json({
         isSignedIn: true,
-        user: JSON.parse(req.session.user)
+        user: req.session.user
       })
     }
 
-    return res.json({
+    res.json({
       isSignedIn: false,
       user: null
     })
