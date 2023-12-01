@@ -1,11 +1,10 @@
 import styled from 'styled-components'
 import { useCallback, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { MapPin } from '@busmap/components/icons/mapPin'
 import { Star } from '@busmap/components/icons/star'
 import { Bus } from '@busmap/components/icons/bus'
 import { Cog } from '@busmap/components/icons/cog'
-import { User } from '@busmap/components/icons/user'
+import { User as UserIcon } from '@busmap/components/icons/user'
 import { Exchange } from '@busmap/components/icons/exchange'
 import { SignIn } from '@busmap/components/icons/signIn'
 import {
@@ -21,15 +20,18 @@ import {
   DARK_MODE_FIELD
 } from '@busmap/components/colors'
 
-import { status as getStatus } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
 
 import logoSvg from '../../assets/svg/logo.svg?raw'
 
 import type { FC, MouseEvent } from 'react'
-import type { Page } from '@core/types.js'
+import type { Page, Status } from '@core/types.js'
 import type { Mode } from '@module/settings/types.js'
+
+interface NavigationProps {
+  status: Status
+}
 
 const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   position: relative;
@@ -190,7 +192,7 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
     }
   }
 `
-const Navigation: FC = () => {
+const Navigation: FC<NavigationProps> = ({ status }) => {
   const { dispatch, page, collapsed, user } = useGlobals()
   const { mode } = useTheme()
   const onClick = useCallback(
@@ -204,10 +206,6 @@ const Navigation: FC = () => {
   const onClickToggle = useCallback(() => {
     dispatch({ type: 'collapsed', value: !collapsed })
   }, [dispatch, collapsed])
-  const { data: status } = useQuery({
-    queryKey: ['status'],
-    queryFn: getStatus
-  })
 
   useEffect(() => {
     if (status?.user) {
@@ -268,7 +266,7 @@ const Navigation: FC = () => {
             data-name="profile"
             onClick={onClick}
             className={page === 'profile' ? 'active' : undefined}>
-            <User />
+            <UserIcon />
             <span>Profile</span>
           </button>
         </li>

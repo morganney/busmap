@@ -1,6 +1,6 @@
 import { transport } from './transport.js'
 
-import type { User } from '@core/types.js'
+import type { User, Status } from '@core/types.js'
 
 const login = async (credential: string) => {
   const user = await transport.fetch<User>('/authn/login', {
@@ -11,9 +11,7 @@ const login = async (credential: string) => {
   return user
 }
 const status = async () => {
-  const status = await transport.fetch<{ isSignedIn: boolean; user: User | null }>(
-    '/authn/status'
-  )
+  const status = await transport.fetch<Status>('/authn/status')
 
   return status
 }

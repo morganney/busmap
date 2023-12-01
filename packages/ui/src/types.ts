@@ -110,6 +110,10 @@ interface User {
   givenName: string
   familyName: string
 }
+interface Status {
+  isSignedIn: boolean
+  user?: User | null
+}
 type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info' | 'signin' | 'profile'
 interface BoundsChanged {
   type: 'bounds'
@@ -184,6 +188,7 @@ interface BusmapGlobals {
 
 export type {
   User,
+  Status,
   Page,
   Point,
   Bounds,
