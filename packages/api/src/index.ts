@@ -45,8 +45,7 @@ if (env.BM_SESSION_STORE === 'redis') {
      * (separate from express-session's `rolling` option which is `false`) while
      * using connect-redis which updates the underlying TTL when touched.
      *
-     * The goal is to keep the client cookie, and redis session expiration
-     * synchronized.
+     * The goal is to keep the client cookie, and redis session expiration synchronized.
      */
     sess.store = new RedisStore({ client, disableTouch: true })
   } catch (err) {
