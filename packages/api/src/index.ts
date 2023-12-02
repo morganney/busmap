@@ -13,10 +13,10 @@ import restbus from 'restbus'
 
 import { authn } from './routes/authn.js'
 import { error } from './handlers/error.js'
+import { SESSION_DURATION_MS } from './common.js'
 
 import type { SessionOptions, CookieOptions } from 'express-session'
 
-const oneHourMs = 3_600_000
 const sess: SessionOptions = {
   name: 'busmap.sid',
   secret: env.BM_COOKIE_SECRET as SessionOptions['secret'],
@@ -24,7 +24,7 @@ const sess: SessionOptions = {
   saveUninitialized: true,
   unset: 'destroy',
   cookie: {
-    maxAge: 12 * oneHourMs,
+    maxAge: SESSION_DURATION_MS,
     httpOnly: true,
     secure: env.BM_COOKIE_SECURE === 'true',
     sameSite: (env.BM_COOKIE_SAMESITE as CookieOptions['sameSite']) ?? 'strict'
@@ -39,8 +39,15 @@ if (env.BM_SESSION_STORE === 'redis') {
 
   try {
     await client.connect()
-    // TTL for the redis session keys is derived from cookie.maxAge
-    sess.store = new RedisStore({ client })
+    /**
+     * TTL for the redis session key is derived from `cookie.maxAge` (SESSION_DURATION_MS).
+     * Setting `disableTouch` to `true` prevents rolling sessions
+     * (separate from express-session's `rolling` option which is `false`) while
+     * using connect-redis which updates the underlying TTL when touched.
+     *
+     * The goal is to keep the client cookie, and redis session expiration synchronized.
+     */
+    sess.store = new RedisStore({ client, disableTouch: true })
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(`Redis client failed to connect: ${err}`)

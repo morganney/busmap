@@ -4,6 +4,7 @@ import error from 'http-errors'
 import { OAuth2Client } from 'google-auth-library'
 
 import { sql } from '../db.js'
+import { SESSION_DURATION_MS } from '../common.js'
 
 import type { Request, Response, NextFunction } from 'express'
 import type { TokenPayload } from 'google-auth-library'
@@ -73,6 +74,12 @@ const authn = {
             }
 
             req.session.user = sessUser
+            /**
+             * Because the underlying session store (connect-redis),
+             * updates the TTL when changed, so this keeps the
+             * cookie and redis session in sync.
+             */
+            req.session.cookie.maxAge = SESSION_DURATION_MS
 
             return res.json(sessUser)
           } catch (err) {
