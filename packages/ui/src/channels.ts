@@ -1,12 +1,12 @@
 /**
- * Channel used to broadcast session related info.
+ * Channel used by transport to communicate
+ * unauthenticated status from the backend.
+ * Using broadcast channels because they work
+ * better than custom events across browsing contexts.
  *
- * This one is necessary for the favorites worker
- * and the fetch transport to work in tandem when
- * reading the busmap-session-user header to
- * detect backend seassion state. There is no
- * window object to dispatch a custom event
- * against in the worker scope.
+ * Instantiated here to allow for calling
+ * close() on the channel within the root
+ * component. (React StrictMode cruft)
  */
 const authn = new BroadcastChannel('authn')
 

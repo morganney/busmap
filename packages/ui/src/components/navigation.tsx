@@ -21,7 +21,6 @@ import {
   DARK_MODE_FIELD
 } from '@busmap/components/colors'
 
-import { authn } from '@core/channels.js'
 import { useGlobals } from '@core/globals.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
 
@@ -35,6 +34,15 @@ interface NavigationProps {
   status: Status
 }
 
+/**
+ * Without a new broadcast object the listener
+ * would only receive messages from the favorites
+ * worker fetch calls.
+ *
+ * This channel is for the browsing context separate
+ * from the favorites worker.
+ */
+const authn = new BroadcastChannel('authn')
 const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   position: relative;
   z-index: 9999;
@@ -233,6 +241,13 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
 
     return () => {
       authn.removeEventListener('message', handleUserInactive)
+      /**
+       * Calling authn.close() here prematurely closes this
+       * particular channel object, so that message events
+       * are not received.
+       *
+       * StrictMode sucks, consider dropping it entirely.
+       */
     }
   }, [dispatch, user])
 
