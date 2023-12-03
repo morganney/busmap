@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { useCallback, useEffect } from 'react'
+import { toast } from '@busmap/components/toast'
 import { MapPin } from '@busmap/components/icons/mapPin'
 import { Star } from '@busmap/components/icons/star'
 import { Bus } from '@busmap/components/icons/bus'
@@ -212,6 +213,29 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
       dispatch({ type: 'user', value: status.user })
     }
   }, [dispatch, status])
+
+  useEffect(() => {
+    const handleNoUserSession = (evt: MessageEvent) => {
+      /**
+       * Currently, not using rolling sessions but fixed
+       * durations that expire. If the backend session expires
+       * clear the apps user state to require another sign in.
+       */
+      if (evt.data === 'no-user-session' && user) {
+        dispatch({ type: 'user', value: undefined })
+        dispatch({ type: 'page', value: 'signin' })
+        toast({ type: 'warning', message: 'Your session expired.' })
+      }
+    }
+    const channel = new BroadcastChannel('authn')
+
+    channel.addEventListener('message', handleNoUserSession)
+
+    return () => {
+      channel.removeEventListener('message', handleNoUserSession)
+      channel.close()
+    }
+  }, [dispatch, user])
 
   return (
     <Nav mode={mode} isSignedIn={Boolean(user)}>
