@@ -27,7 +27,7 @@ const transport = {
 
     const resp = await fetch(endpoint, init)
 
-    if (resp.headers.get('busmap-session-user') === 'inactive') {
+    if (resp.headers.get('busmap-session-user') === 'unknown') {
       try {
         authn.postMessage('no-user-session')
       } catch {

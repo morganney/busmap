@@ -6,7 +6,7 @@
  *
  * Instantiated here to allow for calling
  * close() on the channel within the root
- * component. (React StrictMode cruft)
+ * component.
  */
 const authn = new BroadcastChannel('authn')
 

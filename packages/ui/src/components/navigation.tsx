@@ -34,15 +34,6 @@ interface NavigationProps {
   status: Status
 }
 
-/**
- * Without a new broadcast object the listener
- * would only receive messages from the favorites
- * worker fetch calls.
- *
- * This channel is for the browsing context separate
- * from the favorites worker.
- */
-const authn = new BroadcastChannel('authn')
 const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   position: relative;
   z-index: 9999;
@@ -224,7 +215,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
   }, [dispatch, status])
 
   useEffect(() => {
-    const handleUserInactive = (evt: MessageEvent) => {
+    const handleNoUserSession = (evt: MessageEvent) => {
       /**
        * Currently, not using rolling sessions but fixed
        * durations that expire. If the backend session expires
@@ -236,18 +227,13 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         toast({ type: 'warning', message: 'Your session expired.' })
       }
     }
+    const channel = new BroadcastChannel('authn')
 
-    authn.addEventListener('message', handleUserInactive)
+    channel.addEventListener('message', handleNoUserSession)
 
     return () => {
-      authn.removeEventListener('message', handleUserInactive)
-      /**
-       * Calling authn.close() here prematurely closes this
-       * particular channel object, so that message events
-       * are not received.
-       *
-       * StrictMode sucks, consider dropping it entirely.
-       */
+      channel.removeEventListener('message', handleNoUserSession)
+      channel.close()
     }
   }, [dispatch, user])
 
