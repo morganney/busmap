@@ -1,3 +1,5 @@
+import { authn } from '@core/channels.js'
+
 import { errors } from './errors.js'
 
 const defaultInit: RequestInit = {
@@ -24,6 +26,14 @@ const transport = {
     }
 
     const resp = await fetch(endpoint, init)
+
+    if (resp.headers.get('busmap-session-user') === 'inactive') {
+      try {
+        authn.postMessage('no-user-session')
+      } catch {
+        /* silent */
+      }
+    }
 
     if (!resp.ok) {
       throw errors.create(init.method ?? 'UNKNOWN', resp.status, resp.statusText)

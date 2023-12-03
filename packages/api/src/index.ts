@@ -62,6 +62,10 @@ if (env.NODE_ENV === 'production') {
 
 app.use(helmet())
 app.use(session(sess))
+app.use((req, res, next) => {
+  res.set('BUSMAP-SESSION-USER', req.session.user ? 'active' : 'inactive')
+  next()
+})
 app.use('/authn', authn)
 app.use('/restbus', restbus.middleware())
 app.use((req, res) => {
