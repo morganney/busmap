@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom'
 import { Toaster } from '@busmap/components/toast'
 
 import { authn } from './channels.js'
-import { status as getStatus } from './api/authn.js'
+import { status } from './api/authn.js'
 import { Layout } from './layout.js'
 import { Providers } from './providers.js'
 import { Navigation } from './components/navigation.js'
@@ -11,13 +11,13 @@ import { Navigation } from './components/navigation.js'
 import type { Status } from './types.js'
 
 const Root = () => {
-  const [status, setStatus] = useState<Status>()
+  const [authStatus, setAuthStatus] = useState<Status>()
 
   useEffect(() => {
     const fetchStatus = async () => {
-      const status = await getStatus()
+      const statusResults = await status()
 
-      setStatus(status)
+      setAuthStatus(statusResults)
     }
 
     fetchStatus()
@@ -36,7 +36,7 @@ const Root = () => {
     <StrictMode>
       <Providers>
         <Toaster anchor="top right" />
-        <Navigation status={status} />
+        <Navigation status={authStatus} />
         <Layout>
           <Outlet />
         </Layout>

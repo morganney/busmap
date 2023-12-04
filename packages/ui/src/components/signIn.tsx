@@ -29,6 +29,7 @@ const SignIn: FC = () => {
         type: 'standard',
         click_listener: () => {
           // TODO: Sign in UX
+          // Show a spinner, blah blah, move to home
         }
       })
     }

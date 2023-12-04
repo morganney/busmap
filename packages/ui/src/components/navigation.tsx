@@ -21,6 +21,7 @@ import {
   DARK_MODE_FIELD
 } from '@busmap/components/colors'
 
+import { touch } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
 
@@ -31,7 +32,7 @@ import type { Page, Status } from '@core/types.js'
 import type { Mode } from '@module/settings/types.js'
 
 interface NavigationProps {
-  status: Status
+  status?: Status
 }
 
 const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
@@ -221,6 +222,16 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
   }, [dispatch, status])
 
   useEffect(() => {
+    const onVisibilityChange = async () => {
+      if (document.visibilityState === 'visible') {
+        // Attempt to update session maxAge when window becomes active
+        const resp = await touch()
+
+        if (resp.user) {
+          dispatch({ type: 'user', value: resp.user })
+        }
+      }
+    }
     const handleNoUserSession = (evt: MessageEvent) => {
       /**
        * Currently, not using rolling sessions but fixed
@@ -236,10 +247,12 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
     const channel = new BroadcastChannel('authn')
 
     channel.addEventListener('message', handleNoUserSession)
+    document.addEventListener('visibilitychange', onVisibilityChange)
 
     return () => {
       channel.removeEventListener('message', handleNoUserSession)
       channel.close()
+      document.removeEventListener('visibilitychange', onVisibilityChange)
     }
   }, [dispatch, user])
 

@@ -25,5 +25,16 @@ const logout = async () => {
 
   return result
 }
+const touch = async () => {
+  const result = await transport.fetch<{
+    success: boolean
+    touched: boolean
+    user: User | null
+  }>('/authn/touch', {
+    method: 'PUT'
+  })
 
-export { login, status, logout }
+  return result
+}
+
+export { login, status, logout, touch }
