@@ -196,13 +196,19 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
 const Navigation: FC<NavigationProps> = ({ status }) => {
   const { dispatch, page, collapsed, user } = useGlobals()
   const { mode } = useTheme()
-  const onClick = useCallback(
+  const onClickNavItem = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
       const { dataset } = evt.currentTarget
 
-      dispatch({ type: 'page', value: dataset.name as Page })
+      if (page !== dataset.name) {
+        dispatch({ type: 'page', value: dataset.name as Page })
+      }
+
+      if (collapsed) {
+        dispatch({ type: 'collapsed', value: false })
+      }
     },
-    [dispatch]
+    [dispatch, page, collapsed]
   )
   const onClickToggle = useCallback(() => {
     dispatch({ type: 'collapsed', value: !collapsed })
@@ -244,7 +250,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
           <a href="/" dangerouslySetInnerHTML={{ __html: logoSvg }} />
         </li>
         <li title="Sign In" className={page === 'signin' ? 'active' : undefined}>
-          <button data-name="signin" onClick={onClick}>
+          <button data-name="signin" onClick={onClickNavItem}>
             <span>Sign in</span>
             <SignIn />
           </button>
@@ -252,7 +258,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Nearby">
           <button
             data-name="locate"
-            onClick={onClick}
+            onClick={onClickNavItem}
             className={page === 'locate' ? 'active' : undefined}>
             <MapPin />
             <span>Nearby</span>
@@ -261,7 +267,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Selector">
           <button
             data-name="select"
-            onClick={onClick}
+            onClick={onClickNavItem}
             className={page === 'select' ? 'active' : undefined}>
             <Bus />
             <span>Selector</span>
@@ -270,7 +276,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Favorites">
           <button
             data-name="favorites"
-            onClick={onClick}
+            onClick={onClickNavItem}
             className={page === 'favorites' ? 'active' : undefined}>
             <Star />
             <span>Favorites</span>
@@ -279,7 +285,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Settings">
           <button
             data-name="settings"
-            onClick={onClick}
+            onClick={onClickNavItem}
             className={page === 'settings' ? 'active' : undefined}>
             <Cog />
             <span>Settings</span>
@@ -288,7 +294,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Profile">
           <button
             data-name="profile"
-            onClick={onClick}
+            onClick={onClickNavItem}
             className={page === 'profile' ? 'active' : undefined}>
             <UserIcon />
             <span>Profile</span>
