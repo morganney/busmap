@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { latLng } from 'leaflet'
 import { Tooltip } from '@busmap/components/tooltip'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
-import { PB50T, PB80T, PB70T } from '@busmap/components/colors'
+import { PB20T, PB50T, PB80T, PB90T, PB70T } from '@busmap/components/colors'
 
 import { useTheme } from '@module/settings/contexts/theme.js'
 import { useVehicleSettings } from '@module/settings/contexts/vehicle.js'
@@ -242,7 +242,11 @@ const Predictions: FC<PredictionsProps> = ({
             <h3>
               <span>{stop.title}</span>
               <Tooltip title="Locate selected stop.">
-                <MapMarked size="small" onClick={onClickIcon} />
+                <MapMarked
+                  size="small"
+                  color={mode === 'light' ? PB20T : PB90T}
+                  onClick={onClickIcon}
+                />
               </Tooltip>
             </h3>
           </header>

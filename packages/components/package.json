@@ -15,6 +15,10 @@
         "default": "./dist/cjs/index.cjs"
       }
     },
+    "./button": {
+      "import": "./dist/button/mod.js",
+      "require": "./dist/cjs/button/mod.cjs"
+    },
     "./autoSuggest": {
       "import": "./dist/autoSuggest/mod.js",
       "require": "./dist/cjs/autoSuggest/mod.cjs"
