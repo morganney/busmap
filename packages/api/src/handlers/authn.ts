@@ -1,10 +1,10 @@
 import { env } from 'node:process'
 
+import makeDebug from 'debug'
 import error from 'http-errors'
 import { OAuth2Client } from 'google-auth-library'
 
 import { sql } from '../db.js'
-import { SESSION_DURATION_MS } from '../common.js'
 
 import type { Request, Response, NextFunction } from 'express'
 import type { TokenPayload } from 'google-auth-library'
@@ -17,6 +17,7 @@ interface User {
   full_name: string
 }
 
+const debug = makeDebug('busmap')
 const authn = {
   async login(req: Request, res: Response) {
     if (req.body.credential) {
@@ -70,16 +71,13 @@ const authn = {
               email: user.email,
               givenName: user.given_name,
               familyName: user.family_name,
-              fullName: user.full_name
+              fullName: user.full_name,
+              maxAge: req.session.cookie.maxAge,
+              expires: req.session.cookie.expires
             }
 
+            debug('setting user to session', sessUser)
             req.session.user = sessUser
-            /**
-             * Because the underlying session store (connect-redis),
-             * updates the TTL when changed, so this keeps the
-             * cookie and redis session in sync.
-             */
-            req.session.cookie.maxAge = SESSION_DURATION_MS
 
             return res.json(sessUser)
           } catch (err) {
@@ -101,7 +99,7 @@ const authn = {
         next(err)
       }
 
-      req.session.regenerate(err => {
+      req.session.destroy(err => {
         if (err) {
           next(err)
         } else {
@@ -118,7 +116,9 @@ const authn = {
     if (req.session?.user) {
       return res.json({
         isSignedIn: true,
-        user: req.session.user
+        user: req.session.user,
+        expires: req.session.cookie.expires,
+        maxAge: req.session.cookie.maxAge
       })
     }
 
@@ -126,6 +126,23 @@ const authn = {
       isSignedIn: false,
       user: null
     })
+  },
+
+  touch(req: Request, res: Response) {
+    if (req.session?.user) {
+      debug('rolling session from touch')
+      req.session.touch()
+      req.session.user = {
+        ...req.session.user,
+        maxAge: req.session.cookie.maxAge,
+        expires: req.session.cookie.expires
+      }
+      debug('updated maxAge', req.session.cookie.maxAge)
+
+      return res.json({ success: true, user: req.session.user, touched: true })
+    }
+
+    res.json({ success: true, user: null, touched: false })
   }
 }
 

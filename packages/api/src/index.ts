@@ -21,7 +21,7 @@ const sess: SessionOptions = {
   name: 'busmap.sid',
   secret: env.BM_COOKIE_SECRET as SessionOptions['secret'],
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   unset: 'destroy',
   cookie: {
     maxAge: SESSION_DURATION_MS,
@@ -41,9 +41,8 @@ if (env.BM_SESSION_STORE === 'redis') {
     await client.connect()
     /**
      * TTL for the redis session key is derived from `cookie.maxAge` (SESSION_DURATION_MS).
-     * Setting `disableTouch` to `true` prevents rolling sessions
-     * (separate from express-session's `rolling` option which is `false`) while
-     * using connect-redis which updates the underlying TTL when touched.
+     * Setting `disableTouch` to `true` prevents rolling backend sessions (connect-redis updates the TTL).
+     * This is separate from express-session's `rolling` option which controls the client's cookie lifetime.
      *
      * The goal is to keep the client cookie, and redis session expiration synchronized.
      */

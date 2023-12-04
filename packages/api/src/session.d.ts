@@ -7,6 +7,8 @@ interface SessionUser {
   givenName: string
   familyName: string
   fullName: string
+  expires?: string | null | Date
+  maxAge?: number | null
 }
 
 declare module 'express-session' {
