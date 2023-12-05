@@ -234,9 +234,8 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
     }
     const handleNoUserSession = (evt: MessageEvent) => {
       /**
-       * Currently, not using rolling sessions but fixed
-       * durations that expire. If the backend session expires
-       * clear the apps user state to require another sign in.
+       * If the backend session expires clear the apps
+       * user state to require another sign in.
        */
       if (evt.data === 'no-user-session' && user) {
         dispatch({ type: 'user', value: undefined })

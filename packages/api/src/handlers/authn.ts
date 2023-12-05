@@ -72,7 +72,6 @@ const authn = {
               givenName: user.given_name,
               familyName: user.family_name,
               fullName: user.full_name,
-              maxAge: req.session.cookie.maxAge,
               expires: req.session.cookie.expires
             }
 
@@ -117,8 +116,7 @@ const authn = {
       return res.json({
         isSignedIn: true,
         user: req.session.user,
-        expires: req.session.cookie.expires,
-        maxAge: req.session.cookie.maxAge
+        expires: req.session.cookie.expires
       })
     }
 
@@ -134,7 +132,6 @@ const authn = {
       req.session.touch()
       req.session.user = {
         ...req.session.user,
-        maxAge: req.session.cookie.maxAge,
         expires: req.session.cookie.expires
       }
       debug('updated maxAge', req.session.cookie.maxAge)
