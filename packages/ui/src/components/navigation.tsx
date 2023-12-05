@@ -61,7 +61,7 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
     border: none;
     padding: 12px;
     color: ${({ mode }) => (mode === 'light' ? PB70T : PB40T)};
-    font-size: 10px;
+    font-size: 11px;
     width: 100%;
     display: flex;
     flex-direction: column;
