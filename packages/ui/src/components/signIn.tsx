@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import styled from 'styled-components'
 
 import { login } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
@@ -8,6 +9,9 @@ import { Page } from './page.js'
 
 import type { FC } from 'react'
 
+const Note = styled.em`
+  font-size: 12px;
+`
 const SignIn: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
   const { dispatch } = useGlobals()
@@ -41,6 +45,7 @@ const SignIn: FC = () => {
         Sign in to save your favorite stops and settings across devices. After signing in,
         you can <strong>save more than {MAX_FAVORITES} favorite stops</strong>.
       </p>
+      <Note>Requires email verification</Note>
       <div ref={ref} />
     </Page>
   )

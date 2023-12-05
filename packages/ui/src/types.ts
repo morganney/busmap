@@ -109,6 +109,7 @@ interface User {
   fullName: string
   givenName: string
   familyName: string
+  expires: string
 }
 interface Status {
   isSignedIn: boolean
