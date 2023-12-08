@@ -19,5 +19,9 @@ declare module 'express-session' {
      * a UI User shape.
      */
     user?: SessionUser | null
+    /**
+     * User PK in DB.
+     */
+    userId?: number
   }
 }

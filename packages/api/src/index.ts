@@ -12,6 +12,8 @@ import helmet from 'helmet'
 import restbus from 'restbus'
 
 import { authn } from './routes/authn.js'
+import { favorite } from './routes/favorite.js'
+import { authenticated } from './middleware/authenticated.js'
 import { error } from './handlers/error.js'
 import { SESSION_DURATION_MS } from './common.js'
 
@@ -67,6 +69,7 @@ app.use((req, res, next) => {
 })
 app.use('/authn', authn)
 app.use('/restbus', restbus.middleware())
+app.use('/favorite', authenticated, favorite)
 app.use((req, res) => {
   res.status(404).json(new errors.NotFound())
 })

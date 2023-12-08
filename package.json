@@ -11,7 +11,8 @@
     "packages/ui",
     "packages/api",
     "packages/web",
-    "packages/components"
+    "packages/components",
+    "packages/common"
   ],
   "scripts": {
     "loc": "git ls-files | grep '\\.ts' | xargs wc -l",

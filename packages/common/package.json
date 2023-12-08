@@ -1,0 +1,27 @@
+{
+  "name": "@busmap/common",
+  "version": "1.0.0-alpha.0",
+  "description": "Common busmap code and types.",
+  "type": "module",
+  "main": "dist",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts"
+    },
+    "./types/*": {
+      "types": "./dist/types/*.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "cycles": "madge --circular --warning --exclude node_modules --ts-config ./tsconfig.json --extensions ts,tsx src",
+    "prettier": "prettier -w .",
+    "lint": "eslint . src --ext .ts,.tsx --max-warnings 0",
+    "lint:fix": "npm run lint -- --fix",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Morgan Ney <morganney@gmail.com>"
+}

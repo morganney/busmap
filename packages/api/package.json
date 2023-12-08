@@ -26,6 +26,7 @@
   ],
   "author": "Morgan Ney <morganney@gmail.com>",
   "dependencies": {
+    "@busmap/common": "^1.0.0-alpha.0",
     "connect-redis": "^7.1.0",
     "debug": "^2.6.9",
     "express": "^4.18.2",

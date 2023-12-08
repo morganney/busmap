@@ -64,7 +64,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      RESTBUS_HOST: ${RESTBUS_HOST}
+      API_HOST: ${API_HOST}
     entrypoint:
       - npm
       - run

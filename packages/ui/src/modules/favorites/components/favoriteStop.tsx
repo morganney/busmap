@@ -1,7 +1,9 @@
 import styled from 'styled-components'
 import { useCallback, useMemo } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { Star } from '@busmap/components/icons/star'
 import { Tooltip } from '@busmap/components/tooltip'
+import { toast } from '@busmap/components/toast'
 import { SY30T } from '@busmap/components/colors'
 
 import { useGlobals } from '@core/globals.js'
@@ -9,6 +11,7 @@ import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 import { same } from '@module/util.js'
 
 import { MAX_FAVORITES } from '../common.js'
+import { put } from '../api/put.js'
 
 import type { FC } from 'react'
 import type { RouteName, DirectionName } from '@core/types.js'
@@ -42,8 +45,12 @@ const Button = styled.button`
 const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => {
   const globals = useGlobals()
   const { agency, route, direction, stop } = selection ?? globals
+  const { user } = globals
   const { favorites } = useStorage()
   const storageDispatch = useStorageDispatch()
+  const mutation = useMutation({
+    mutationFn: (fav: Favorite) => put(fav)
+  })
   const favorite = useMemo(() => {
     return favorites.find(fav => {
       if (route && direction && stop && agency) {
@@ -51,7 +58,7 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
       }
     })
   }, [favorites, agency, stop, route, direction])
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     if (favorite) {
       storageDispatch({ type: 'favoriteRemove', value: favorite })
     } else if (agency && route && direction && stop) {
@@ -68,8 +75,17 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
       }
 
       storageDispatch({ type: 'favoriteAdd', value: add })
+
+      if (user) {
+        try {
+          await mutation.mutateAsync(add)
+          toast({ type: 'info', message: 'Favorite saved.' })
+        } catch {
+          toast({ type: 'error', message: 'Error saving favorite.' })
+        }
+      }
     }
-  }, [storageDispatch, agency, route, direction, stop, favorite])
+  }, [storageDispatch, mutation, agency, route, direction, stop, favorite, user])
   const isFavoritable = Boolean(stop) && (favorites.length < MAX_FAVORITES || favorite)
 
   if (isFavoritable) {

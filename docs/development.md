@@ -44,10 +44,10 @@ DEBUG=express-session BM_SESSION_STORE=memory npm run dev:local -w api
 
 ### UI
 
-The UI is built with vite and runs on the same Node.js version as the API service. When developing outside of docker you can configure the vite dev server to [`proxy`](https://vitejs.dev/config/server-options.html#server-proxy) the running API using the `RESTBUS_HOST` environment variable.
+The UI is built with vite and runs on the same Node.js version as the API service. When developing outside of docker you can configure the vite dev server to [`proxy`](https://vitejs.dev/config/server-options.html#server-proxy) the running API using the `API_HOST` environment variable.
 
 ```
-RESTBUS_HOST=http://localhost:3000 npm run dev -w ui
+API_HOST=http://localhost:3000 npm run dev -w ui
 ```
 
 You can visualize the built bundles by running `npm run visualizer -w ui`.

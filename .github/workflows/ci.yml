@@ -40,6 +40,8 @@ jobs:
         run: docker compose build
       - name: Build Components
         run: npm run build -w @busmap/components
+      - name: Build Common
+        run: npm run build -w @busmap/common
       - name: Build UI
         run: npm run build -w ui
       - name: Lint
