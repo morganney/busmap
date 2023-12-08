@@ -22,6 +22,7 @@ FROM busmap AS uibuild
 WORKDIR /app
 COPY . .
 RUN npm run build -w @busmap/components
+RUN npm run build -w @busmap/common
 RUN npm run build -w ui
 
 FROM nginx:1.25.2 AS dev
