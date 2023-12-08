@@ -10,6 +10,7 @@ import { MapMarked } from '@busmap/components/icons/mapMarked'
 import { Trash } from '@busmap/components/icons/trash'
 import { PB50T } from '@busmap/components/colors'
 
+import { useGlobals } from '@core/globals.js'
 import { useMap } from '@core/contexts/map.js'
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 import { useHomeStop } from '@core/hooks/useHomeStop.js'
@@ -30,8 +31,10 @@ import { groupBy } from '@module/util.js'
 
 import { getPredsKey } from '../util.js'
 import { MAX_FAVORITES } from '../common.js'
+import { remove } from '../api/delete.js'
 
 import type { MouseEvent } from 'react'
+import type { Favorite } from '@busmap/common/types/favorites'
 import type {
   ErrorsMap,
   WorkerMessage,
@@ -57,6 +60,7 @@ const Section = styled(Page)`
   }
 `
 const Favorites = memo(function Favorites() {
+  const { user } = useGlobals()
   const map = useMap()
   const workerRef = useRef<Worker>()
   const homeStop = useHomeStop()
@@ -87,6 +91,24 @@ const Favorites = memo(function Favorites() {
       map?.setView(latLon, Math.max(map.getZoom() ?? 1, 16))
     },
     [map]
+  )
+  const onClickDeleteFavorite = useCallback(
+    async (fav: Favorite) => {
+      storageDispatch({
+        type: 'favoriteRemove',
+        value: fav
+      })
+
+      if (user) {
+        try {
+          await remove(fav)
+          toast({ type: 'info', message: 'Favorite removed.' })
+        } catch (err) {
+          toast({ type: 'error', message: 'Error removing favorite.' })
+        }
+      }
+    },
+    [storageDispatch, user]
   )
   const PredFormat = format === 'minutes' ? Minutes : Time
 
@@ -231,13 +253,7 @@ const Favorites = memo(function Favorites() {
                             )}
                             <footer>
                               <Tooltip title="Delete">
-                                <button
-                                  onClick={() => {
-                                    storageDispatch({
-                                      type: 'favoriteRemove',
-                                      value: fav
-                                    })
-                                  }}>
+                                <button onClick={() => onClickDeleteFavorite(fav)}>
                                   <Trash size="small" color={PB50T} />
                                 </button>
                               </Tooltip>

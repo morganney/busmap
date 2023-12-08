@@ -11,4 +11,16 @@ interface Favorite {
   stop: Stop
 }
 
-export type { RouteMeta, Favorite }
+// API models
+
+interface RiderFavoriteListItem {
+  created: string
+  rank: number
+  agency_id: string
+  route_id: string
+  stop_id: string
+  favorte_id: number
+  ui: string
+}
+
+export type { RouteMeta, Favorite, RiderFavoriteListItem }

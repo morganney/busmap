@@ -12,11 +12,12 @@ import { same } from '@module/util.js'
 
 import { MAX_FAVORITES } from '../common.js'
 import { put } from '../api/put.js'
+import { remove } from '../api/delete.js'
 
 import type { FC } from 'react'
 import type { RouteName, DirectionName } from '@core/types.js'
 import type { Selection } from '@module/util.js'
-import type { Favorite } from '../types.js'
+import type { Favorite } from '@busmap/common/types/favorites'
 
 interface SelectionMeta extends Selection {
   route: RouteName & {
@@ -51,6 +52,9 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
   const mutation = useMutation({
     mutationFn: (fav: Favorite) => put(fav)
   })
+  const removal = useMutation({
+    mutationFn: (fav: Favorite) => remove(fav)
+  })
   const favorite = useMemo(() => {
     return favorites.find(fav => {
       if (route && direction && stop && agency) {
@@ -61,6 +65,15 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
   const onClick = useCallback(async () => {
     if (favorite) {
       storageDispatch({ type: 'favoriteRemove', value: favorite })
+
+      if (user) {
+        try {
+          await removal.mutateAsync(favorite)
+          toast({ type: 'info', message: 'Favorite removed.' })
+        } catch (err) {
+          toast({ type: 'error', message: 'Error removing favorite.' })
+        }
+      }
     } else if (agency && route && direction && stop) {
       const add: Favorite = {
         stop: stop,
@@ -85,7 +98,7 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
         }
       }
     }
-  }, [storageDispatch, mutation, agency, route, direction, stop, favorite, user])
+  }, [storageDispatch, mutation, removal, agency, route, direction, stop, favorite, user])
   const isFavoritable = Boolean(stop) && (favorites.length < MAX_FAVORITES || favorite)
 
   if (isFavoritable) {
