@@ -24,6 +24,7 @@ import {
 import { touch } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
+import { get as getFavorites } from '@module/favorites/api/get.js'
 
 import logoSvg from '../../assets/svg/logo.svg?raw'
 
@@ -217,7 +218,12 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
 
   useEffect(() => {
     if (status?.user) {
+      const getUserFavorites = async () => {
+        await getFavorites()
+      }
+
       dispatch({ type: 'user', value: status.user })
+      getUserFavorites()
     }
   }, [dispatch, status])
 

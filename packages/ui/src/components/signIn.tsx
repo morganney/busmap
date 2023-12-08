@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import styled from 'styled-components'
+import { toast } from '@busmap/components/toast'
 
 import { login } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
@@ -23,10 +24,14 @@ const SignIn: FC = () => {
         client_id: import.meta.env.VITE_GOOG_CLIENT_ID,
         nonce: btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))),
         callback: async response => {
-          const user = await login(response.credential)
+          try {
+            const user = await login(response.credential)
 
-          dispatch({ type: 'user', value: user })
-          dispatch({ type: 'page', value: 'profile' })
+            dispatch({ type: 'user', value: user })
+            dispatch({ type: 'page', value: 'profile' })
+          } catch (err) {
+            toast({ type: 'error', message: 'Error signing in.' })
+          }
         }
       })
       google.accounts.id.renderButton(ref.current, {
