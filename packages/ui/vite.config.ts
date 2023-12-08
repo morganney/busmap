@@ -5,11 +5,12 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig(() => {
-  const proxy = !env.RESTBUS_HOST
+  const proxy = !env.API_HOST
     ? undefined
     : {
-        '/authn': env.RESTBUS_HOST,
-        '/restbus': env.RESTBUS_HOST
+        '/authn': env.API_HOST,
+        '/favorite': env.API_HOST,
+        '/restbus': env.API_HOST
       }
 
   return {

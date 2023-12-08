@@ -10,6 +10,7 @@ import type { Request, Response, NextFunction } from 'express'
 import type { TokenPayload } from 'google-auth-library'
 
 interface User {
+  id: number
   sub: string
   email: string
   given_name: string
@@ -41,46 +42,51 @@ const authn = {
         if (sub && email && email_verified) {
           const { given_name, family_name, name } = payload
 
-          try {
-            const userRow = await sql<User[]>`
-              INSERT INTO rider
-                (sub, email, sso_provider, given_name, family_name, full_name, last_login)
-              VALUES
-                (${sub}, ${email}, 1, ${given_name ?? ''}, ${family_name ?? ''}, ${
-                  name ?? ''
-                }, ${new Date().toISOString()})
-              ON CONFLICT (sub) DO UPDATE
-              SET
-                sub = EXCLUDED.sub,
-                email = EXCLUDED.email,
-                sso_provider = EXCLUDED.sso_provider,
-                given_name = EXCLUDED.given_name,
-                family_name = EXCLUDED.family_name,
-                full_name = EXCLUDED.full_name,
-                last_login = EXCLUDED.last_login
-              RETURNING
-                sub,
-                email,
-                given_name,
-                family_name,
-                full_name
-            `
-            const user = userRow[0]
-            const sessUser = {
-              sub: user.sub,
-              email: user.email,
-              givenName: user.given_name,
-              familyName: user.family_name,
-              fullName: user.full_name,
-              expires: req.session.cookie.expires
+          if (sub && email && given_name) {
+            try {
+              const userRow = await sql<User[]>`
+                INSERT INTO rider
+                  (sub, email, sso_provider, given_name, family_name, full_name, last_login)
+                VALUES
+                  (${sub}, ${email}, 1, ${given_name}, ${family_name ?? null}, ${
+                    name ?? (family_name ? `${given_name} ${family_name}` : given_name)
+                  }, ${new Date().toISOString()})
+                ON CONFLICT (sub) DO UPDATE
+                SET
+                  sub = EXCLUDED.sub,
+                  email = EXCLUDED.email,
+                  sso_provider = EXCLUDED.sso_provider,
+                  given_name = EXCLUDED.given_name,
+                  family_name = EXCLUDED.family_name,
+                  full_name = EXCLUDED.full_name,
+                  last_login = EXCLUDED.last_login
+                RETURNING
+                  id,
+                  sub,
+                  email,
+                  given_name,
+                  family_name,
+                  full_name
+              `
+              const user = userRow[0]
+              const sessUser = {
+                sub: user.sub,
+                email: user.email,
+                givenName: user.given_name,
+                familyName: user.family_name,
+                fullName: user.full_name,
+                expires: req.session.cookie.expires
+              }
+
+              debug('setting user to session', sessUser)
+              req.session.user = sessUser
+              debug('setting session user ID', user.id)
+              req.session.userId = user.id
+
+              return res.json(sessUser)
+            } catch (err) {
+              return res.status(500).json(new error.InternalServerError())
             }
-
-            debug('setting user to session', sessUser)
-            req.session.user = sessUser
-
-            return res.json(sessUser)
-          } catch (err) {
-            return res.status(500).json(new error.InternalServerError())
           }
         }
       }

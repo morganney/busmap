@@ -9,7 +9,7 @@
     "cycles": "madge --circular --warning --exclude node_modules --ts-config ./tsconfig.json --extensions ts,tsx src",
     "prettier": "prettier -w .",
     "dev": "vite",
-    "dev:local": "RESTBUS_HOST=http://localhost:3000 vite",
+    "dev:local": "API_HOST=http://localhost:3000 vite",
     "dev:node": "tsx devServer.ts",
     "lint": "npm run lint:js && npm run lint:css",
     "lint:js": "eslint . src --ext .ts,.tsx --max-warnings 0",
@@ -44,6 +44,7 @@
     "vite-bundle-visualizer": "^0.10.0"
   },
   "dependencies": {
+    "@busmap/common": "^1.0.0-alpha.0",
     "@busmap/components": "^1.0.0-alpha.0",
     "@tanstack/react-query": "^5.4.3",
     "leaflet": "^1.9.4",
