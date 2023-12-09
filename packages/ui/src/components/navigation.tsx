@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { useCallback, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { toast } from '@busmap/components/toast'
 import { MapPin } from '@busmap/components/icons/mapPin'
 import { Star } from '@busmap/components/icons/star'
@@ -23,6 +24,7 @@ import {
 
 import { touch } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
+import { useStorageDispatch } from '@core/contexts/storage.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
 import { get as getFavorites } from '@module/favorites/api/get.js'
 
@@ -196,8 +198,14 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   }
 `
 const Navigation: FC<NavigationProps> = ({ status }) => {
+  const storageDispatch = useStorageDispatch()
   const { dispatch, page, collapsed, user } = useGlobals()
   const { mode } = useTheme()
+  const { data: riderFavorites } = useQuery({
+    queryKey: ['favorites'],
+    queryFn: async () => await getFavorites(),
+    enabled: Boolean(user)
+  })
   const onClickNavItem = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
       const { dataset } = evt.currentTarget
@@ -218,14 +226,18 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
 
   useEffect(() => {
     if (status?.user) {
-      const getUserFavorites = async () => {
-        await getFavorites()
-      }
-
       dispatch({ type: 'user', value: status.user })
-      getUserFavorites()
     }
   }, [dispatch, status])
+
+  useEffect(() => {
+    if (riderFavorites?.length) {
+      storageDispatch({
+        type: 'favoriteSet',
+        value: riderFavorites.map(({ favorite }) => favorite)
+      })
+    }
+  }, [storageDispatch, riderFavorites])
 
   useEffect(() => {
     const onVisibilityChange = async () => {

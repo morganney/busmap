@@ -7,6 +7,7 @@ import { PB80T } from '@busmap/components/colors'
 
 import { logout } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
+import { useStorageDispatch } from '@core/contexts/storage.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
 
 import { Page } from './page.js'
@@ -59,6 +60,7 @@ const ProviderBlock = styled.div`
 const Profile: FC = () => {
   const { mode } = useTheme()
   const { user, dispatch } = useGlobals()
+  const dispatchStorage = useStorageDispatch()
   const [loading, setLoading] = useState(false)
   const onClickSignOut = useCallback(async () => {
     setLoading(true)
@@ -68,13 +70,14 @@ const Profile: FC = () => {
 
       dispatch({ type: 'page', value: 'locate' })
       dispatch({ type: 'user', value: undefined })
+      dispatchStorage({ type: 'favoriteStore' })
       toast({ type: 'info', message: `Goodbye ${result.user.givenName ?? ''}.` })
     } catch {
       toast({ type: 'error', message: 'Error signing out!' })
     } finally {
       setLoading(false)
     }
-  }, [dispatch])
+  }, [dispatch, dispatchStorage])
   const onClickDisconnect = useCallback(() => {
     if (user) {
       // TODO: Do not logout. Instead open modal explaining they will need to re-connect next sign in.

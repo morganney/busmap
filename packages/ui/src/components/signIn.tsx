@@ -4,7 +4,7 @@ import { toast } from '@busmap/components/toast'
 
 import { login } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
-import { MAX_FAVORITES } from '@module/favorites/common.js'
+import { MAX_USER_FAVORITES } from '@module/favorites/common.js'
 
 import { Page } from './page.js'
 
@@ -48,7 +48,7 @@ const SignIn: FC = () => {
     <Page title="Sign In">
       <p>
         Sign in to save your favorite stops and settings across devices. After signing in,
-        you can <strong>save more than {MAX_FAVORITES} favorite stops</strong>.
+        you can <strong>save up to {MAX_USER_FAVORITES} favorite stops</strong>.
       </p>
       <Note>Requires email verification</Note>
       <div ref={ref} />

@@ -8,7 +8,7 @@ import {
 } from '../queries/favorite.js'
 
 import type { Request, Response } from 'express'
-import type { Favorite, RiderFavoriteListItem } from '@busmap/common/types/favorites'
+import type { Favorite, RiderFavoriteItem } from '@busmap/common/types/favorites'
 import type { RiderFavorite } from '../types.js'
 import type { HttpError } from 'http-errors'
 
@@ -70,13 +70,20 @@ const favorite = {
 
   async list(
     req: Request,
-    res: Response<RiderFavoriteListItem[] | HttpError<500> | HttpError<400>>
+    res: Response<RiderFavoriteItem[] | HttpError<500> | HttpError<400>>
   ) {
     if (req.session?.userId) {
       try {
         const favorites = await getRiderFavorites(req.session.userId)
 
-        return res.json(favorites)
+        return res.json(
+          favorites.map(fav => ({
+            created: fav.created,
+            rank: fav.rank,
+            favoriteId: fav.favorite_id,
+            favorite: JSON.parse(fav.ui)
+          }))
+        )
       } catch (err) {
         return res.status(500).json(new errors.InternalServerError())
       }

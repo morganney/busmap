@@ -1,6 +1,6 @@
 import { sql } from '../db.js'
 
-import type { Favorite, RiderFavoriteListItem } from '@busmap/common/types/favorites'
+import type { Favorite, RiderFavoriteRow } from '@busmap/common/types/favorites'
 import type { RiderFavorite } from '../types.js'
 
 const addRiderFavorite = async (favorite: Favorite, userId: number) => {
@@ -38,10 +38,11 @@ const addRiderFavorite = async (favorite: Favorite, userId: number) => {
   return riderFavoriteRow
 }
 const getRiderFavorites = async (userId: number) => {
-  const favorites = await sql<RiderFavoriteListItem[]>`
+  const favorites = await sql<RiderFavoriteRow[]>`
     SELECT created, rank, agency_id, route_id, stop_id, id as favorite_id, ui
     FROM rider_favorite
     JOIN favorite ON favorite = favorite.id WHERE rider=${userId}
+    LIMIT 10
   `
 
   return favorites
