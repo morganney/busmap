@@ -110,14 +110,7 @@ const Favorites = memo(function Favorites() {
     },
     [storageDispatch, user]
   )
-  const maximum = useMemo(() => {
-    if (user) {
-      return MAX_USER_FAVORITES
-    }
-
-    return MAX_FAVORITES
-  }, [user])
-  //const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
+  const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
   const PredFormat = format === 'minutes' ? Minutes : Time
 
   useEffect(() => {
