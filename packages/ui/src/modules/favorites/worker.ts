@@ -66,7 +66,7 @@ const restartFavoritesPoll = debounce(
     timeoutId = requestAnimationFrame(getFavoritePreds)
   },
   350,
-  { leading: true, trailing: false }
+  { leading: false, trailing: true }
 )
 
 addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {

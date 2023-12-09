@@ -10,7 +10,7 @@ import { useGlobals } from '@core/globals.js'
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 import { same } from '@module/util.js'
 
-import { MAX_FAVORITES } from '../common.js'
+import { MAX_FAVORITES, MAX_USER_FAVORITES } from '../common.js'
 import { put } from '../api/put.js'
 import { remove } from '../api/delete.js'
 
@@ -99,7 +99,8 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
       }
     }
   }, [storageDispatch, mutation, removal, agency, route, direction, stop, favorite, user])
-  const isFavoritable = Boolean(stop) && (favorites.length < MAX_FAVORITES || favorite)
+  const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
+  const isFavoritable = Boolean(stop) && (favorites.length < maximum || favorite)
 
   if (isFavoritable) {
     return (

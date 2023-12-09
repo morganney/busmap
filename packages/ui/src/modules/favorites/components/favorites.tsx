@@ -30,7 +30,7 @@ import {
 import { groupBy } from '@module/util.js'
 
 import { getPredsKey } from '../util.js'
-import { MAX_FAVORITES } from '../common.js'
+import { MAX_FAVORITES, MAX_USER_FAVORITES } from '../common.js'
 import { remove } from '../api/delete.js'
 
 import type { MouseEvent } from 'react'
@@ -110,6 +110,7 @@ const Favorites = memo(function Favorites() {
     },
     [storageDispatch, user]
   )
+  const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
   const PredFormat = format === 'minutes' ? Minutes : Time
 
   useEffect(() => {
@@ -136,15 +137,14 @@ const Favorites = memo(function Favorites() {
 
   useEffect(() => {
     if (favorites && workerRef.current) {
+      const group = groupBy(favorites.slice(0, maximum), ({ agency }) => agency.id)
+
       workerRef.current.postMessage({
         action: 'update',
-        favoritesByAgencyId: groupBy(
-          favorites.slice(0, MAX_FAVORITES),
-          ({ agency }) => agency.id
-        )
+        favoritesByAgencyId: group
       })
     }
-  }, [favorites])
+  }, [favorites, maximum])
 
   return (
     <Section title="Favorite Stops">
@@ -153,19 +153,23 @@ const Favorites = memo(function Favorites() {
           <span>⭐⭐⭐</span>
           <p>
             You can select up to {MAX_FAVORITES} favorite stops from the Selector tab.
-            Their predicted arrival or departure times will be displayed here.
+            After you sign in you can select up to {MAX_USER_FAVORITES} stops. Their
+            predicted arrival or departure times will be displayed here.
           </p>
           <span>⭐⭐⭐</span>
         </Empty>
       ) : (
         <>
-          {favorites.length === MAX_FAVORITES && (
+          {favorites.length === maximum && (
             <Details mode={mode}>
               <summary>Maximum favorites reached.</summary>
               <p>
-                You have reached your maximum of {MAX_FAVORITES} favorite stops. To select
-                another favorite stop you can remove a current favorite, or sign in to
-                increase your maximum limit.
+                You have reached your maximum of {maximum} favorite stops. To select
+                another favorite stop you can remove a current favorite
+                {user
+                  ? ''
+                  : `, or sign in to increase your maximum limit to ${MAX_USER_FAVORITES}`}
+                .
               </p>
             </Details>
           )}

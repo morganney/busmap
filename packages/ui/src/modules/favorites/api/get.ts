@@ -1,9 +1,9 @@
 import { transport } from '@core/api/transport.js'
 
-import type { RiderFavoriteListItem } from '@busmap/common/types/favorites'
+import type { RiderFavoriteItem } from '@busmap/common/types/favorites'
 
 const get = async () => {
-  const resp = await transport.fetch<RiderFavoriteListItem[]>('/favorite/list')
+  const resp = await transport.fetch<RiderFavoriteItem[]>('/favorite/list')
 
   return resp
 }

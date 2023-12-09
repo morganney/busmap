@@ -23,6 +23,7 @@ import {
 
 import { touch } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
+import { useStorageDispatch } from '@core/contexts/storage.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
 import { get as getFavorites } from '@module/favorites/api/get.js'
 
@@ -196,6 +197,7 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   }
 `
 const Navigation: FC<NavigationProps> = ({ status }) => {
+  const storageDispatch = useStorageDispatch()
   const { dispatch, page, collapsed, user } = useGlobals()
   const { mode } = useTheme()
   const onClickNavItem = useCallback(
@@ -217,15 +219,26 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
   }, [dispatch, collapsed])
 
   useEffect(() => {
-    if (status?.user) {
-      const getUserFavorites = async () => {
-        await getFavorites()
-      }
+    const getRiderFavs = async () => {
+      try {
+        const riderFavs = await getFavorites()
 
-      dispatch({ type: 'user', value: status.user })
-      getUserFavorites()
+        if (riderFavs?.length) {
+          storageDispatch({
+            type: 'favoriteSet',
+            value: riderFavs.map(({ favorite }) => favorite)
+          })
+        }
+      } catch (err) {
+        toast({ type: 'error', message: 'Error loading favorites.' })
+      }
     }
-  }, [dispatch, status])
+
+    if (status?.user) {
+      dispatch({ type: 'user', value: status.user })
+      getRiderFavs()
+    }
+  }, [dispatch, storageDispatch, status])
 
   useEffect(() => {
     const onVisibilityChange = async () => {
