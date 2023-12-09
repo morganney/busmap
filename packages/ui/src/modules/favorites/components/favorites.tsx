@@ -137,7 +137,6 @@ const Favorites = memo(function Favorites() {
 
   useEffect(() => {
     if (favorites && workerRef.current) {
-      //console.log('starting worker')
       workerRef.current.postMessage({
         action: 'update',
         favoritesByAgencyId: groupBy(

@@ -27,7 +27,6 @@ const getFavoritePreds = async (timeSinceLastFetch: number) => {
           getForTuples(agencyId, tuples, controller.signal)
         )
       )
-      //console.log("results", results)
       const successes: Prediction[][] = []
       const errors: ErrorsMap = {}
 
@@ -50,7 +49,6 @@ const getFavoritePreds = async (timeSinceLastFetch: number) => {
       })
       timeToNextFetch = timeSinceLastFetch + INTERVAL
     } catch (err) {
-      //console.log('worker err', err)
       cancelAnimationFrame(timeoutId)
       timeToNextFetch = timeSinceLastFetch + INTERVAL
 
@@ -77,7 +75,6 @@ addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
   if (action === 'update' && favoritesByAgencyId) {
     const requests: TupleRequest[] = []
 
-    //console.log('worker received update', favoritesByAgencyId)
     for (const [agencyId, favs] of Object.entries(favoritesByAgencyId)) {
       const tuples: string[] = []
 
@@ -94,7 +91,6 @@ addEventListener('message', (evt: MessageEvent<ThreadMessage>) => {
     timeToNextFetch = 0
 
     if (requests.length) {
-      //console.log("restarting favorites poll")
       restartFavoritesPoll()
     }
   }
