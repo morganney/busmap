@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { useCallback, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { toast } from '@busmap/components/toast'
 import { MapPin } from '@busmap/components/icons/mapPin'
 import { Star } from '@busmap/components/icons/star'
@@ -201,11 +200,6 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
   const storageDispatch = useStorageDispatch()
   const { dispatch, page, collapsed, user } = useGlobals()
   const { mode } = useTheme()
-  const { data: riderFavorites } = useQuery({
-    queryKey: ['favorites'],
-    queryFn: async () => await getFavorites(),
-    enabled: Boolean(user)
-  })
   const onClickNavItem = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
       const { dataset } = evt.currentTarget
@@ -225,19 +219,26 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
   }, [dispatch, collapsed])
 
   useEffect(() => {
+    const getRiderFavs = async () => {
+      try {
+        const riderFavs = await getFavorites()
+
+        if (riderFavs?.length) {
+          storageDispatch({
+            type: 'favoriteSet',
+            value: riderFavs.map(({ favorite }) => favorite)
+          })
+        }
+      } catch (err) {
+        toast({ type: 'error', message: 'Error loading favorites.' })
+      }
+    }
+
     if (status?.user) {
       dispatch({ type: 'user', value: status.user })
+      getRiderFavs()
     }
-  }, [dispatch, status])
-
-  useEffect(() => {
-    if (riderFavorites?.length) {
-      storageDispatch({
-        type: 'favoriteSet',
-        value: riderFavorites.map(({ favorite }) => favorite)
-      })
-    }
-  }, [storageDispatch, riderFavorites])
+  }, [dispatch, storageDispatch, status])
 
   useEffect(() => {
     const onVisibilityChange = async () => {

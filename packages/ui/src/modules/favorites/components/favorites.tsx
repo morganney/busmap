@@ -110,8 +110,15 @@ const Favorites = memo(function Favorites() {
     },
     [storageDispatch, user]
   )
+  const maximum = useMemo(() => {
+    if (user) {
+      return MAX_USER_FAVORITES
+    }
+
+    return MAX_FAVORITES
+  }, [user])
+  //const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
   const PredFormat = format === 'minutes' ? Minutes : Time
-  const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
 
   useEffect(() => {
     workerRef.current = new Worker(new URL('../worker.ts', import.meta.url), {
@@ -137,12 +144,11 @@ const Favorites = memo(function Favorites() {
 
   useEffect(() => {
     if (favorites && workerRef.current) {
+      const group = groupBy(favorites.slice(0, maximum), ({ agency }) => agency.id)
+
       workerRef.current.postMessage({
         action: 'update',
-        favoritesByAgencyId: groupBy(
-          favorites.slice(0, maximum),
-          ({ agency }) => agency.id
-        )
+        favoritesByAgencyId: group
       })
     }
   }, [favorites, maximum])
