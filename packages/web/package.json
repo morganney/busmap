@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "devDependencies": {},
   "scripts": {
+    "clean": "rm -rf ./node_modules ./dist",
     "cycles": "echo Skip cycles for web package...",
     "prettier": "prettier -w .",
     "lint": "eslint . src --ext .ts,.tsx --no-error-on-unmatched-pattern",

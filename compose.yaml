@@ -12,15 +12,6 @@ services:
       SSO_GOOG_CLIENT_SECRET: ${SSO_GOOG_CLIENT_SECRET:?err}
     volumes:
       - db:/var/lib/postgresql/data
-  adminer:
-    depends_on:
-      - db
-    build:
-      context: .
-      target: adminer
-    container_name: adminer
-    ports:
-      - "8080:8080"
   session:
     build:
       context: .
@@ -41,65 +32,13 @@ services:
       - hoisted_node_modules:/app/node_modules
       - common_node_modules:/app/packages/common/node_modules
       - api_node_modules:/app/packages/api/node_modules
-    ports:
-      - "3000:3000"
     env_file: ./packages/api/.env
     command:
       - npm
       - run
-      - dev
+      - start
       - -w
       - api
-  ui:
-    depends_on:
-      - api
-    build:
-      context: .
-      target: busmap
-    container_name: ui
-    volumes:
-      - .:/app
-      - hoisted_node_modules:/app/node_modules
-      - common_node_modules:/app/packages/common/node_modules
-      - ui_node_modules:/app/packages/ui/node_modules
-      - components_node_modules:/app/packages/components/node_modules
-    ports:
-      - "5173:5173"
-    environment:
-      API_HOST: ${API_HOST}
-    command:
-      - npm
-      - run
-      - dev
-      - -w
-      - ui
-  storybook:
-    build:
-      context: .
-      target: busmap
-    container_name: storybook
-    volumes:
-      - .:/app
-      - hoisted_node_modules:/app/node_modules
-      - components_node_modules:/app/packages/components/node_modules
-    ports:
-      - "9000:9000"
-    command:
-      - npm
-      - run
-      - storybook
-      - -w
-      - "@busmap/components"
-  dev:
-    depends_on:
-      - ui
-    build:
-      context: .
-      target: dev
-    container_name: dev
-    ports:
-      - "80:80"
-      - "443:443"
   stage:
     depends_on:
       - api
@@ -118,31 +57,9 @@ services:
       SSL_CERT_PATH: ${SSL_CERT_PATH}
       SSL_KEY_PATH: ${SSL_KEY_PATH}
 
-  stage_local:
-    depends_on:
-      - api
-    build:
-      context: .
-      target: stage
-      args:
-        HOST_NAME: ${HOST_NAME}
-    container_name: stage_local
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      SERVER_NAME: ${SERVER_NAME}
-      HOST_NAME: ${HOST_NAME}
-      SSL_CERT_PATH: ${SSL_CERT_PATH}
-      SSL_KEY_PATH: ${SSL_KEY_PATH}
-    volumes:
-      - ./packages/ui/dist:/var/www/${HOST_NAME}
-
 volumes:
   db:
   session:
   hoisted_node_modules:
   api_node_modules:
-  ui_node_modules:
   common_node_modules:
-  components_node_modules:
