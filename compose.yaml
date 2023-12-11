@@ -38,12 +38,13 @@ services:
     container_name: api
     volumes:
       - .:/app
-      - shared_node_modules:/app/node_modules
+      - hoisted_node_modules:/app/node_modules
+      - common_node_modules:/app/packages/common/node_modules
       - api_node_modules:/app/packages/api/node_modules
     ports:
       - "3000:3000"
     env_file: ./packages/api/.env
-    entrypoint:
+    command:
       - npm
       - run
       - dev
@@ -58,14 +59,15 @@ services:
     container_name: ui
     volumes:
       - .:/app
-      - shared_node_modules:/app/node_modules
+      - hoisted_node_modules:/app/node_modules
+      - common_node_modules:/app/packages/common/node_modules
       - ui_node_modules:/app/packages/ui/node_modules
       - components_node_modules:/app/packages/components/node_modules
     ports:
       - "5173:5173"
     environment:
       API_HOST: ${API_HOST}
-    entrypoint:
+    command:
       - npm
       - run
       - dev
@@ -78,11 +80,11 @@ services:
     container_name: storybook
     volumes:
       - .:/app
-      - shared_node_modules:/app/node_modules
+      - hoisted_node_modules:/app/node_modules
       - components_node_modules:/app/packages/components/node_modules
     ports:
       - "9000:9000"
-    entrypoint:
+    command:
       - npm
       - run
       - storybook
@@ -104,22 +106,43 @@ services:
     build:
       context: .
       target: stage
+      args:
+        HOST_NAME: ${HOST_NAME}
     container_name: stage
     ports:
       - "80:80"
       - "443:443"
     environment:
-      - SERVER_NAME=${SERVER_NAME}
-      - HOST_NAME=${HOST_NAME}
-      - SSL_CERT_PATH=${SSL_CERT_PATH}
-      - SSL_KEY_PATH=${SSL_KEY_PATH}
+      SERVER_NAME: ${SERVER_NAME}
+      HOST_NAME: ${HOST_NAME}
+      SSL_CERT_PATH: ${SSL_CERT_PATH}
+      SSL_KEY_PATH: ${SSL_KEY_PATH}
+
+  stage_local:
+    depends_on:
+      - api
+    build:
+      context: .
+      target: stage
+      args:
+        HOST_NAME: ${HOST_NAME}
+    container_name: stage_local
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SERVER_NAME: ${SERVER_NAME}
+      HOST_NAME: ${HOST_NAME}
+      SSL_CERT_PATH: ${SSL_CERT_PATH}
+      SSL_KEY_PATH: ${SSL_KEY_PATH}
     volumes:
-      - ./packages/ui/dist:/var/www/busmap.localhost
+      - ./packages/ui/dist:/var/www/${HOST_NAME}
 
 volumes:
   db:
   session:
-  shared_node_modules:
+  hoisted_node_modules:
   api_node_modules:
   ui_node_modules:
+  common_node_modules:
   components_node_modules:

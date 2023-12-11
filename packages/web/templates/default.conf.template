@@ -1,6 +1,6 @@
 # Configuration to stage a production build locally.
-# Some minor differences like the SSL certs/config used, api-host (potentially), etc.
-# Otherwise, identical to production
+# Known differences:
+# - TODO (when they arise)
 
 server {
   # Redirect server configuration
@@ -14,7 +14,8 @@ server {
 }
 
 server {
-  listen 443 ssl http2;
+  listen 443 ssl;
+  http2 on;
   server_name ${SERVER_NAME};
   root /var/www/${HOST_NAME};
   index index.html;

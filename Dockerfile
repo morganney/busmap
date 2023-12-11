@@ -14,6 +14,7 @@ COPY package-lock.json package.json .
 COPY packages/api/package.json /app/packages/api/package.json
 COPY packages/ui/package.json /app/packages/ui/package.json
 COPY packages/components/package.json /app/packages/components/package.json
+COPY packages/common/package.json /app/packages/common/package.json
 RUN npm config set registry https://registry.npmjs.org/
 RUN npm install
 EXPOSE 3000 5173 9000
@@ -31,8 +32,9 @@ COPY packages/web/certs/ /etc/nginx/certs/
 COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
 
 FROM nginx:1.25.2 as stage
+ARG HOST_NAME=busmap.localhost
 COPY packages/web/certs/ /etc/nginx/certs/
 COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
 COPY packages/web/templates/ /etc/nginx/templates/
 COPY packages/web/nginx.conf /etc/nginx/nginx.conf
-COPY --from=uibuild /app/packages/ui/dist /var/www/busmap.localhost
+COPY --from=uibuild /app/packages/ui/dist /var/www/${HOST_NAME}
