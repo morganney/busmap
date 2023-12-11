@@ -1,11 +1,11 @@
 # Configuration to stage a production build locally.
-# Some minor differences like the SSL certs/config used, api-host (potentially), etc.
-# Otherwise, identical to production
+# Known differences:
+# - TODO (when they arise)
 
 server {
   # Redirect server configuration
   listen 80 default_server;
-  server_name busmap.localhost;
+  server_name ${SERVER_NAME};
   server_tokens off;
 
   location / {
@@ -14,20 +14,19 @@ server {
 }
 
 server {
-  listen 80;
   listen 443 ssl;
-  server_name busmap.localhost localhost;
-  # Using compose volume to populate in container (packages/ui/dist)
-  root /var/www/busmap.localhost;
+  http2 on;
+  server_name ${SERVER_NAME};
+  root /var/www/${HOST_NAME};
   index index.html;
 
-  ssl_certificate /etc/nginx/certs/busmap.localhost.pem;
-  ssl_certificate_key /etc/nginx/certs/busmap.localhost-key.pem;
-
+  include /etc/nginx/conf.d/core/ssl.conf;
   include /etc/nginx/conf.d/core/compression.conf;
 
   location / {
-    location ~ /restbus {
+    resolver 8.8.8.8 valid=30s;
+
+    location ~ /(authn|restbus|favorite) {
       access_log /var/log/nginx/api.log api;
       proxy_pass http://api_server;
     }

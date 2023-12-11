@@ -4,10 +4,11 @@ Development is done using Docker and Compose.
 
 Quick start:
 
-1. `docker compose build`
-2. `docker compose up dev`
+1. Rename `.env.example` to `.env` filling in any missing values as needed.
+2. `docker compose build`
+3. `docker compose up dev`
 
-That will start the `web`, `session`, `api` and `ui` containers. If you have already setup local DNS and [created the SSL certifcates](../packages/web/certs/README.md), then you should be able to reach the site at `https://busmap.localhost`.
+That will start the `dev`, `session`, `api` and `ui` containers. If you have already setup local DNS and [created the SSL certifcates](../packages/web/certs/README.md), then you should be able to reach the site at `https://busmap.localhost`.
 
 ### Session
 
@@ -61,3 +62,27 @@ A separate container can be started to run Storybook for `packages/components` a
 It can also be run locally.
 
 * `npm run storybook -w @busmap/components`
+
+### Stage
+
+To stage a production build locally:
+
+1. Build the UI which is mounted as a volume into the stage container: `npm run build -w ui`.
+2. Set the environment variables to desired values. For example the `HOST_NAME` and `SERVER_NAME` to use, and any others variables inside the `.env` file. You can also define them directly in the shell when running step 3 below.
+3. Start the staging container `docker compose up --attach-dependencies stage` (optionally prepending any env vars).
+
+Note, this is a local stage in that it uses the UI build from ./packages/ui/dist and rebuilds are updated while the container is running. Also, the API is started in watch mode.
+
+To stage a production build without mounting a local UI build or starting the API in watch mode, do not include the `compose.override.yaml` file when starting the container (which is included by default when not using `-f`):
+
+```
+docker compose -f compose.yaml up --attach-dependencies stage
+```
+
+This will use whatever UI build was included in the image for stage.
+
+Here is another example using shell environment variables defined when starting the container to override ones from .env files:
+
+```
+SERVER_NAME=busmap.online HOST_NAME=busmap.online docker compose -f compose.yaml up --attach-dependencies stage
+```

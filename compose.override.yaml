@@ -1,0 +1,78 @@
+services:
+  adminer:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: Dockerfile.override
+      target: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
+  api:
+    ports:
+      - "3000:3000"
+    command:
+      - npm
+      - run
+      - dev
+      - -w
+      - api
+  ui:
+    depends_on:
+      - api
+    build:
+      context: .
+      target: busmap
+    container_name: ui
+    volumes:
+      - .:/app
+      - hoisted_node_modules:/app/node_modules
+      - common_node_modules:/app/packages/common/node_modules
+      - ui_node_modules:/app/packages/ui/node_modules
+      - components_node_modules:/app/packages/components/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      API_HOST: ${API_HOST}
+    command:
+      - npm
+      - run
+      - dev
+      - -w
+      - ui
+  storybook:
+    build:
+      context: .
+      target: busmap
+    container_name: storybook
+    volumes:
+      - .:/app
+      - hoisted_node_modules:/app/node_modules
+      - components_node_modules:/app/packages/components/node_modules
+    ports:
+      - "9000:9000"
+    command:
+      - npm
+      - run
+      - storybook
+      - -w
+      - "@busmap/components"
+  dev:
+    depends_on:
+      - ui
+    build:
+      context: .
+      dockerfile: Dockerfile.override
+      target: dev
+    container_name: dev
+    ports:
+      - "80:80"
+      - "443:443"
+  stage:
+    volumes:
+      - ./packages/ui/dist:/var/www/${HOST_NAME}
+
+volumes:
+  ui_node_modules:
+  components_node_modules:

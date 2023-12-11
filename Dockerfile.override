@@ -1,0 +1,7 @@
+FROM adminer:4.8.1 as adminer
+EXPOSE 8080
+
+FROM nginx:1.25.3 AS dev
+COPY packages/web/nginx.local.conf /etc/nginx/nginx.conf
+COPY packages/web/certs/ /etc/nginx/certs/
+COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/

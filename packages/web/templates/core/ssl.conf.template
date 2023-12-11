@@ -1,0 +1,7 @@
+ssl_certificate ${SSL_CERT_PATH};
+ssl_certificate_key ${SSL_KEY_PATH};
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_ciphers HIGH:!aNULL:!MD5;
+ssl_session_cache shared:SSL:15m;
+ssl_session_timeout 3h;
+ssl_session_tickets off;

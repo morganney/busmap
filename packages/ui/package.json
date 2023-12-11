@@ -5,6 +5,7 @@
   "type": "module",
   "main": "dist",
   "scripts": {
+    "clean": "rm -rf ./node_modules ./dist",
     "check-types": "tsc --noEmit",
     "cycles": "madge --circular --warning --exclude node_modules --ts-config ./tsconfig.json --extensions ts,tsx src",
     "prettier": "prettier -w .",
