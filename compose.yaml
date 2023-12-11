@@ -108,18 +108,13 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
+      - HOST_NAME=${HOST_NAME}
+      - SSL_CERT_PATH=${SSL_CERT_PATH}
+      - SSL_KEY_PATH=${SSL_KEY_PATH}
     volumes:
       - ./packages/ui/dist:/var/www/busmap.localhost
-  web:
-    depends_on:
-      - api
-    build:
-      context: .
-      target: web
-    container_name: web
-    ports:
-      - "80:80"
-      - "443:443"
 
 volumes:
   db:

@@ -1,0 +1,2 @@
+ssl_certificate ${SSL_CERT_PATH};
+ssl_certificate_key ${SSL_KEY_PATH};

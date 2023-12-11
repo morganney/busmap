@@ -5,7 +5,7 @@
 server {
   # Redirect server configuration
   listen 80 default_server;
-  server_name busmap.localhost;
+  server_name ${SERVER_NAME};
   server_tokens off;
 
   location / {
@@ -15,14 +15,11 @@ server {
 
 server {
   listen 443 ssl http2;
-  server_name busmap.localhost localhost;
-  # Using compose volume to populate in container (packages/ui/dist)
-  root /var/www/busmap.localhost;
+  server_name ${SERVER_NAME};
+  root /var/www/${HOST_NAME};
   index index.html;
 
-  ssl_certificate /etc/nginx/certs/busmap.localhost.pem;
-  ssl_certificate_key /etc/nginx/certs/busmap.localhost-key.pem;
-
+  include /etc/nginx/conf.d/core/ssl.conf;
   include /etc/nginx/conf.d/core/compression.conf;
 
   location / {
