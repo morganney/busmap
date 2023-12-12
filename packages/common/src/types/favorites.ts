@@ -13,6 +13,12 @@ interface Favorite {
 
 // API models
 
+interface RiderFavorite {
+  rider: number
+  favorite: number
+  rank: number
+  created: string
+}
 interface RiderFavoriteRow {
   created: string
   rank: number
@@ -29,4 +35,4 @@ interface RiderFavoriteItem {
   favorite: Favorite
 }
 
-export type { RouteMeta, Favorite, RiderFavoriteRow, RiderFavoriteItem }
+export type { RouteMeta, Favorite, RiderFavorite, RiderFavoriteRow, RiderFavoriteItem }

@@ -1,7 +1,10 @@
 import { sql } from '../db.js'
 
-import type { Favorite, RiderFavoriteRow } from '@busmap/common/types/favorites'
-import type { RiderFavorite } from '../types.js'
+import type {
+  Favorite,
+  RiderFavorite,
+  RiderFavoriteRow
+} from '@busmap/common/types/favorites'
 
 const addRiderFavorite = async (favorite: Favorite, userId: number) => {
   const { agency, route, stop } = favorite
