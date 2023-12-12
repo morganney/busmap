@@ -8,8 +8,11 @@ import {
 } from '../queries/favorite.js'
 
 import type { Request, Response } from 'express'
-import type { Favorite, RiderFavoriteItem } from '@busmap/common/types/favorites'
-import type { RiderFavorite } from '../types.js'
+import type {
+  Favorite,
+  RiderFavorite,
+  RiderFavoriteItem
+} from '@busmap/common/types/favorites'
 import type { HttpError } from 'http-errors'
 
 const debug = makeDebug('busmap')
@@ -57,8 +60,12 @@ const favorite = {
           const removed = await removeRiderFavorite(req.session.userId, favorite)
 
           debug('removed rider favorite', removed)
-
-          return res.json(removed[0])
+          /**
+           * Guard against returning `undefined`
+           * if `removed` is an empty array because
+           * no rows were actually deleted.
+           */
+          return res.json(removed[0] ?? null)
         } catch (err) {
           return res.status(500).json(new errors.InternalServerError())
         }

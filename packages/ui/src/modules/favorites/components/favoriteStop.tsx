@@ -68,8 +68,11 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
 
       if (user) {
         try {
-          await removal.mutateAsync(favorite)
-          toast({ type: 'info', message: 'Favorite removed.' })
+          const removed = await removal.mutateAsync(favorite)
+
+          if (removed) {
+            toast({ type: 'info', message: 'Favorite removed.' })
+          }
         } catch (err) {
           toast({ type: 'error', message: 'Error removing favorite.' })
         }

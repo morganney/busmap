@@ -101,8 +101,11 @@ const Favorites = memo(function Favorites() {
 
       if (user) {
         try {
-          await remove(fav)
-          toast({ type: 'info', message: 'Favorite removed.' })
+          const removed = await remove(fav)
+
+          if (removed) {
+            toast({ type: 'info', message: 'Favorite removed.' })
+          }
         } catch (err) {
           toast({ type: 'error', message: 'Error removing favorite.' })
         }
