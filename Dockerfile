@@ -17,13 +17,13 @@ RUN npm run build -w api
 RUN npm run build -w ui
 EXPOSE 3000 5173 9000
 
-FROM node:20.10-alpine3.18 AS busmap
+FROM node:20.10-bookworm-slim AS busmap
 WORKDIR /app
-COPY --from=builder /app/package.json package.json
-COPY --from=builder /app/package-lock.json package-lock.json
-COPY --from=builder /app/packages/api/dist packages/api/dist
-COPY --from=builder /app/packages/api/package.json packages/api/package.json
-COPY --from=builder /app/packages/common/package.json packages/common/package.json
+COPY --chown=node:node --from=builder /app/package.json package.json
+COPY --chown=node:node --from=builder /app/package-lock.json package-lock.json
+COPY --chown=node:node --from=builder /app/packages/api/dist packages/api/dist
+COPY --chown=node:node --from=builder /app/packages/api/package.json packages/api/package.json
+COPY --chown=node:node --from=builder /app/packages/common/package.json packages/common/package.json
 RUN npm install --package-lock-only && npm ci --omit=dev
 EXPOSE 3000
 

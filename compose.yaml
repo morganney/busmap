@@ -24,6 +24,7 @@ services:
       - db
       - session
     init: true
+    user: node
     build:
       context: .
       target: busmap
