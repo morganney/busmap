@@ -23,30 +23,26 @@ services:
     depends_on:
       - db
       - session
+    init: true
     build:
       context: .
       target: busmap
+      args:
+        VITE_GOOG_CLIENT_ID: ${SSO_GOOG_CLIENT_ID:?err}
     container_name: api
-    volumes:
-      - .:/app
-      - hoisted_node_modules:/app/node_modules
-      - common_node_modules:/app/packages/common/node_modules
-      - api_node_modules:/app/packages/api/node_modules
     env_file: ./packages/api/.env
     command:
-      - npm
-      - run
-      - start
-      - -w
-      - api
+      - node
+      - packages/api/dist/index.js
   stage:
     depends_on:
       - api
     build:
       context: .
-      target: stage
+      target: web
       args:
         HOST_NAME: ${HOST_NAME}
+        VITE_GOOG_CLIENT_ID: ${SSO_GOOG_CLIENT_ID:?err}
     container_name: stage
     ports:
       - "80:80"
@@ -60,6 +56,3 @@ services:
 volumes:
   db:
   session:
-  hoisted_node_modules:
-  api_node_modules:
-  common_node_modules:

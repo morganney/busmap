@@ -4,14 +4,20 @@ services:
       - db
     build:
       context: .
-      dockerfile: Dockerfile.override
       target: adminer
     container_name: adminer
     ports:
       - "8080:8080"
   api:
+    build:
+      target: builder
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app
+      - hoisted_node_modules:/app/node_modules
+      - common_node_modules:/app/packages/common/node_modules
+      - api_node_modules:/app/packages/api/node_modules
     command:
       - npm
       - run
@@ -23,7 +29,7 @@ services:
       - api
     build:
       context: .
-      target: busmap
+      target: builder
     container_name: ui
     volumes:
       - .:/app
@@ -44,7 +50,7 @@ services:
   storybook:
     build:
       context: .
-      target: busmap
+      target: builder
     container_name: storybook
     volumes:
       - .:/app
@@ -63,7 +69,6 @@ services:
       - ui
     build:
       context: .
-      dockerfile: Dockerfile.override
       target: dev
     container_name: dev
     ports:
@@ -74,5 +79,8 @@ services:
       - ./packages/ui/dist:/var/www/${HOST_NAME}
 
 volumes:
-  ui_node_modules:
+  hoisted_node_modules:
+  common_node_modules:
+  api_node_modules:
   components_node_modules:
+  ui_node_modules:

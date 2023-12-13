@@ -25,6 +25,7 @@ const authn = {
       const client = new OAuth2Client()
       let payload: TokenPayload | undefined
 
+      debug('verifying id token with goog client id', env.SSO_GOOG_CLIENT_ID)
       try {
         const ticket = await client.verifyIdToken({
           idToken: req.body.credential,
