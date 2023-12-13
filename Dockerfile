@@ -6,10 +6,9 @@ FROM redis:7.2.3 AS redis
 EXPOSE 6739
 
 FROM node:20.10-bookworm AS builder
-ARG VITE_GOOG_CLIENT_ID=$SSO_GOOG_CLIENT_ID
+ARG VITE_GOOG_CLIENT_ID
 WORKDIR /app
 COPY . .
-RUN echo $VITE_GOOG_CLIENT_ID
 RUN npm config set registry https://registry.npmjs.org/
 RUN npm install
 RUN npm run build -w @busmap/components
@@ -38,9 +37,10 @@ COPY --from=builder /app/packages/ui/dist /var/www/${HOST_NAME}
 EXPOSE 80 443
 
 FROM nginx:1.25.3 AS dev
-COPY packages/web/nginx.local.conf /etc/nginx/nginx.conf
 COPY packages/web/certs/ /etc/nginx/certs/
 COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
+COPY packages/web/default.dev.conf /etc/nginx/conf.d/default.conf
+COPY packages/web/nginx.dev.conf /etc/nginx/nginx.conf
 EXPOSE 80 443
 
 FROM adminer:4.8.1 as adminer

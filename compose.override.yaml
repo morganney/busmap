@@ -11,13 +11,12 @@ services:
   api:
     build:
       target: builder
+    image: busmap-api_dev
+    container_name: api_dev
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
-      - hoisted_node_modules:/app/node_modules
-      - common_node_modules:/app/packages/common/node_modules
-      - api_node_modules:/app/packages/api/node_modules
+      - ./packages/api:/app/packages/api
     command:
       - npm
       - run
@@ -32,11 +31,8 @@ services:
       target: builder
     container_name: ui
     volumes:
-      - .:/app
-      - hoisted_node_modules:/app/node_modules
-      - common_node_modules:/app/packages/common/node_modules
-      - ui_node_modules:/app/packages/ui/node_modules
-      - components_node_modules:/app/packages/components/node_modules
+      - ./packages/ui:/app/packages/ui
+      - ./.env:/app/.env # used to inject VITE_ env vars
     ports:
       - "5173:5173"
     environment:
@@ -53,9 +49,7 @@ services:
       target: builder
     container_name: storybook
     volumes:
-      - .:/app
-      - hoisted_node_modules:/app/node_modules
-      - components_node_modules:/app/packages/components/node_modules
+      - ./packages/components:/app/packages/components
     ports:
       - "9000:9000"
     command:

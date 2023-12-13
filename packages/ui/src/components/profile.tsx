@@ -79,7 +79,7 @@ const Profile: FC = () => {
     }
   }, [dispatch, dispatchStorage])
   const onClickDisconnect = useCallback(() => {
-    if (user) {
+    if (user && google) {
       // TODO: Do not logout. Instead open modal explaining they will need to re-connect next sign in.
       google.accounts.id.revoke(user.sub, async resp => {
         if (resp.error) {

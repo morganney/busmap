@@ -39,12 +39,12 @@ jobs:
           BM_POSTGRES_DB: ${{ secrets.BM_POSTGRES_DB }}
           SSO_GOOG_CLIENT_ID: ${{ secrets.SSO_GOOG_CLIENT_ID }}
           SSO_GOOG_CLIENT_SECRET: ${{ secrets.SSO_GOOG_CLIENT_SECRET }}
-        run: docker compose build
-      - name: Build API
-        run: npm run build -w api
+        run: docker compose -f compose.yaml build stage
       - name: Build Components
         run: npm run build -w @busmap/components
       - name: Build Common
         run: npm run build -w @busmap/common
+      - name: Build API
+      run: npm run build -w api
       - name: Build UI
         run: npm run build -w ui

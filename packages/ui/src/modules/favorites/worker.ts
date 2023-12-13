@@ -58,6 +58,7 @@ const getFavoritePreds = async (timeSinceLastFetch: number) => {
     }
   }
 
+  cancelAnimationFrame(timeoutId)
   timeoutId = requestAnimationFrame(getFavoritePreds)
 }
 const restartFavoritesPoll = debounce(
