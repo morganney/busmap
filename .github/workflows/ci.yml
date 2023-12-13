@@ -45,6 +45,6 @@ jobs:
       - name: Build Common
         run: npm run build -w @busmap/common
       - name: Build API
-      run: npm run build -w api
+        run: npm run build -w api
       - name: Build UI
         run: npm run build -w ui
