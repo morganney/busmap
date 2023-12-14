@@ -1,0 +1,12 @@
+services:
+  db:
+    restart: always
+  session:
+    restart: always
+  api:
+    restart: always
+    environment:
+      NODE_ENV: production
+      DEBUG: ""
+  stage:
+    restart: always

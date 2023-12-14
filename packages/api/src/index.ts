@@ -36,7 +36,7 @@ const debug = makeDebug('busmap')
 const app = express()
 
 if (env.BM_SESSION_STORE === 'redis') {
-  debug('initializing redis store')
+  debug('initializing redis store at host', env.BM_REDIS_HOST)
   const client = createClient({ url: env.BM_REDIS_HOST })
 
   try {
