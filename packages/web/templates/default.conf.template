@@ -29,6 +29,9 @@ server {
     location ~ /(authn|restbus|favorite) {
       access_log /var/log/nginx/api.log api;
       proxy_pass http://api_server;
+      # Allow keepalive to work with the upstream
+      proxy_http_version 1.1;
+      proxy_set_header Connection "";
     }
 
     location ~* \.(js|css)$ {
