@@ -71,10 +71,3 @@ services:
   stage:
     volumes:
       - ./packages/ui/dist:/var/www/${HOST_NAME}
-
-volumes:
-  hoisted_node_modules:
-  common_node_modules:
-  api_node_modules:
-  components_node_modules:
-  ui_node_modules:
