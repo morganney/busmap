@@ -42,7 +42,7 @@ services:
       context: .
       target: web
       args:
-        HOST_NAME: ${HOST_NAME}
+        HOST_NAME: ${HOST_NAME:?err}
         VITE_GOOG_CLIENT_ID: ${SSO_GOOG_CLIENT_ID:?err}
     container_name: stage
     ports:
