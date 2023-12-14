@@ -79,6 +79,14 @@ const authn = {
                 expires: req.session.cookie.expires
               }
 
+              /**
+               * Doesn't seem necessary atm since the session
+               * is currently being saved to the store at the
+               * end of the HTTP response, however, consider
+               * using `req.session.regenerate` and `req.session.save`
+               * as exemplified in the documentation:
+               * @see https://www.npmjs.com/package/express-session#user-login
+               */
               debug('setting user to session', sessUser)
               req.session.user = sessUser
               debug('setting session user ID', user.id)

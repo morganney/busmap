@@ -25,6 +25,7 @@ const sess: SessionOptions = {
   resave: false,
   saveUninitialized: false,
   unset: 'destroy',
+  proxy: true,
   cookie: {
     maxAge: SESSION_DURATION_MS,
     httpOnly: true,
