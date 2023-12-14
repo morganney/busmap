@@ -2,7 +2,7 @@
 
 1. Install [mkcert](https://github.com/FiloSottile/mkcert#installation).
 2. `mkcert -install`.
-3. `mkcert busmap.localhost`.
+3. `mkcert -key-file busmap.localhost-key.pem -cert-file busmap.localhost.pem busmap.localhost localhost`.
 
 That should install a CA in your OS trust store and produce two files:
 
