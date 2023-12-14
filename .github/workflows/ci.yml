@@ -33,6 +33,7 @@ jobs:
         run: npm run lint
       - name: Build Docker
         env:
+          HOST_NAME: busmap.ci
           BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
           BM_POSTGRES_PASSWORD: ${{ secrets.BM_POSTGRES_PASSWORD }}
           BM_POSTGRES_USER: ${{ secrets.BM_POSTGRES_USER }}
