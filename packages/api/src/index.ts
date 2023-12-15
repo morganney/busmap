@@ -1,4 +1,4 @@
-import { env } from 'node:process'
+import { env, exit } from 'node:process'
 import http from 'node:http'
 
 import makeDebug from 'debug'
@@ -53,6 +53,7 @@ if (env.BM_SESSION_STORE === 'redis') {
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error(`Redis client failed to connect: ${err}`)
+    exit(1)
   }
 }
 

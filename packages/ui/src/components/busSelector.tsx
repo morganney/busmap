@@ -9,6 +9,7 @@ import { Agencies } from './selectors/agencies.js'
 import { Routes } from './selectors/routes.js'
 import { Directions } from './selectors/directions.js'
 import { Stops } from './selectors/stops.js'
+import { SelectorError } from './error/selector.js'
 
 import { useGlobals } from '../globals.js'
 import { useMap } from '../contexts/map.js'
@@ -279,17 +280,9 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     }
   }, [dispatch, homeStop, agencies, agency, routeName, routes, route, direction, stop])
 
-  if (error instanceof Error) {
-    return (
-      <div style={{ padding: '20px' }}>
-        <p>An error occured while getting agency and route information:</p>
-        <p>{error.message}</p>
-      </div>
-    )
-  }
-
   return (
     <Page title="Bus Selector">
+      {error instanceof Error && <SelectorError err={error} />}
       <Form
         onSubmit={evt => {
           evt.preventDefault()
