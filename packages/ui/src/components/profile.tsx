@@ -3,7 +3,7 @@ import { useCallback, useState } from 'react'
 import { toast } from '@busmap/components/toast'
 import { Button } from '@busmap/components/button'
 import { SignOut } from '@busmap/components/icons/signOut'
-import { PB80T } from '@busmap/components/colors'
+import { PB80T, PB20T, PB90T } from '@busmap/components/colors'
 
 import { logout } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
@@ -13,17 +13,23 @@ import { useTheme } from '@module/settings/contexts/theme.js'
 import { Page } from './page.js'
 
 import type { FC } from 'react'
+import type { Mode } from '@module/settings/types.js'
 
-const SignOutBtn = styled.button`
+const SignOutBtn = styled.button<{ $mode: Mode }>`
   cursor: pointer;
   background: none;
   font-weight: bold;
   border: none;
-  margin: 0;
+  margin: 0 0 0 auto;
   padding: 0;
   display: flex;
   align-items: center;
   gap: 8px;
+  color: ${({ $mode }) => ($mode === 'light' ? PB20T : PB90T)};
+
+  span:last-child {
+    color: ${({ $mode }) => ($mode === 'light' ? PB20T : PB90T)};
+  }
 `
 const ProviderBlock = styled.div`
   display: flex;
@@ -142,7 +148,7 @@ const Profile: FC = () => {
         </ProviderBlock>
       </div>
       <div>
-        <SignOutBtn disabled={loading} onClick={onClickSignOut}>
+        <SignOutBtn $mode={mode} disabled={loading} onClick={onClickSignOut}>
           <span>Sign out</span>
           <SignOut size="small" />
         </SignOutBtn>
