@@ -2,6 +2,7 @@ import { sql } from '../db.js'
 
 import type { RiderSettings } from '@busmap/common/types/settings'
 import type { SerializableParameter } from 'postgres'
+
 const updateRiderSettings = async (settings: RiderSettings, userId: number) => {
   const riderSettings = await sql<RiderSettings[]>`
     UPDATE rider
