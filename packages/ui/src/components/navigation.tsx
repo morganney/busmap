@@ -246,7 +246,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         // Attempt to update session maxAge when window becomes active
         const resp = await touch()
 
-        if (resp.user) {
+        if (resp?.user) {
           dispatch({ type: 'user', value: resp.user })
         }
       }

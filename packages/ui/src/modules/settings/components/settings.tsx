@@ -72,7 +72,6 @@ const Settings: FC = () => {
         vehicleColorPredicted: settings.vehicle.markPredictedVehicles
       }
 
-      console.log('payload', payload, JSON.stringify(payload))
       putSettings(payload)
     }
   }, [settings, prevSettings, user, putSettings])

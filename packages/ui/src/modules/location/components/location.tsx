@@ -99,7 +99,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
     // Make sure the route configs update when the group data does
     queryKey: ['configs', ...Object.keys(group ?? {})],
     queryFn: () => {
-      const requests: Promise<Route>[] = []
+      const requests: Promise<Route | undefined>[] = []
 
       if (group) {
         Object.keys(group).forEach(agency => {
@@ -193,7 +193,9 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   useEffect(() => {
     if (Array.isArray(routeConfigs)) {
       routeConfigs.forEach(route => {
-        queryClient.setQueryData(['route', route.id, route.title], route)
+        if (route) {
+          queryClient.setQueryData(['route', route.id, route.title], route)
+        }
       })
     }
   }, [routeConfigs])
