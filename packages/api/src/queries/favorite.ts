@@ -5,14 +5,23 @@ import type {
   RiderFavorite,
   RiderFavoriteRow
 } from '@busmap/common/types/favorites'
+import type { SerializableParameter } from 'postgres'
 
 const addRiderFavorite = async (favorite: Favorite, userId: number) => {
   const { agency, route, stop } = favorite
+  /**
+   * Regarding the type annotation,
+   * either I'm missing something, or the type
+   * definitions for the postgres package are wrong:
+   * @see https://github.com/porsager/postgres/issues/625
+   */
   const riderFavoriteRow = await sql<RiderFavorite[]>`
     WITH
       data (agency_id, route_id, stop_id, ui)
     AS (
-      VALUES (${agency.id}, ${route.id}, ${stop.id}, ${JSON.stringify(favorite)}::jsonb)
+      VALUES (${agency.id}, ${route.id}, ${stop.id}, ${
+        favorite as unknown as SerializableParameter
+      }::jsonb)
     ),
       inserted
     AS (
