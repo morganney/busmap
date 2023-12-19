@@ -26,7 +26,7 @@ server {
   location / {
     resolver 8.8.8.8 valid=30s;
 
-    location ~ /(authn|restbus|favorite) {
+    location ~ /(authn|restbus|rider|favorite) {
       access_log /var/log/nginx/api.log api;
       proxy_pass http://api_server;
       # Allow keepalive to work with the upstream

@@ -13,7 +13,7 @@ import { useTheme } from '@module/settings/contexts/theme.js'
 import { Page } from './page.js'
 
 import type { FC } from 'react'
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 
 const SignOutBtn = styled.button<{ $mode: Mode }>`
   cursor: pointer;

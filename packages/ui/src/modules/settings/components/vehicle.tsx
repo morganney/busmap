@@ -1,10 +1,11 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
+import { isASpeedUnit } from '@busmap/common/util'
 
 import { FormItem } from '@core/components/formItem.js'
 import { useStorageDispatch } from '@core/contexts/storage.js'
 
-import { useVehicleSettings, isASpeedUnit } from '../contexts/vehicle.js'
+import { useVehicleSettings } from '../contexts/vehicle.js'
 
 import type { FC, ChangeEvent } from 'react'
 
@@ -73,11 +74,17 @@ const VehicleSettings: FC = () => {
     [dispatch, storageDispatch]
   )
   const onChangeVisible = useCallback(() => {
-    dispatch({
-      type: 'visibile',
-      value: !visible
+    const value = !visible
+
+    storageDispatch({
+      value,
+      type: 'vehicleVisible'
     })
-  }, [dispatch, visible])
+    dispatch({
+      value,
+      type: 'visibile'
+    })
+  }, [dispatch, storageDispatch, visible])
 
   return (
     <Form

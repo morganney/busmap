@@ -1,3 +1,5 @@
+import { useMemo } from 'react'
+
 import { ThemeProvider, useTheme } from './theme.js'
 import { VehicleSettingsProvider, useVehicleSettings } from './vehicle.js'
 import { PredictionsSettingsProvider, usePredictionsSettings } from './predictions.js'
@@ -14,11 +16,20 @@ const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
   )
 }
 const useSettings = () => {
-  return {
-    theme: useTheme(),
-    vehicle: useVehicleSettings(),
-    predictions: usePredictionsSettings()
-  }
+  const theme = useTheme()
+  const vehicle = useVehicleSettings()
+  const predictions = usePredictionsSettings()
+
+  const settings = useMemo(
+    () => ({
+      theme,
+      vehicle,
+      predictions
+    }),
+    [theme, vehicle, predictions]
+  )
+
+  return settings
 }
 
 export { SettingsProvider, useSettings }

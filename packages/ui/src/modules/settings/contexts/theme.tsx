@@ -3,7 +3,7 @@ import { useContext, createContext, useReducer, useMemo, useEffect } from 'react
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { Mode } from '../types.js'
+import type { Mode } from '@busmap/common/types/settings'
 
 interface ThemeAction {
   type: 'mode'

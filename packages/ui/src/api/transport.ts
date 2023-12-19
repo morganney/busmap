@@ -39,6 +39,10 @@ const transport = {
       throw errors.create(init.method ?? 'UNKNOWN', resp.status, resp.statusText)
     }
 
+    if (resp.status === 204) {
+      return null
+    }
+
     const data: T = await resp.json()
 
     return data

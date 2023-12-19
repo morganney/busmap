@@ -10,7 +10,7 @@ import { useTheme } from '@module/settings/contexts/theme.js'
 import { useMap } from '../contexts/map.js'
 
 import type { FC } from 'react'
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 import type { Stop } from '../types.js'
 
 interface StopLocatorProps {

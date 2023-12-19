@@ -31,7 +31,7 @@ import logoSvg from '../../assets/svg/logo.svg?raw'
 
 import type { FC, MouseEvent } from 'react'
 import type { Page, Status } from '@core/types.js'
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 
 interface NavigationProps {
   status?: Status

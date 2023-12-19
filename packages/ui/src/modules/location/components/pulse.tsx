@@ -4,7 +4,7 @@ import { SLB20T, PB20T } from '@busmap/components/colors'
 import { useTheme } from '@module/settings/contexts/theme.js'
 
 import type { FC } from 'react'
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 
 const pulse = (mode: Mode) => keyframes`
   from {

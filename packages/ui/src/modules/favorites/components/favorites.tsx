@@ -155,9 +155,18 @@ const Favorites = memo(function Favorites() {
         <Empty>
           <span>⭐⭐⭐</span>
           <p>
-            You can select up to {MAX_FAVORITES} favorite stops from the Selector tab.
-            After you sign in you can select up to {MAX_USER_FAVORITES} stops. Their
-            predicted arrival or departure times will be displayed here.
+            {user ? (
+              <>
+                You can select up to {MAX_USER_FAVORITES} favorite stops from the Selector
+                tab.
+              </>
+            ) : (
+              <>
+                You can select up to {MAX_FAVORITES} favorite stops from the Selector tab.
+                After you sign in you can select up to {MAX_USER_FAVORITES} stops.
+              </>
+            )}{' '}
+            The predicted arrival or departure times will be displayed here.
           </p>
           <span>⭐⭐⭐</span>
         </Empty>

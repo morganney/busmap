@@ -3,7 +3,7 @@ import { PB80T, PB20T, PB10T } from '@busmap/components/colors'
 
 import { blinkStyles } from '@core/common.js'
 
-import type { Mode } from './settings/types'
+import type { Mode } from '@busmap/common/types/settings'
 
 const AgenciesWrap = styled.div`
   display: flex;

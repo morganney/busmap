@@ -23,7 +23,7 @@ import { getAll as getAllVehicles } from './api/rb/vehicles.js'
 import { getForStop } from './api/rb/predictions.js'
 
 import type { FC } from 'react'
-import type { Mode } from './modules/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 
 interface HomeState {
   timestamp: number
