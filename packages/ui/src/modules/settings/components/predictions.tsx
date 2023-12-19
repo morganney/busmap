@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
+import { isAPredictionFormat } from '@busmap/common/util'
 
 import { FormItem } from '@core/components/formItem.js'
 import { useStorageDispatch } from '@core/contexts/storage.js'
 
 import { usePredictionsSettings } from '../contexts/predictions.js'
-import { isAPredictionFormat } from '../util.js'
 
 import type { FC, ChangeEvent } from 'react'
 

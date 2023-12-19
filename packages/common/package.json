@@ -11,6 +11,7 @@
     "./types/*": {
       "types": "./dist/types/*.d.ts"
     },
+    "./util": "./dist/util.js",
     "./package.json": "./package.json"
   },
   "devDependencies": {},

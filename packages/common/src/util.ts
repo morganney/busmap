@@ -1,4 +1,4 @@
-import { Mode, SpeedUnit, PredictionFormat } from './types.js'
+import { Mode, SpeedUnit, PredictionFormat } from './types/settings.js'
 
 const isAMode = (x: unknown): x is Mode => {
   if (x && typeof x === 'string' && ['dark', 'light'].includes(x)) {

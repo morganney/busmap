@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { PB50T, PB80T } from '@busmap/components/colors'
 
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 
 const Details = styled.details<{ mode: Mode; color?: string }>`
   display: inline-block;

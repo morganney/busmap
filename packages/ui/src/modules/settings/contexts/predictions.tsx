@@ -1,11 +1,10 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
+import { isAPredictionFormat } from '@busmap/common/util'
 
 import { useStorage } from '@core/contexts/storage.js'
 
-import { isAPredictionFormat } from '../util.js'
-
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { PredictionFormat } from '../types.js'
+import type { PredictionFormat } from '@busmap/common/types/settings'
 
 interface PredictionsSettingsState {
   format: PredictionFormat

@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
+import { isAMode } from '@busmap/common/util'
 
 import { FormItem } from '@core/components/formItem.js'
 import { useStorageDispatch } from '@core/contexts/storage.js'
 
 import { useTheme } from '../contexts/theme.js'
-import { isAMode } from '../util.js'
 
 import type { FC, ChangeEvent } from 'react'
 

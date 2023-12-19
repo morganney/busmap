@@ -10,7 +10,7 @@ import { useGlobals } from '../globals.js'
 import { useVehicles } from '../contexts/vehicles.js'
 
 import type { FC, ReactNode } from 'react'
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 import type { Vehicle } from '../types.js'
 
 interface LocatorProps {

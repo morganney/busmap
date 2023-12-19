@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS "rider" (
   "family_name" varchar(32),
   "full_name" varchar(64) NOT NULL,
   "last_login" timestamptz NOT NULL DEFAULT now(),
+  "settings" jsonb NOT NULL DEFAULT '{}'::jsonb,
   FOREIGN KEY (sso_provider) REFERENCES sso_provider(id) ON UPDATE CASCADE ON DELETE CASCADE
 ) WITH (oids = false);
 

@@ -39,9 +39,19 @@ const transport = {
       throw errors.create(init.method ?? 'UNKNOWN', resp.status, resp.statusText)
     }
 
-    const data: T = await resp.json()
+    /**
+     * HTTP 204 implies no content.
+     *
+     * Requires considering responses of type `undefined`
+     * when using this module. Consider creating more
+     * cohesive transports associated with HTTP verbs
+     * if this becomes bad DX for GET requests.
+     */
+    if (resp.status !== 204) {
+      const data: T = await resp.json()
 
-    return data
+      return data
+    }
   }
 }
 

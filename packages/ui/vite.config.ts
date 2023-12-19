@@ -9,6 +9,7 @@ export default defineConfig(() => {
     ? undefined
     : {
         '/authn': env.API_HOST,
+        '/rider': env.API_HOST,
         '/favorite': env.API_HOST,
         '/restbus': env.API_HOST
       }

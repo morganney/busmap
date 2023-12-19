@@ -16,7 +16,7 @@ import { useMap } from '../contexts/map.js'
 import { PredictedVehiclesColors, blinkStyles } from '../common.js'
 
 import type { FC } from 'react'
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 import type { Prediction, Stop, Route } from '../types.js'
 
 interface PredictionsProps {

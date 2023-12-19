@@ -12,6 +12,12 @@ import type {
   Stop
 } from './types/restbus.js'
 import type { Favorite } from './types/favorites.js'
+import type {
+  Mode,
+  SpeedUnit,
+  PredictionFormat,
+  RiderSettings
+} from './types/settings.js'
 
 export type {
   Hypertext,
@@ -26,4 +32,5 @@ export type {
   StopName,
   Stop
 }
+export type { Mode, SpeedUnit, PredictionFormat, RiderSettings }
 export type { Favorite }

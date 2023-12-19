@@ -31,7 +31,7 @@ import logoSvg from '../../assets/svg/logo.svg?raw'
 
 import type { FC, MouseEvent } from 'react'
 import type { Page, Status } from '@core/types.js'
-import type { Mode } from '@module/settings/types.js'
+import type { Mode } from '@busmap/common/types/settings'
 
 interface NavigationProps {
   status?: Status
@@ -246,7 +246,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         // Attempt to update session maxAge when window becomes active
         const resp = await touch()
 
-        if (resp.user) {
+        if (resp?.user) {
           dispatch({ type: 'user', value: resp.user })
         }
       }

@@ -10,16 +10,20 @@ const modify = (agency: Agency) => {
 const get = async (id: string) => {
   const agency = await transport.fetch<Agency>(`${ROOT}/agencies/${id}?links=false`)
 
-  modify(agency)
+  if (agency) {
+    modify(agency)
+  }
 
   return agency
 }
 const getAll = async () => {
   const agencies = await transport.fetch<Agency[]>(`${ROOT}/agencies?links=false`)
 
-  agencies.forEach(agency => {
-    modify(agency)
-  })
+  if (Array.isArray(agencies)) {
+    agencies.forEach(agency => {
+      modify(agency)
+    })
+  }
 
   return agencies
 }

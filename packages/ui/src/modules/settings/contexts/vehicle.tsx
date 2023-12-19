@@ -1,11 +1,10 @@
 import { createContext, useContext, useReducer, useMemo } from 'react'
+import { isASpeedUnit } from '@busmap/common/util'
 
 import { useStorage } from '@core/contexts/storage.js'
 
-import { isASpeedUnit } from '../util.js'
-
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { SpeedUnit } from '../types.js'
+import type { SpeedUnit } from '@busmap/common/types/settings'
 
 interface VehicleSettingsState {
   visible: boolean
@@ -59,9 +58,10 @@ const reducer = (state: VehicleSettingsState, action: VehicleSettingsAction) => 
   }
 }
 const VehicleSettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { vehicleSpeedUnit, vehicleColorPredicted } = useStorage()
+  const { vehicleVisible, vehicleSpeedUnit, vehicleColorPredicted } = useStorage()
   const [vehicleSettings, dispatch] = useReducer(reducer, {
     ...defaultState,
+    visible: vehicleVisible ?? true,
     speedUnit: vehicleSpeedUnit ?? 'kph',
     markPredictedVehicles: vehicleColorPredicted ?? true
   })

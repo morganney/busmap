@@ -1,18 +1,19 @@
 import { createContext, useContext, useEffect, useReducer, useMemo } from 'react'
+import { isAMode, isASpeedUnit, isAPredictionFormat } from '@busmap/common/util'
 
 import { same } from '@module/util.js'
 import { MAX_FAVORITES } from '@module/favorites/common.js'
-import { isAMode, isASpeedUnit, isAPredictionFormat } from '@module/settings/util.js'
 
 import type { FC, ReactNode, Dispatch } from 'react'
-import type { Mode, SpeedUnit, PredictionFormat } from '@module/settings/types.js'
-import type { Favorite } from '@module/favorites/types.js'
+import type {
+  Mode,
+  SpeedUnit,
+  PredictionFormat,
+  RiderSettings
+} from '@busmap/common/types/settings'
+import type { Favorite } from '@busmap/common/types/favorites'
 
-interface StorageState {
-  predsFormat?: PredictionFormat
-  vehicleSpeedUnit?: SpeedUnit
-  vehicleColorPredicted?: boolean
-  themeMode?: Mode
+interface StorageState extends RiderSettings {
   favorites: Favorite[]
 }
 interface PredsFormatUpdate {
@@ -25,6 +26,10 @@ interface VehicleSpeedUnitUpdate {
 }
 interface VehicleColorPredictedUpdate {
   type: 'vehicleColorPredicted'
+  value?: boolean
+}
+interface VehicleVisible {
+  type: 'vehicleVisible'
   value?: boolean
 }
 interface ThemeModeUpdate {
@@ -48,6 +53,7 @@ interface FavoriteStore {
 }
 type StorageAction =
   | PredsFormatUpdate
+  | VehicleVisible
   | VehicleSpeedUnitUpdate
   | VehicleColorPredictedUpdate
   | ThemeModeUpdate
@@ -86,6 +92,8 @@ const reducer = (state: StorageState, action: StorageAction) => {
     }
     case 'predsFormat':
       return { ...state, predsFormat: action.value }
+    case 'vehicleVisible':
+      return { ...state, vehicleVisible: action.value }
     case 'vehicleSpeedUnit':
       return { ...state, vehicleSpeedUnit: action.value }
     case 'vehicleColorPredicted':
@@ -94,8 +102,10 @@ const reducer = (state: StorageState, action: StorageAction) => {
       return state
   }
 }
+// These are used in the settings module/component too
 const KEYS = {
   themeMode: 'busmap-themeMode',
+  vehicleVisible: 'busmap-vehicleVisible',
   vehicleSpeedUnit: 'busmap-vehicleSpeedUnit',
   vehicleColorPredicted: 'busmap-vehicleColorPredicted',
   predsFormat: 'busmap-predsFormat',
@@ -106,6 +116,7 @@ const StorageDispatch = createContext<Dispatch<StorageAction>>(() => {})
 const Storage = createContext<StorageState>(initStorageState)
 const init = (state: StorageState): StorageState => {
   const themeMode = localStorage.getItem(KEYS.themeMode)
+  const vehicleVisible = localStorage.getItem(KEYS.vehicleVisible)
   const vehicleSpeedUnit = localStorage.getItem(KEYS.vehicleSpeedUnit)
   const vehicleColorPredicted = localStorage.getItem(KEYS.vehicleColorPredicted)
   const predsFormat = localStorage.getItem(KEYS.predsFormat)
@@ -125,6 +136,10 @@ const init = (state: StorageState): StorageState => {
 
   if (vehicleColorPredicted !== null) {
     state.vehicleColorPredicted = vehicleColorPredicted !== 'false'
+  }
+
+  if (vehicleVisible !== null) {
+    state.vehicleVisible = vehicleVisible !== 'false'
   }
 
   if (favoritesJson) {
@@ -187,6 +202,14 @@ const StorageProvider: FC<{ children: ReactNode }> = ({ children }) => {
       localStorage.removeItem(KEYS.vehicleColorPredicted)
     }
   }, [storage.vehicleColorPredicted])
+
+  useEffect(() => {
+    if (storage.vehicleVisible !== undefined) {
+      localStorage.setItem(KEYS.vehicleVisible, storage.vehicleVisible.toString())
+    } else {
+      localStorage.removeItem(KEYS.vehicleVisible)
+    }
+  }, [storage.vehicleVisible])
 
   return (
     <Storage.Provider value={context}>
