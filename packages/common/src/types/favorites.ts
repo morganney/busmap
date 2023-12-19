@@ -26,7 +26,7 @@ interface RiderFavoriteRow {
   route_id: string
   stop_id: string
   favorite_id: number
-  ui: string
+  ui: Favorite
 }
 interface RiderFavoriteItem {
   created: string

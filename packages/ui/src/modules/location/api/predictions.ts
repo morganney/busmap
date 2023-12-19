@@ -15,8 +15,15 @@ const get = async (point?: Point) => {
   const predictions: Prediction[] = []
 
   preds.forEach(pred => {
+    /**
+     * Reconcile differences across the locations API and the route
+     * configuration data. Specifically, those relevant to allow the
+     * favorites tab to aggregate user selections made across the
+     * Nearby and Selector tabs correctly.
+     */
     pred.agency.id = pred.agency.id.replace(/sfmta-cis/, 'sfmuni-sandbox')
     pred.agency.title = pred.agency.title.replace('SF Muni', 'San Francisco Muni')
+    pred.agency.title = pred.agency.title.replace('Chapel Hill', 'Chapel Hill Transit')
 
     /**
      * Not able to support SF Bay Ferry agency.

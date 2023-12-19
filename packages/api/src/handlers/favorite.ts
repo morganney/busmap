@@ -88,7 +88,7 @@ const favorite = {
             created: fav.created,
             rank: fav.rank,
             favoriteId: fav.favorite_id,
-            favorite: JSON.parse(fav.ui)
+            favorite: fav.ui
           }))
         )
       } catch (err) {
