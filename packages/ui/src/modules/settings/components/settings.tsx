@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from '@busmap/components/toast'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
@@ -26,6 +26,8 @@ const SettingsTabs = styled(Tabs)`
 `
 const Settings: FC = () => {
   const { user } = useGlobals()
+  // Prevents saving settins on sign in
+  const userSignedIn = useRef(Boolean(user))
   const settings = useSettings()
   const prevSettings = usePrevious(settings)
   const mutation = useMutation({
@@ -50,14 +52,9 @@ const Settings: FC = () => {
    * Performing settings API updates here in lieu
    * of inside individual event handlers within the
    * various settings components.
-   *
-   * Side-effect is when a user signs in there may
-   * be an immediate PUT settings call if whats in
-   * localStorage differs from the database value
-   * (user is on a new device or changed settings after signing out).
    */
   useEffect(() => {
-    if (settings !== prevSettings && user) {
+    if (settings !== prevSettings && userSignedIn.current) {
       /**
        * The mismatch between the localStorage keys and the
        * settings context names are preventing a dynamic
@@ -79,7 +76,11 @@ const Settings: FC = () => {
 
       putSettings(payload)
     }
-  }, [settings, prevSettings, user, putSettings])
+  }, [settings, prevSettings, putSettings])
+
+  useEffect(() => {
+    userSignedIn.current = Boolean(user)
+  }, [user])
 
   return (
     <Page title="Settings">
