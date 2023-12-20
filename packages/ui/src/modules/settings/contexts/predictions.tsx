@@ -33,9 +33,12 @@ const reducer = (
   }
 }
 const PredictionsSettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const storage = useStorage()
-  const [format, dispatch] = useReducer(reducer, storage.predsFormat ?? 'minutes')
-  const context = useMemo(() => ({ format, dispatch }), [format, dispatch])
+  const { predsFormat } = useStorage()
+  const [format, dispatch] = useReducer(reducer, predsFormat ?? 'minutes')
+  const context = useMemo(
+    () => ({ format: predsFormat ?? format, dispatch }),
+    [format, predsFormat, dispatch]
+  )
 
   return (
     <PredictionsSettings.Provider value={context}>

@@ -14,11 +14,9 @@ const getForStop = async (agencyId?: string, routeId?: string, stopId?: string) 
     `${ROOT}/agencies/${agencyId}/routes/${routeId}/stops/${stopId}/predictions?links=false`
   )
 
-  if (Array.isArray(preds)) {
-    preds.forEach(pred => {
-      modifyMuniTitle(pred.agency)
-    })
-  }
+  preds.forEach(pred => {
+    modifyMuniTitle(pred.agency)
+  })
 
   return preds
 }

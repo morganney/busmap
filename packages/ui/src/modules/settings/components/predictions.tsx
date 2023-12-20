@@ -35,7 +35,7 @@ const Form = styled.form`
 `
 const PredictionsSettings: FC = () => {
   const storageDispatch = useStorageDispatch()
-  const { format, dispatch } = usePredictionsSettings()
+  const { format } = usePredictionsSettings()
   const onChangeFormat = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       const { value } = evt.currentTarget
@@ -45,13 +45,9 @@ const PredictionsSettings: FC = () => {
           value,
           type: 'predsFormat'
         })
-        dispatch({
-          value,
-          type: 'format'
-        })
       }
     },
-    [dispatch, storageDispatch]
+    [storageDispatch]
   )
 
   return (

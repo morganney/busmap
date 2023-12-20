@@ -16,6 +16,7 @@ interface User {
   given_name: string
   family_name: string
   full_name: string
+  settings: object
 }
 
 const debug = makeDebug('busmap')
@@ -67,7 +68,8 @@ const authn = {
                   email,
                   given_name,
                   family_name,
-                  full_name
+                  full_name,
+                  settings
               `
               const user = userRow[0]
               const sessUser = {
@@ -92,7 +94,10 @@ const authn = {
               debug('setting session user ID', user.id)
               req.session.userId = user.id
 
-              return res.json(sessUser)
+              return res.json({
+                ...sessUser,
+                settings: user.settings
+              })
             } catch (err) {
               return res.status(500).json(new error.InternalServerError())
             }

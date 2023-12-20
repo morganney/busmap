@@ -31,10 +31,13 @@ const useTheme = () => {
   return useContext(ThemeContext)
 }
 const ThemeProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const storage = useStorage()
+  const { themeMode } = useStorage()
   const storageDispatch = useStorageDispatch()
-  const [mode, dispatch] = useReducer(reducer, storage.themeMode ?? 'light')
-  const context = useMemo(() => ({ mode, dispatch }), [mode, dispatch])
+  const [mode, dispatch] = useReducer(reducer, themeMode ?? 'light')
+  const context = useMemo(
+    () => ({ mode: themeMode ?? mode, dispatch }),
+    [mode, themeMode, dispatch]
+  )
 
   useEffect(() => {
     const mql = window.matchMedia('(prefers-color-scheme: dark)')

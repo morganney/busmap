@@ -50,6 +50,11 @@ const Settings: FC = () => {
    * Performing settings API updates here in lieu
    * of inside individual event handlers within the
    * various settings components.
+   *
+   * Side-effect is when a user signs in there may
+   * be an immediate PUT settings call if whats in
+   * localStorage differs from the database value
+   * (user is on a new device or changed settings after signing out).
    */
   useEffect(() => {
     if (settings !== prevSettings && user) {

@@ -34,7 +34,7 @@ const Form = styled.form`
   }
 `
 const ThemeSettings: FC = () => {
-  const { mode, dispatch } = useTheme()
+  const { mode } = useTheme()
   const storageDispatch = useStorageDispatch()
   const onChangeMode = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
@@ -45,13 +45,9 @@ const ThemeSettings: FC = () => {
           value,
           type: 'themeMode'
         })
-        dispatch({
-          value,
-          type: 'mode'
-        })
       }
     },
-    [dispatch, storageDispatch]
+    [storageDispatch]
   )
 
   return (

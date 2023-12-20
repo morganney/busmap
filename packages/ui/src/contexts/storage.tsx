@@ -51,6 +51,10 @@ interface FavoriteSet {
 interface FavoriteStore {
   type: 'favoriteStore'
 }
+interface StorageSettingsChanged {
+  type: 'settingsChanged'
+  value: Partial<RiderSettings>
+}
 type StorageAction =
   | PredsFormatUpdate
   | VehicleVisible
@@ -61,6 +65,7 @@ type StorageAction =
   | FavoriteStore
   | FavoriteAdded
   | FavoriteRemoved
+  | StorageSettingsChanged
 
 const reducer = (state: StorageState, action: StorageAction) => {
   switch (action.type) {
@@ -98,6 +103,8 @@ const reducer = (state: StorageState, action: StorageAction) => {
       return { ...state, vehicleSpeedUnit: action.value }
     case 'vehicleColorPredicted':
       return { ...state, vehicleColorPredicted: action.value }
+    case 'settingsChanged':
+      return { ...state, ...action.value }
     default:
       return state
   }

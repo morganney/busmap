@@ -35,6 +35,7 @@ const SignIn: FC = () => {
 
             dispatch({ type: 'user', value: user })
             dispatch({ type: 'page', value: 'profile' })
+            storageDispatch({ type: 'settingsChanged', value: user.settings })
             setRiderFavorites(riderFavs)
           } catch (err) {
             toast({ type: 'error', message: 'Error signing in.' })
@@ -49,7 +50,7 @@ const SignIn: FC = () => {
         }
       })
     }
-  }, [dispatch])
+  }, [dispatch, storageDispatch])
 
   useEffect(() => {
     if (riderFavorites?.length) {
