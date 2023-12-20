@@ -45,11 +45,7 @@ const VehicleSettings: FC = () => {
       value,
       type: 'vehicleColorPredicted'
     })
-    dispatch({
-      value,
-      type: 'markPredictedVehicles'
-    })
-  }, [markPredictedVehicles, dispatch, storageDispatch])
+  }, [markPredictedVehicles, storageDispatch])
   const onToggleHideOtherDirections = useCallback(() => {
     dispatch({
       type: 'hideOtherDirections',
@@ -65,13 +61,9 @@ const VehicleSettings: FC = () => {
           value,
           type: 'vehicleSpeedUnit'
         })
-        dispatch({
-          value,
-          type: 'speedUnit'
-        })
       }
     },
-    [dispatch, storageDispatch]
+    [storageDispatch]
   )
   const onChangeVisible = useCallback(() => {
     const value = !visible
@@ -80,11 +72,7 @@ const VehicleSettings: FC = () => {
       value,
       type: 'vehicleVisible'
     })
-    dispatch({
-      value,
-      type: 'visibile'
-    })
-  }, [dispatch, storageDispatch, visible])
+  }, [storageDispatch, visible])
 
   return (
     <Form

@@ -32,9 +32,7 @@ const getFavoritePreds = async (timeSinceLastFetch: number) => {
 
       results.forEach((result, idx) => {
         if (result.status === 'fulfilled') {
-          if (result.value) {
-            successes.push(result.value)
-          }
+          successes.push(result.value)
         } else {
           errors[tupleRequests[idx].agencyId] = result.reason
         }

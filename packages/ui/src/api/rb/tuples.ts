@@ -19,11 +19,9 @@ const getForTuples = async (
     { signal }
   )
 
-  if (Array.isArray(preds)) {
-    preds.forEach(pred => {
-      modifyMuniTitle(pred.agency)
-    })
-  }
+  preds.forEach(pred => {
+    modifyMuniTitle(pred.agency)
+  })
 
   return preds
 }

@@ -66,8 +66,15 @@ const VehicleSettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     markPredictedVehicles: vehicleColorPredicted ?? true
   })
   const context = useMemo(
-    () => ({ ...vehicleSettings, dispatch }),
-    [vehicleSettings, dispatch]
+    () => ({
+      ...vehicleSettings,
+      visible: vehicleVisible ?? vehicleSettings.visible,
+      speedUnit: vehicleSpeedUnit ?? vehicleSettings.speedUnit,
+      markPredictedVehicles:
+        vehicleColorPredicted ?? vehicleSettings.markPredictedVehicles,
+      dispatch
+    }),
+    [vehicleSettings, vehicleVisible, vehicleSpeedUnit, vehicleColorPredicted, dispatch]
   )
 
   return <VehicleSettings.Provider value={context}>{children}</VehicleSettings.Provider>
