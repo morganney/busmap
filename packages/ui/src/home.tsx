@@ -14,6 +14,7 @@ import { Settings } from './modules/settings/components/settings.js'
 import { Favorites } from './modules/favorites/components/favorites.js'
 import { SignIn } from './components/signIn.js'
 import { Profile } from './components/profile.js'
+import { BusmapPage } from './components/busmap.js'
 import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
 import { Predictions } from './components/predictions.js'
@@ -152,7 +153,11 @@ const Home: FC = () => {
               <Tab name="favorites">⭐</Tab>
               <Tab name="settings">⚙️</Tab>
               <Tab name="profile">👤</Tab>
+              <Tab name="busmap">BM</Tab>
             </TabList>
+            <TabPanel name="busmap">
+              <BusmapPage />
+            </TabPanel>
             <TabPanel name="signin">
               <SignIn />
             </TabPanel>
