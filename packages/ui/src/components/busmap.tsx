@@ -1,6 +1,8 @@
 import { Page } from './page.js'
 
-const BusmapPage = () => {
+import type { FC } from 'react'
+
+const BusmapPage: FC = () => {
   return (
     <Page title="About">
       <p>
