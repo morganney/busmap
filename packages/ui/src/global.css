@@ -27,11 +27,13 @@
 }
 :root {
   --color-light: #333333;
+  --anchor-color-light: #265a87;
   --field-bg-color-light: #ffffff;
   --home-bg-color-light: #ffffffcc;
   --home-border-color-light: #cccccc;
 
   --color-dark: #e5e5e5;
+  --anchor-color-dark: #ff8400;
   --field-bg-color-dark: #3b3b3b;
   --home-bg-color-dark: #191919cc;
   --home-border-color-dark: #191919;
@@ -72,6 +74,16 @@ body.busmap-dark .leaflet-control-zoom-in,
 body.busmap-dark .leaflet-control-zoom-out,
 body.busmap-dark .leaflet-control-attribution {
   filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+a {
+  color: var(--anchor-color-light);
+  text-decoration: none;
+}
+body.busmap-dark a {
+  color: var(--anchor-color-dark);
+}
+a:hover {
+  text-decoration: underline;
 }
 main {
   display: flex;

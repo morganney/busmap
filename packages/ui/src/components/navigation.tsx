@@ -45,11 +45,11 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
 
   ul {
     margin: 0;
-    padding: 6px 0 0;
+    padding: 8px 0 0;
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
     width: 48px;
     height: 100%;
   }
@@ -102,17 +102,23 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   }
 
   li:first-child {
-    a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: ${({ mode }) => (mode === 'light' ? SDB : SO)};
+    button {
+      padding: 0;
 
-      svg {
-        width: 40px;
+      span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        height: auto;
 
-        path.bus {
-          fill: ${({ mode }) => (mode === 'light' ? PB90T : DARK_MODE_FIELD)};
+        svg {
+          width: 40px;
+          color: ${({ mode }) => (mode === 'light' ? SDB : SO)};
+
+          path.bus {
+            fill: ${({ mode }) => (mode === 'light' ? PB90T : DARK_MODE_FIELD)};
+          }
         }
       }
     }
@@ -189,7 +195,7 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
       }
     }
 
-    li:first-child a {
+    li:first-child button span {
       svg {
         width: 64px;
       }
@@ -278,7 +284,12 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
     <Nav mode={mode} isSignedIn={Boolean(user)}>
       <ul>
         <li title="Busmap">
-          <a href="/" dangerouslySetInnerHTML={{ __html: logoSvg }} />
+          <button
+            data-name="busmap"
+            onClick={onClickNavItem}
+            className={page === 'busmap' ? 'active' : undefined}>
+            <span dangerouslySetInnerHTML={{ __html: logoSvg }} />
+          </button>
         </li>
         <li title="Sign In" className={page === 'signin' ? 'active' : undefined}>
           <button data-name="signin" onClick={onClickNavItem}>

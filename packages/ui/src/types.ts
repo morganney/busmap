@@ -75,7 +75,15 @@ interface Status {
   isSignedIn: boolean
   user?: User | null
 }
-type Page = 'locate' | 'favorites' | 'select' | 'settings' | 'info' | 'signin' | 'profile'
+type Page =
+  | 'locate'
+  | 'favorites'
+  | 'select'
+  | 'settings'
+  | 'info'
+  | 'signin'
+  | 'profile'
+  | 'busmap'
 interface BoundsChanged {
   type: 'bounds'
   value: Bounds
