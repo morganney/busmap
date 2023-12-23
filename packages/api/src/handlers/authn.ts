@@ -5,6 +5,7 @@ import error from 'http-errors'
 import { OAuth2Client } from 'google-auth-library'
 
 import { sql } from '../db.js'
+import { logger } from '../logger.js'
 
 import type { Request, Response, NextFunction } from 'express'
 import type { TokenPayload } from 'google-auth-library'
@@ -27,6 +28,7 @@ const authn = {
       let payload: TokenPayload | undefined
 
       debug('verifying id token with goog client id', env.SSO_GOOG_CLIENT_ID)
+
       try {
         const ticket = await client.verifyIdToken({
           idToken: req.body.credential,
@@ -35,6 +37,11 @@ const authn = {
 
         payload = ticket.getPayload()
       } catch (err) {
+        logger.warn(
+          { idToken: req.body.credential },
+          'Google ID token failed verification.'
+        )
+
         return res.status(403).json(new error.Forbidden())
       }
 
@@ -81,6 +88,8 @@ const authn = {
                 expires: req.session.cookie.expires
               }
 
+              logger.info({ ...sessUser, id: user.id }, 'Rider signed in.')
+
               /**
                * Doesn't seem necessary atm since the session
                * is currently being saved to the store at the
@@ -99,6 +108,13 @@ const authn = {
                 settings: user.settings
               })
             } catch (err) {
+              if (err instanceof Error) {
+                logger.error(
+                  { ...err, userInfo: payload },
+                  'Error inserting user at login.'
+                )
+              }
+
               return res.status(500).json(new error.InternalServerError())
             }
           }

@@ -37,9 +37,11 @@
     "helmet": "^7.1.0",
     "http-errors": "^2.0.0",
     "morgan": "^1.10.0",
+    "pino": "^8.17.1",
     "postgres": "^3.4.3",
+    "prexit": "^2.2.0",
     "redis": "^4.6.10",
-    "restbus": "^2.2.0"
+    "restbus": "^2.3.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",

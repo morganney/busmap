@@ -16,6 +16,7 @@ import { rider } from './routes/rider.js'
 import { favorite } from './routes/favorite.js'
 import { authenticated } from './middleware/authenticated.js'
 import { error } from './handlers/error.js'
+import { logger } from './logger.js'
 import { SESSION_DURATION_MS } from './common.js'
 
 import type { SessionOptions, CookieOptions } from 'express-session'
@@ -36,6 +37,7 @@ const sess: SessionOptions = {
 }
 const debug = makeDebug('busmap')
 const app = express()
+const server = http.createServer(app)
 
 if (env.BM_SESSION_STORE === 'redis') {
   debug('initializing redis store at host', env.BM_REDIS_HOST)
@@ -52,8 +54,7 @@ if (env.BM_SESSION_STORE === 'redis') {
      */
     sess.store = new RedisStore({ client, disableTouch: true })
   } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error(`Redis client failed to connect: ${err}`)
+    logger.fatal(err, 'Redis client failed to connect. Exiting.')
     exit(1)
   }
 }
@@ -61,6 +62,7 @@ if (env.BM_SESSION_STORE === 'redis') {
 app.set('trust proxy', 1)
 
 if (env.NODE_ENV === 'production') {
+  // TODO: Do I need this AND nginx logs?
   app.use(morgan('combined'))
 }
 
@@ -79,7 +81,6 @@ app.use((req, res) => {
 })
 app.use(error.handler)
 
-http.createServer(app).listen(3000, () => {
-  // eslint-disable-next-line no-console
-  console.log('listening on port 3000')
+server.listen(3000, () => {
+  logger.info('Busmap listening on port 3000...')
 })
