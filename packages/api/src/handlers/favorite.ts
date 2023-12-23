@@ -1,6 +1,7 @@
 import makeDebug from 'debug'
 import errors from 'http-errors'
 
+import { logger } from '../logger.js'
 import {
   addRiderFavorite,
   getRiderFavorites,
@@ -38,6 +39,10 @@ const favorite = {
 
           return res.status(409).json(new errors.Conflict())
         } catch (err) {
+          if (err instanceof Error) {
+            logger.error({ ...err, userId, favorite }, 'Error adding rider favorite.')
+          }
+
           return res.status(500).json(new errors.InternalServerError())
         }
       }
@@ -54,10 +59,11 @@ const favorite = {
 
     if (favorite && typeof favorite === 'object' && req.session?.userId) {
       const { agency, route, stop } = favorite
+      const { userId } = req.session
 
       if (agency.id && route.id && stop.id) {
         try {
-          const removed = await removeRiderFavorite(req.session.userId, favorite)
+          const removed = await removeRiderFavorite(userId, favorite)
 
           debug('removed rider favorite', removed)
           /**
@@ -67,6 +73,10 @@ const favorite = {
            */
           return res.json(removed[0] ?? null)
         } catch (err) {
+          if (err instanceof Error) {
+            logger.error({ ...err, userId, favorite }, 'Error removing rider favorite.')
+          }
+
           return res.status(500).json(new errors.InternalServerError())
         }
       }
@@ -80,8 +90,10 @@ const favorite = {
     res: Response<RiderFavoriteItem[] | HttpError<500> | HttpError<400>>
   ) {
     if (req.session?.userId) {
+      const { userId } = req.session
+
       try {
-        const favorites = await getRiderFavorites(req.session.userId)
+        const favorites = await getRiderFavorites(userId)
 
         return res.json(
           favorites.map(fav => ({
@@ -92,6 +104,10 @@ const favorite = {
           }))
         )
       } catch (err) {
+        if (err instanceof Error) {
+          logger.error({ ...err, userId }, 'Error getting rider favorites.')
+        }
+
         return res.status(500).json(new errors.InternalServerError())
       }
     }

@@ -1,6 +1,7 @@
 import errors from 'http-errors'
 import makeDebug from 'debug'
 
+import { logger } from '../logger.js'
 import { updateRiderSettings } from '../queries/rider.js'
 
 import type { Request, Response } from 'express'
@@ -19,6 +20,7 @@ const rider = {
       req.session?.userId
     ) {
       debug('updating user with new settings', req.body.settings)
+
       try {
         const riderSettingsRow = await updateRiderSettings(
           req.body.settings,
@@ -34,6 +36,13 @@ const rider = {
          */
         return res.json(riderSettingsRow[0] ?? null)
       } catch (err) {
+        if (err instanceof Error) {
+          logger.error(
+            { ...err, userId: req.session.userId, settings: req.body.settings },
+            'Error updating rider settings.'
+          )
+        }
+
         return res.status(500).json(new errors.InternalServerError())
       }
     }
