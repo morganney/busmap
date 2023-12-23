@@ -10,13 +10,15 @@ import { createClient } from 'redis'
 import morgan from 'morgan'
 import helmet from 'helmet'
 import restbus from 'restbus'
+import prexit from 'prexit'
 
+import { sql } from './db.js'
+import { logger } from './logger.js'
 import { authn } from './routes/authn.js'
 import { rider } from './routes/rider.js'
 import { favorite } from './routes/favorite.js'
 import { authenticated } from './middleware/authenticated.js'
 import { error } from './handlers/error.js'
-import { logger } from './logger.js'
 import { SESSION_DURATION_MS } from './common.js'
 
 import type { SessionOptions, CookieOptions } from 'express-session'
@@ -38,13 +40,14 @@ const sess: SessionOptions = {
 const debug = makeDebug('busmap')
 const app = express()
 const server = http.createServer(app)
+let redisClient: ReturnType<typeof createClient> | null = null
 
 if (env.BM_SESSION_STORE === 'redis') {
   debug('initializing redis store at host', env.BM_REDIS_HOST)
-  const client = createClient({ url: env.BM_REDIS_HOST })
+  redisClient = createClient({ url: env.BM_REDIS_HOST })
 
   try {
-    await client.connect()
+    await redisClient.connect()
     /**
      * TTL for the redis session key is derived from `cookie.maxAge` (SESSION_DURATION_MS).
      * Setting `disableTouch` to `true` prevents rolling backend sessions (connect-redis updates the TTL).
@@ -52,7 +55,7 @@ if (env.BM_SESSION_STORE === 'redis') {
      *
      * The goal is to keep the client cookie, and redis session expiration synchronized.
      */
-    sess.store = new RedisStore({ client, disableTouch: true })
+    sess.store = new RedisStore({ client: redisClient, disableTouch: true })
   } catch (err) {
     logger.fatal(err, 'Redis client failed to connect. Exiting.')
     exit(1)
@@ -80,6 +83,48 @@ app.use((req, res) => {
   res.status(404).json(new errors.NotFound())
 })
 app.use(error.handler)
+
+/**
+ * Shutdown gracefully when signal received. Primary signal is SIGTERM
+ * when stopping container from process (Docker/Copilot).
+ *
+ * According to the documentation the container has 10 seconds to shutdown
+ * before a SIGKILL is sent.
+ * @see https://docs.docker.com/engine/reference/commandline/stop/
+ */
+prexit(['SIGTERM', 'SIGINT', 'SIGHUP'], async (signal, code, err) => {
+  logger.info({ signal, code, err }, 'Server received signal.')
+
+  // Shutdown API server
+  server.closeIdleConnections()
+  await new Promise(resolve => {
+    server.close(error => {
+      if (error) {
+        logger.warn(`Server not running on ${signal} shutdown.`)
+      } else {
+        logger.info('Server shut down.')
+      }
+
+      resolve('done')
+    })
+    setTimeout(() => {
+      // Force close all connections after the timeout
+      server.closeAllConnections()
+    }, 5000).unref()
+  })
+
+  // Close database connections (timeout is in SECONDS)
+  await sql.end({ timeout: 5 })
+  logger.info('Database connections closed.')
+
+  // Disconnect redis client
+  if (redisClient) {
+    await redisClient.quit()
+    logger.info('Redis client disconnected.')
+  }
+
+  logger.info('Process exiting.')
+})
 
 server.listen(3000, () => {
   logger.info('Busmap listening on port 3000...')
