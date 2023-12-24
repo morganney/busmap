@@ -118,7 +118,7 @@ const Profile: FC = () => {
   return (
     <Page title="Profile">
       <p>
-        Hi <strong>{user.givenName}</strong>.
+        Hi <strong>{user.givenName}</strong>. Have a good ride.
       </p>
       <div>
         <p>Your Busmap sign in provider.</p>
