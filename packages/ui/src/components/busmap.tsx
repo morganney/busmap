@@ -28,27 +28,29 @@ const BusmapPage: FC = () => {
           href="https://github.com/morganney/busmap/pulls"
           target="_blank"
           rel="noreferrer">
-          Contributions
-        </a>{' '}
-        and{' '}
+          Pull requests
+        </a>
+        ,{' '}
         <a
           href="https://github.com/morganney/busmap/discussions"
           target="_blank"
           rel="noreferrer">
           feedback
         </a>{' '}
-        are welcome. You can also report any{' '}
+        and{' '}
         <a
           href="https://github.com/morganney/busmap/issues"
           target="_blank"
           rel="noreferrer">
           issues or bugs
-        </a>
-        . Maintained with ❤️ by{' '}
+        </a>{' '}
+        are welcome.
+      </p>
+      <p>
+        Maintained with ❤️ by{' '}
         <a href="https://github.com/morganney" target="_blank" rel="noreferrer">
           morganney
         </a>
-        .
       </p>
     </Page>
   )
