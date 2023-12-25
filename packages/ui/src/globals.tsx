@@ -40,23 +40,20 @@ const reducer = (state: BusmapState, action: BusmapAction): BusmapState => {
         agency: action.value,
         route: undefined,
         direction: undefined,
-        stop: undefined,
-        selected: undefined
+        stop: undefined
       }
     case 'route':
       return {
         ...state,
         route: action.value,
         direction: undefined,
-        stop: undefined,
-        selected: undefined
+        stop: undefined
       }
     case 'direction':
       return {
         ...state,
         direction: action.value,
-        stop: undefined,
-        selected: undefined
+        stop: undefined
       }
     case 'stop':
       return { ...state, stop: action.value }
