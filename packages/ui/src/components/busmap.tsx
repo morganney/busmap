@@ -6,6 +6,11 @@ const BusmapPage: FC = () => {
   return (
     <Page title="About">
       <p>
+        Busmap provides real-time arrival and departure times for vehicles servicing bus
+        stops along routes in San Francisco Muni CIS, Toronto Transit Commission,
+        OmniTrans, and other transit agencies across North and South America.
+      </p>
+      <p>
         Busmap is a public, open source project{' '}
         <a href="https://github.com/morganney/busmap" target="_blank" rel="noreferrer">
           hosted on GitHub
@@ -21,9 +26,7 @@ const BusmapPage: FC = () => {
         <a href="http://restbus.info/" target="_blank" rel="noreferrer">
           <code>restbus</code>
         </a>
-        .
-      </p>
-      <p>
+        .{' '}
         <a
           href="https://github.com/morganney/busmap/pulls"
           target="_blank"

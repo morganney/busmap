@@ -13,6 +13,7 @@ import { SelectorError } from './error/selector.js'
 
 import { useGlobals } from '../globals.js'
 import { useMap } from '../contexts/map.js'
+import { useDocMeta } from '../hooks/useDocMeta.js'
 import { useHomeStop } from '../hooks/useHomeStop.js'
 import { useVehiclesDispatch } from '../contexts/vehicles.js'
 import { getAll as getAllRoutes, get as getRoute } from '../api/rb/route.js'
@@ -156,6 +157,11 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   }, [navigate, dispatch, vehiclesDispatch, agency, route, direction])
   const error = getFirstDataError([routesError, routeError])
   const isLoading = isRoutesLoading || isRouteLoading
+
+  /**
+   * Update page title and description.
+   */
+  useDocMeta()
 
   useEffect(() => {
     if (routes) {
