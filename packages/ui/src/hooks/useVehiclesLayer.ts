@@ -183,14 +183,14 @@ const useVehiclesLayer = ({ vehiclesLayer }: UseVehiclesLayer) => {
     useVehicleSettings()
 
   const iconDimensions = useRef<Dimensions | null>(null)
-  const preds = useRef(predictions?.length ? predictions[0].values.slice(0, 3) : [])
+  const preds = useRef(predictions.length ? predictions[0].values.slice(0, 3) : [])
 
   useEffect(() => {
     iconDimensions.current = null
   }, [route])
 
   useEffect(() => {
-    const nextPreds = predictions?.length ? predictions[0].values.slice(0, 3) : []
+    const nextPreds = predictions.length ? predictions[0].values.slice(0, 3) : []
 
     preds.current = nextPreds
   }, [predictions])

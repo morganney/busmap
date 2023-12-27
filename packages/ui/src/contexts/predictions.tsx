@@ -10,20 +10,20 @@ interface PredictionsChanged {
 type PredictionsAction = PredictionsChanged | StopChanged | DirectionChanged
 interface PredictionsContext {
   dispatch: Dispatch<PredictionsAction>
-  predictions?: Prediction[]
+  predictions: Prediction[]
 }
 
 const Predictions = createContext<PredictionsContext>({
   dispatch: () => {},
-  predictions: undefined
+  predictions: []
 })
-const reducer = (state: Prediction[] | undefined, action: PredictionsAction) => {
+const reducer = (state: Prediction[], action: PredictionsAction) => {
   switch (action.type) {
     case 'predictions':
       return action.value
     case 'direction':
     case 'stop':
-      return undefined
+      return []
     default:
       return state
   }
