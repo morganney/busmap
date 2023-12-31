@@ -19,6 +19,10 @@
       "import": "./dist/button/mod.js",
       "require": "./dist/cjs/button/mod.cjs"
     },
+    "./loading": {
+      "import": "./dist/loading/mod.js",
+      "require": "./dist/cjs/loading/mod.cjs"
+    },
     "./autoSuggest": {
       "import": "./dist/autoSuggest/mod.js",
       "require": "./dist/cjs/autoSuggest/mod.cjs"
