@@ -12,7 +12,8 @@ export default {
   args: {
     children: 'Some button text',
     display: 'light',
-    variant: 'solid'
+    variant: 'solid',
+    isDisabled: false
   },
   argTypes: {
     onClick: {

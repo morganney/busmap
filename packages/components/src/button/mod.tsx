@@ -11,30 +11,47 @@ interface ButtonProps {
   icon?: ReactElement
   variant?: 'outlined' | 'solid'
   onClick?: MouseEventHandler<HTMLButtonElement>
+  isDisabled?: boolean
 }
 
-const getBackground = ({ variant, display }: ButtonProps) => {
-  if (variant === 'outlined') {
+const getBackground = ({
+  $variant,
+  $display
+}: {
+  $variant: ButtonProps['variant']
+  $display: ButtonProps['display']
+}) => {
+  if ($variant === 'outlined') {
     return 'transparent'
   }
 
-  return display === 'light' ? PB90T : PB50T
+  return $display === 'light' ? PB90T : PB50T
 }
-const getHoverBackground = ({ variant, display }: ButtonProps) => {
-  if (variant === 'outlined') {
-    return display === 'light' ? PB97T : PB60T
+const getHoverBackground = ({
+  $variant,
+  $display
+}: {
+  $variant: ButtonProps['variant']
+  $display: ButtonProps['display']
+}) => {
+  if ($variant === 'outlined') {
+    return $display === 'light' ? PB97T : PB60T
   }
 
-  return display === 'light' ? PB80T : PB60T
+  return $display === 'light' ? PB80T : PB60T
 }
-const getBorderColor = ({ variant }: ButtonProps) => {
-  if (variant === 'solid') {
+const getBorderColor = ({ $variant }: { $variant: ButtonProps['variant'] }) => {
+  if ($variant === 'solid') {
     return 'transparent'
   }
 
   return PB90T
 }
-const Btn = styled.button<ButtonProps>`
+const Btn = styled.button<{
+  $variant: ButtonProps['variant']
+  $display: ButtonProps['display']
+  $isDisabled: ButtonProps['isDisabled']
+}>`
   display: inline-flex;
   align-items: center;
   font-size: 14px;
@@ -48,10 +65,10 @@ const Btn = styled.button<ButtonProps>`
   border-color: ${getBorderColor};
   line-height: 1.15;
   background: ${getBackground};
-  color: ${({ display }) => (display === 'light' ? PB20T : PB90T)};
+  color: ${({ $display }) => ($display === 'light' ? PB20T : PB90T)};
 
   &:hover {
-    cursor: pointer;
+    cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
     background: ${getHoverBackground};
   }
 `
@@ -60,7 +77,8 @@ const Button: FC<ButtonProps> = ({
   icon,
   onClick,
   variant = 'solid',
-  display = 'light'
+  display = 'light',
+  isDisabled = false
 }) => {
   const handleOnClick = useCallback(
     (evt: MouseEvent<HTMLButtonElement>) => {
@@ -72,7 +90,12 @@ const Button: FC<ButtonProps> = ({
   )
 
   return (
-    <Btn variant={variant} display={display} onClick={handleOnClick}>
+    <Btn
+      $variant={variant}
+      $display={display}
+      onClick={handleOnClick}
+      disabled={isDisabled}
+      $isDisabled={isDisabled}>
       {icon ? (
         <>
           <span>{children}</span>

@@ -62,11 +62,14 @@ const Timestamp = styled.p`
   text-align: center;
   font-size: 10px;
 `
-const NoArrivals = styled.p`
+const NoPredictions = styled.p`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   margin: 20px 0 0;
 
-  em {
-    text-decoration: underline;
+  strong {
+    display: block;
   }
 `
 const List = styled.ul<{ markPredictedVehicles: boolean; mode: Mode }>`
@@ -312,9 +315,10 @@ const Predictions: FC<PredictionsProps> = ({
     }
 
     return (
-      <NoArrivals>
-        <em>No arrivals</em>: {stop.title}.
-      </NoArrivals>
+      <NoPredictions>
+        <em>No buses servicing stop:</em>
+        <strong>{stop.title}</strong>
+      </NoPredictions>
     )
   }
 

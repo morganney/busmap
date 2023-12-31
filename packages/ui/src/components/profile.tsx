@@ -4,6 +4,7 @@ import { toast } from '@busmap/components/toast'
 import { Button } from '@busmap/components/button'
 import { SignOut } from '@busmap/components/icons/signOut'
 import { PB80T, PB20T, PB90T } from '@busmap/components/colors'
+import { Loading } from '@busmap/components/loading'
 
 import { logout } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
@@ -86,15 +87,15 @@ const Profile: FC = () => {
   }, [dispatch, dispatchStorage])
   const onClickDisconnect = useCallback(() => {
     if (user && google) {
+      setLoading(true)
       // TODO: Do not logout. Instead open modal explaining they will need to re-connect next sign in.
       google.accounts.id.revoke(user.sub, async resp => {
         if (resp.error) {
+          setLoading(false)
           toast({ type: 'error', message: 'Error disconnecting Google.' })
         }
 
         if (resp.successful) {
-          setLoading(true)
-
           try {
             await logout()
 
@@ -142,16 +143,22 @@ const Profile: FC = () => {
             </span>
             <span>Google</span>
           </p>
-          <Button display={mode} onClick={onClickDisconnect}>
+          <Button display={mode} onClick={onClickDisconnect} isDisabled={loading}>
             Disconnect
           </Button>
         </ProviderBlock>
       </div>
       <div>
-        <SignOutBtn $mode={mode} disabled={loading} onClick={onClickSignOut}>
-          <span>Sign out</span>
-          <SignOut size="small" />
-        </SignOutBtn>
+        {loading ? (
+          <p>
+            Signing you out <Loading indent={2} color={mode === 'dark' ? PB90T : PB20T} />
+          </p>
+        ) : (
+          <SignOutBtn $mode={mode} disabled={loading} onClick={onClickSignOut}>
+            <span>Sign out</span>
+            <SignOut size="small" />
+          </SignOutBtn>
+        )}
       </div>
     </Page>
   )

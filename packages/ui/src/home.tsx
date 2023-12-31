@@ -188,7 +188,7 @@ const Home: FC = () => {
           />
         </Wrap>
       ) : (
-        <Loading text="Loading agencies..." />
+        <Loading text="Loading agencies" />
       )}
     </Aside>
   )
