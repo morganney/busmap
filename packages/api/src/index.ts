@@ -1,4 +1,4 @@
-import { env, exit } from 'node:process'
+import { env, exit, uptime } from 'node:process'
 import http from 'node:http'
 
 import makeDebug from 'debug'
@@ -7,7 +7,6 @@ import express from 'express'
 import session from 'express-session'
 import RedisStore from 'connect-redis'
 import { createClient } from 'redis'
-import morgan from 'morgan'
 import helmet from 'helmet'
 import restbus from 'restbus'
 import prexit from 'prexit'
@@ -64,11 +63,6 @@ if (env.BM_SESSION_STORE === 'redis') {
 
 app.set('trust proxy', 1)
 
-if (env.NODE_ENV === 'production') {
-  // TODO: Do I need this AND nginx logs?
-  app.use(morgan('combined'))
-}
-
 app.use(helmet())
 app.use(session(sess))
 app.use((req, res, next) => {
@@ -79,6 +73,23 @@ app.use('/authn', authn)
 app.use('/restbus', restbus.middleware())
 app.use('/rider', authenticated, rider)
 app.use('/favorite', authenticated, favorite)
+app.get('/health', async (req, res) => {
+  try {
+    if (redisClient && !(redisClient.isOpen && redisClient.isReady)) {
+      throw new Error('Redis not healthy.')
+    }
+
+    const [row] = await sql<{ now: string }[]>`SELECT now()`
+
+    return res.json({
+      timestamp: row.now,
+      message: 'OK',
+      uptime: uptime()
+    })
+  } catch (err) {
+    return res.status(503).json(new errors.ServiceUnavailable())
+  }
+})
 app.use((req, res) => {
   res.status(404).json(new errors.NotFound())
 })
