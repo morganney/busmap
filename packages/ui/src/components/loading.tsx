@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-import { Dots } from './dots'
+import { Dots } from './dots.js'
 
 import type { FC } from 'react'
 
