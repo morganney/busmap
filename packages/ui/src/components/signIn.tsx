@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { toast } from '@busmap/components/toast'
-import { Loading } from '@busmap/components/loading'
-import { PB20T, PB90T } from '@busmap/components/colors'
 
 import { login } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
 import { useStorageDispatch } from '@core/contexts/storage.js'
-import { useTheme } from '@module/settings/contexts/theme.js'
 import { MAX_USER_FAVORITES } from '@module/favorites/common.js'
 import { get as getFavorites } from '@module/favorites/api/get.js'
 
 import { Page } from './page.js'
+import { Dots } from './dots.js'
 
 import type { FC } from 'react'
 import type { RiderFavoriteItem } from '@busmap/common/types/favorites'
@@ -22,7 +20,6 @@ const Note = styled.em`
 const SignIn: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
   const { dispatch } = useGlobals()
-  const { mode } = useTheme()
   const [riderFavorites, setRiderFavorites] = useState<RiderFavoriteItem[]>()
   const [loading, setLoading] = useState(false)
   const storageDispatch = useStorageDispatch()
@@ -81,7 +78,7 @@ const SignIn: FC = () => {
     <Page title="Sign In">
       {loading ? (
         <p>
-          Signing you in <Loading indent={2} color={mode === 'dark' ? PB90T : PB20T} />
+          Signing you in <Dots />
         </p>
       ) : (
         <>

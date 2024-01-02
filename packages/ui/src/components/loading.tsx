@@ -1,8 +1,6 @@
 import styled from 'styled-components'
-import { Loading as Dots } from '@busmap/components/loading'
-import { PB20T, PB90T } from '@busmap/components/colors'
 
-import { useTheme } from '../modules/settings/contexts/theme.js'
+import { Dots } from './dots'
 
 import type { FC } from 'react'
 
@@ -24,12 +22,10 @@ const Text = styled.p`
   font-size: 1rem;
 `
 const Loading: FC<LoadingProps> = ({ text, useIcon = true }) => {
-  const { mode } = useTheme()
-
   return (
     <Text>
       <span>
-        {text} {useIcon && <Dots indent={2} color={mode === 'dark' ? PB90T : PB20T} />}
+        {text} {useIcon && <Dots />}
       </span>
     </Text>
   )
