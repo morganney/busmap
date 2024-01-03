@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, memo, useEffect, useRef } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useIsFetching } from '@tanstack/react-query'
 import { useNavigate, generatePath } from 'react-router-dom'
 import { latLng, latLngBounds } from 'leaflet'
 import styled from 'styled-components'
@@ -43,6 +43,8 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const [routeName, setRouteName] = useState<RouteName>()
   const { dispatch, agency, route, direction, stop } = useGlobals()
   const vehiclesDispatch = useVehiclesDispatch()
+  const vehicleFetches = useIsFetching({ queryKey: ['vehicles'] })
+  const routeVehiclesLoaded = useRef(false)
   const stops = useMemo(() => {
     if (direction && route) {
       return route.stops.filter(({ id }) => direction.stops.includes(id))
@@ -57,7 +59,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const {
     data: routes,
     error: routesError,
-    isLoading: isRoutesLoading
+    isFetching: isRoutesFetching
   } = useQuery({
     queryKey: ['routes', agency?.id],
     queryFn: () => getAllRoutes(agency?.id),
@@ -67,7 +69,7 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
   const {
     data: routeConfig,
     error: routeError,
-    isLoading: isRouteLoading
+    isFetching: isRouteFetching
   } = useQuery({
     /**
      * Use two attributes from a route to prevent collisions across agencies.
@@ -156,7 +158,9 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     }
   }, [navigate, dispatch, vehiclesDispatch, agency, route, direction])
   const error = getFirstDataError([routesError, routeError])
-  const isLoading = isRoutesLoading || isRouteLoading
+  const isFetching = isRoutesFetching || isRouteFetching
+  const isPageLoading =
+    isFetching || Boolean(!routeVehiclesLoaded.current && vehicleFetches)
 
   /**
    * Update page title and description.
@@ -286,8 +290,23 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
     }
   }, [dispatch, homeStop, agencies, agency, routeName, routes, route, direction, stop])
 
+  /**
+   * These effects are so that the loader only
+   * renders for the first load of vehicles
+   * when the route changes.
+   */
+  useEffect(() => {
+    routeVehiclesLoaded.current = false
+  }, [route])
+
+  useEffect(() => {
+    if (!vehicleFetches && !routeVehiclesLoaded.current) {
+      routeVehiclesLoaded.current = true
+    }
+  }, [vehicleFetches])
+
   return (
-    <Page title="Bus Selector">
+    <Page title="Bus Selector" loading={isPageLoading}>
       {error instanceof Error && <SelectorError err={error} />}
       <Form
         onSubmit={evt => {
@@ -297,26 +316,26 @@ const BusSelector = memo(function BusSelector({ agencies }: BusSelectorProps) {
           agencies={agencies}
           selected={agency}
           onSelect={onSelectAgency}
-          isDisabled={isLoading}
+          isDisabled={isFetching}
         />
         <Routes
           routes={routes}
           selected={routeName}
           onSelect={onSelectRoute}
-          isDisabled={isLoading || !agency}
+          isDisabled={isFetching || !agency}
         />
         <Directions
           directions={route?.directions}
           selected={direction}
           onSelect={onSelectDirection}
-          isDisabled={isLoading || !agency || !route}
+          isDisabled={isFetching || !agency || !route}
         />
         <Stops
           stops={stops}
           selected={stop}
           onClear={onClearStop}
           onSelect={onSelectStop}
-          isDisabled={isLoading || !agency || !route || !direction}
+          isDisabled={isFetching || !agency || !route || !direction}
         />
       </Form>
     </Page>

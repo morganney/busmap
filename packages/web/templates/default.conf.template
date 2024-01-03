@@ -1,6 +1,4 @@
-# Configuration to stage a production build locally.
-# Known differences:
-# - TODO (when they arise)
+# Configuration to stage a production build.
 
 server {
   # Redirect server configuration
@@ -14,6 +12,7 @@ server {
 
 server {
   listen 443 ssl;
+  listen [::]:443 ssl;
   http2 on;
   server_name ${SERVER_NAME};
   root /var/www/${HOST_NAME};
@@ -22,10 +21,13 @@ server {
   include /etc/nginx/conf.d/core/ssl.conf;
   include /etc/nginx/conf.d/core/compression.conf;
 
-  location / {
-    resolver 8.8.8.8 valid=30s;
+  location = /healthcheck {
+    add_header Content-Type "application/json";
+    return 200 '{"status": "OK"}';
+  }
 
-    location ~ /(authn|restbus|rider|favorite) {
+  location / {
+    location ~ /(authn|restbus|rider|favorite|health) {
       access_log /var/log/nginx/api.log api;
       proxy_pass http://api_server;
       # Allow keepalive to work with the upstream

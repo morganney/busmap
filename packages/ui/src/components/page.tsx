@@ -1,10 +1,13 @@
 import styled from 'styled-components'
 
+import { Dots } from './dots.js'
+
 import type { FC, ReactNode } from 'react'
 
 interface PageProps {
   title: string
   className?: string
+  loading?: boolean
   children: ReactNode
 }
 
@@ -23,10 +26,13 @@ const Section = styled.section`
     line-height: 1.25;
   }
 `
-const Page: FC<PageProps> = ({ title, children, className }) => {
+const Page: FC<PageProps> = ({ title, children, className, loading = false }) => {
   return (
     <Section className={className}>
-      <h2>{title}</h2>
+      <h2>
+        {title}
+        {loading && <Dots />}
+      </h2>
       {children}
     </Section>
   )

@@ -4,7 +4,6 @@ import { toast } from '@busmap/components/toast'
 import { Button } from '@busmap/components/button'
 import { SignOut } from '@busmap/components/icons/signOut'
 import { PB80T, PB20T, PB90T } from '@busmap/components/colors'
-import { Loading } from '@busmap/components/loading'
 
 import { logout } from '@core/api/authn.js'
 import { useGlobals } from '@core/globals.js'
@@ -12,6 +11,7 @@ import { useStorageDispatch } from '@core/contexts/storage.js'
 import { useTheme } from '@module/settings/contexts/theme.js'
 
 import { Page } from './page.js'
+import { Dots } from './dots.js'
 
 import type { FC } from 'react'
 import type { Mode } from '@busmap/common/types/settings'
@@ -151,7 +151,7 @@ const Profile: FC = () => {
       <div>
         {loading ? (
           <p>
-            Signing you out <Loading indent={2} color={mode === 'dark' ? PB90T : PB20T} />
+            Signing you out <Dots />
           </p>
         ) : (
           <SignOutBtn $mode={mode} disabled={loading} onClick={onClickSignOut}>
