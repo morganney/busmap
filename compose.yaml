@@ -49,11 +49,11 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      SERVER_NAME: ${SERVER_NAME}
-      HOST_NAME: ${HOST_NAME}
-      UPSTREAM_API_HOST: ${UPSTREAM_API_HOST}
-      SSL_CERT_PATH: ${SSL_CERT_PATH}
-      SSL_KEY_PATH: ${SSL_KEY_PATH}
+      SERVER_NAME: ${SERVER_NAME:?err}
+      HOST_NAME: ${HOST_NAME:?err}
+      UPSTREAM_API_HOST: ${UPSTREAM_API_HOST:?err}
+      SSL_CERT_PATH: ${SSL_CERT_PATH:?err}
+      SSL_KEY_PATH: ${SSL_KEY_PATH:?err}
 
 volumes:
   db:
