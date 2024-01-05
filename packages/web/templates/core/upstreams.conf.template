@@ -1,6 +1,6 @@
   # DNS resolution works at startup via `depends_on` for `web` service in compose.yaml.
   upstream api_server {
-    server api:3000;
+    server ${UPSTREAM_API_HOST}:3000;
 
     keepalive 2;
   }

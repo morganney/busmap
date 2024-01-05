@@ -40,6 +40,7 @@ FROM nginx:1.25.3 AS dev
 COPY packages/web/certs/ /etc/nginx/certs/
 COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
 COPY packages/web/default.dev.conf /etc/nginx/conf.d/default.conf
+COPY packages/web/templates/core/upstreams.conf.template /etc/nginx/templates/core/upstreams.conf.template
 COPY packages/web/nginx.dev.conf /etc/nginx/nginx.conf
 EXPOSE 80 443
 

@@ -51,6 +51,7 @@ services:
     environment:
       SERVER_NAME: ${SERVER_NAME}
       HOST_NAME: ${HOST_NAME}
+      UPSTREAM_API_HOST: ${UPSTREAM_API_HOST}
       SSL_CERT_PATH: ${SSL_CERT_PATH}
       SSL_KEY_PATH: ${SSL_KEY_PATH}
 
