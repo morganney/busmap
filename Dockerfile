@@ -36,6 +36,14 @@ COPY packages/web/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/packages/ui/dist /var/www/${HOST_NAME}
 EXPOSE 80 443
 
+FROM nginx:1.25.3 as proxy
+COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
+COPY packages/web/templates/core/upstreams.conf.template /etc/nginx/templates/core/upstreams.conf.template
+COPY packages/web/templates/deploy.conf.template /etc/nginx/templates/default.conf.template
+COPY packages/web/nginx.conf /etc/nginx/nginx.conf
+COPY --from=builder /app/packages/ui/dist /var/www/busmap
+EXPOSE 80
+
 FROM nginx:1.25.3 AS dev
 COPY packages/web/certs/ /etc/nginx/certs/
 COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/

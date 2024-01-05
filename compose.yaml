@@ -54,6 +54,19 @@ services:
       UPSTREAM_API_HOST: ${UPSTREAM_API_HOST:?err}
       SSL_CERT_PATH: ${SSL_CERT_PATH:?err}
       SSL_KEY_PATH: ${SSL_KEY_PATH:?err}
+  proxy:
+    depends_on:
+      - api
+    build:
+      context: .
+      target: proxy
+      args:
+        VITE_GOOG_CLIENT_ID: ${SSO_GOOG_CLIENT_ID:?err}
+    container_name: proxy
+    ports:
+      - "80:80"
+    environment:
+      UPSTREAM_API_HOST: ${UPSTREAM_API_HOST:?err}
 
 volumes:
   db:
