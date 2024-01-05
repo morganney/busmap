@@ -3,7 +3,7 @@ COPY packages/api/initdb.d /docker-entrypoint-initdb.d
 EXPOSE 5432
 
 FROM redis:7.2.3 AS redis
-EXPOSE 6739
+EXPOSE 6379
 
 FROM node:20.10-bookworm AS builder
 ARG VITE_GOOG_CLIENT_ID

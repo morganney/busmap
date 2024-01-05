@@ -87,6 +87,8 @@ app.get('/health', async (req, res) => {
       uptime: uptime()
     })
   } catch (err) {
+    logger.error(err, 'Health check request failed.')
+
     return res.status(503).json(new errors.ServiceUnavailable())
   }
 })
