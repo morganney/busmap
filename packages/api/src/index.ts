@@ -50,10 +50,12 @@ if (env.BM_SESSION_STORE === 'redis') {
   redisClient.on('reconnecting', () => {
     logger.info('Redis reconnecting.')
   })
+  redisClient.on('connect', () => {
+    logger.info('Redis client connected.')
+  })
 
   try {
     await redisClient.connect()
-    logger.info('Redis client connected.')
     /**
      * TTL for the redis session key is derived from `cookie.maxAge` (SESSION_DURATION_MS).
      * Setting `disableTouch` to `true` prevents rolling backend sessions (connect-redis updates the TTL).
