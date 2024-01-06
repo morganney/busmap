@@ -44,9 +44,16 @@ let redisClient: ReturnType<typeof createClient> | null = null
 if (env.BM_SESSION_STORE === 'redis') {
   debug('initializing redis store at host', env.BM_REDIS_HOST)
   redisClient = createClient({ url: env.BM_REDIS_HOST })
+  redisClient.on('error', err => {
+    logger.error(err, 'Redis unexpected error.')
+  })
+  redisClient.on('reconnecting', () => {
+    logger.info('Redis reconnecting.')
+  })
 
   try {
     await redisClient.connect()
+    logger.info('Redis client connected.')
     /**
      * TTL for the redis session key is derived from `cookie.maxAge` (SESSION_DURATION_MS).
      * Setting `disableTouch` to `true` prevents rolling backend sessions (connect-redis updates the TTL).

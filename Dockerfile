@@ -31,7 +31,8 @@ FROM nginx:1.25.3 as web
 ARG HOST_NAME=busmap.localhost
 COPY packages/web/certs/ /etc/nginx/certs/
 COPY packages/web/conf.d/core/ /etc/nginx/conf.d/core/
-COPY packages/web/templates/ /etc/nginx/templates/
+COPY packages/web/templates/core/ /etc/nginx/templates/core/
+COPY packages/web/templates/default.conf.template /etc/nginx/templates/default.conf.template
 COPY packages/web/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/packages/ui/dist /var/www/${HOST_NAME}
 EXPOSE 80 443
