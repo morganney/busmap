@@ -4,13 +4,9 @@
 
 Bus maps of North American and South American transit agencies supported by the [UMO public XML feed](https://retro.umoiq.com/xmlFeedDocs/NextBusXMLFeed.pdf), including SF Muni CIS, Toronto Transit Commission, and OmniTrans. App data provided by the [Restbus API](http://restbus.info/).
 
-### Desktop
+**Currently in Beta testing. If you want to be a test user, and have a valid gmail account, contact me and I'll add you as [Sign in with Google](https://developers.google.com/identity/gsi/web/guides/overview) test user**.
 
-<img src="./media/busmap-app.png" alt="BusMap" width="650" />
-
-### Mobile
-
-<img src="./media/busmap-app-mobile.png" alt="BusMap mobile" width="400px" />
+[test.busmap.online](https://test.busmap.online)
 
 ## Docs
 
