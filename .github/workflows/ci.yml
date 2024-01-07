@@ -33,7 +33,11 @@ jobs:
         run: npm run lint
       - name: Build Docker
         env:
+          SERVER_NAME: busmap.ci
           HOST_NAME: busmap.ci
+          UPSTREAM_API_HOST: ci
+          SSL_CERT_PATH: /etc/ci/file.pem
+          SSL_KEY_PATH: /etc/ci/file.key
           BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
           BM_POSTGRES_PASSWORD: ${{ secrets.BM_POSTGRES_PASSWORD }}
           BM_POSTGRES_USER: ${{ secrets.BM_POSTGRES_USER }}

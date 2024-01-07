@@ -1,0 +1,70 @@
+name: api
+type: Load Balanced Web Service
+
+image:
+  port: 3000
+  build:
+    dockerfile: Dockerfile
+    target: busmap
+    args:
+      VITE_GOOG_CLIENT_ID: 252354370153-b37gekefvfvtkcml2dk2ogv4405ib96n.apps.googleusercontent.com
+
+http:
+  alias: busmap.online
+  path: '/'
+  target_container: nginx
+  healthcheck:
+    path: '/health'
+    healthy_threshold: 2
+    unhealthy_threshold: 2
+    interval: 10s
+    timeout: 5s
+
+cpu: 512
+memory: 1024
+count: 1
+exec: true
+command: ["node", "packages/api/dist/index.js"]
+
+network:
+  connect: true
+  vpc:
+    security_groups:
+      - from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-bmclusterSecurityGroup
+
+sidecars:
+  nginx:
+    depends_on:
+      api: start
+    port: 80
+    image:
+      build:
+        dockerfile: Dockerfile
+        target: proxy
+        args:
+          VITE_GOOG_CLIENT_ID: 252354370153-b37gekefvfvtkcml2dk2ogv4405ib96n.apps.googleusercontent.com
+    variables:
+      UPSTREAM_API_HOST: localhost
+
+variables:
+  NODE_ENV: production
+  POSTGRES_DB: busmap
+  SSO_GOOG_CLIENT_ID: 252354370153-b37gekefvfvtkcml2dk2ogv4405ib96n.apps.googleusercontent.com
+  RESTBUS_LOGGER: false
+  BM_COOKIE_SECURE: true
+  BM_COOKIE_SAMESITE: strict
+  BM_SESSION_STORE: redis
+  BM_REDIS_HOST: redis://session
+
+secrets:
+  POSTGRES_USER: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/BM_POSTGRES_USER
+  POSTGRES_PASSWORD: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/BM_POSTGRES_PASSWORD
+  SSO_GOOG_CLIENT_SECRET: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/SSO_GOOG_CLIENT_SECRET
+  BM_COOKIE_SECRET: /copilot/${COPILOT_APPLICATION_NAME}/${COPILOT_ENVIRONMENT_NAME}/secrets/BM_COOKIE_SECRET
+  DB_SECRET:
+    from_cfn: ${COPILOT_APPLICATION_NAME}-${COPILOT_ENVIRONMENT_NAME}-bmclusterAuroraSecret
+
+environments:
+  test:
+    http:
+      alias: test.busmap.online

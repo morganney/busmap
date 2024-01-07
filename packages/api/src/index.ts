@@ -44,6 +44,15 @@ let redisClient: ReturnType<typeof createClient> | null = null
 if (env.BM_SESSION_STORE === 'redis') {
   debug('initializing redis store at host', env.BM_REDIS_HOST)
   redisClient = createClient({ url: env.BM_REDIS_HOST })
+  redisClient.on('error', err => {
+    logger.error(err, 'Redis unexpected error.')
+  })
+  redisClient.on('reconnecting', () => {
+    logger.info('Redis reconnecting.')
+  })
+  redisClient.on('connect', () => {
+    logger.info('Redis client connected.')
+  })
 
   try {
     await redisClient.connect()
@@ -87,6 +96,8 @@ app.get('/health', async (req, res) => {
       uptime: uptime()
     })
   } catch (err) {
+    logger.error(err, 'Health check request failed.')
+
     return res.status(503).json(new errors.ServiceUnavailable())
   }
 })

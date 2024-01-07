@@ -1,0 +1,41 @@
+# Configuration to be run behind an AWS Application Load Balancer.
+
+server {
+  listen 80 default_server;
+  root /var/www/busmap;
+  index index.html;
+
+  include /etc/nginx/conf.d/core/compression.conf;
+
+  location = /healthcheck {
+    add_header Content-Type "application/json";
+    return 200 '{"status": "OK"}';
+  }
+
+  location / {
+    location ~ /(authn|restbus|rider|favorite|health) {
+      access_log /var/log/nginx/api.log api;
+      proxy_pass http://api_server;
+      # Allow keepalive to work with the upstream
+      proxy_http_version 1.1;
+      # Yes, this is not secure and $scheme is recommended, but this is behind an AWS ALB on 443.
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Connection "";
+    }
+
+    location ~* \.(js|css)$ {
+      include /etc/nginx/conf.d/core/headers.conf;
+      add_header Cache-Control "max-age=604800 must-revalidate";
+    }
+
+    # Do not cache index.html for SPA
+    location ~* ^.+.html$ {
+      include /etc/nginx/conf.d/core/headers.conf;
+      add_header Cache-Control "no-store max-age=0";
+    }
+
+    access_log /var/log/nginx/core.log core;
+    try_files $uri /index.html;
+  }
+}
