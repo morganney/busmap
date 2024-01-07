@@ -25,11 +25,11 @@ Mappings:
   bmclusterEnvScalingConfigurationMap: 
     test:
       "DBMinCapacity": 1   # AllowedValues: from 0.5 through 128
-      "DBMaxCapacity": 8   # AllowedValues: from 0.5 through 128
+      "DBMaxCapacity": 2   # AllowedValues: from 0.5 through 128
     
     All:
-      "DBMinCapacity": 2 # AllowedValues: from 0.5 through 128
-      "DBMaxCapacity": 8   # AllowedValues: from 0.5 through 128
+      "DBMinCapacity": 1   # AllowedValues: from 0.5 through 128
+      "DBMaxCapacity": 4   # AllowedValues: from 0.5 through 128
 
 Resources:
   bmclusterDBSubnetGroup:
@@ -112,8 +112,8 @@ Resources:
         - !Ref bmclusterDBClusterSecurityGroup
       ServerlessV2ScalingConfiguration:
         # Replace "All" below with "!Ref Env" to set different autoscaling limits per environment.
-        MinCapacity: !FindInMap [bmclusterEnvScalingConfigurationMap, All, DBMinCapacity]
-        MaxCapacity: !FindInMap [bmclusterEnvScalingConfigurationMap, All, DBMaxCapacity]
+        MinCapacity: !FindInMap [bmclusterEnvScalingConfigurationMap, !Ref Env, DBMinCapacity]
+        MaxCapacity: !FindInMap [bmclusterEnvScalingConfigurationMap, !Ref Env, DBMaxCapacity]
   
   bmclusterDBWriterInstance:
     Metadata:
