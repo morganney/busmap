@@ -34,16 +34,25 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         document.body.classList.remove('busmap-mapmove')
       }, 250)
     }
+    const orientationListener = () => {
+      setTimeout(() => {
+        if (map) {
+          map.invalidateSize()
+        }
+      }, 100)
+    }
 
     if (map) {
       map.on('move', moveListener)
       map.on('moveend', moveEndListener)
+      screen.orientation.addEventListener('change', orientationListener)
     }
 
     return () => {
       if (map) {
         map.off('move', moveListener)
         map.off('moveend', moveEndListener)
+        screen.orientation.removeEventListener('change', orientationListener)
       }
     }
   }, [map])
