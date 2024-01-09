@@ -49,8 +49,8 @@
   font-family: Roboto, Arial, sans-serif;
 }
 html {
-  height: fill-available;
   height: -webkit-fill-available;
+  height: fill-available;
   display: grid;
   box-sizing: border-box;
 }
