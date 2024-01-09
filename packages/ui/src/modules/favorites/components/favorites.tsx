@@ -27,7 +27,7 @@ import {
   RouteSection,
   StopArticle
 } from '@module/components.js'
-import { groupBy } from '@module/util.js'
+import { groupBy, isAPage } from '@module/util.js'
 
 import { getPredsKey } from '../util.js'
 import { MAX_FAVORITES, MAX_USER_FAVORITES } from '../common.js'
@@ -57,10 +57,14 @@ const Section = styled(Page)`
     background: none;
     border: none;
     cursor: pointer;
+
+    &.link {
+      font-weight: 700;
+    }
   }
 `
 const Favorites = memo(function Favorites() {
-  const { user } = useGlobals()
+  const { user, dispatch } = useGlobals()
   const map = useMap()
   const workerRef = useRef<Worker>()
   const homeStop = useHomeStop()
@@ -113,6 +117,16 @@ const Favorites = memo(function Favorites() {
     },
     [storageDispatch, user]
   )
+  const onClickTab = useCallback(
+    (evt: MouseEvent<HTMLButtonElement>) => {
+      const tab = evt.currentTarget.dataset.tab
+
+      if (isAPage(tab)) {
+        dispatch({ type: 'page', value: tab })
+      }
+    },
+    [dispatch]
+  )
   const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
   const PredFormat = format === 'minutes' ? Minutes : Time
 
@@ -154,20 +168,41 @@ const Favorites = memo(function Favorites() {
       {!favorites.length ? (
         <Empty>
           <span>⭐⭐⭐</span>
-          <p>
-            {user ? (
-              <>
-                You can select up to {MAX_USER_FAVORITES} favorite stops from the Selector
-                tab.
-              </>
-            ) : (
-              <>
-                You can select up to {MAX_FAVORITES} favorite stops from the Selector tab.
-                After you sign in you can select up to {MAX_USER_FAVORITES} stops.
-              </>
-            )}{' '}
-            The predicted arrival or departure times will be displayed here.
-          </p>
+          {user ? (
+            <p>
+              {user.givenName}, you can select up to {MAX_USER_FAVORITES} favorite stops
+              across any number of transit agencies from the{' '}
+              <button onClick={onClickTab} data-tab="select" className="link">
+                Selector
+              </button>{' '}
+              or{' '}
+              <button onClick={onClickTab} data-tab="locate" className="link">
+                Nearby
+              </button>{' '}
+              tabs.
+            </p>
+          ) : (
+            <>
+              <p>
+                You can select up to {MAX_FAVORITES} favorite stops from the{' '}
+                <button onClick={onClickTab} data-tab="select" className="link">
+                  Selector
+                </button>{' '}
+                or{' '}
+                <button onClick={onClickTab} data-tab="locate" className="link">
+                  Nearby
+                </button>{' '}
+                tabs. They will be stored by this device.
+              </p>
+              <p>
+                <button onClick={onClickTab} data-tab="signin" className="link">
+                  Sign in with Google
+                </button>{' '}
+                to save more favorite stops.
+              </p>
+            </>
+          )}
+          <p>The predicted arrival or departure times will be displayed here.</p>
           <span>⭐⭐⭐</span>
         </Empty>
       ) : (

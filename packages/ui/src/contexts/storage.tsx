@@ -48,8 +48,8 @@ interface FavoriteSet {
   type: 'favoriteSet'
   value: Favorite[]
 }
-interface FavoriteStore {
-  type: 'favoriteStore'
+interface FavoriteReset {
+  type: 'favoriteReset'
 }
 interface StorageSettingsChanged {
   type: 'settingsChanged'
@@ -62,7 +62,7 @@ type StorageAction =
   | VehicleColorPredictedUpdate
   | ThemeModeUpdate
   | FavoriteSet
-  | FavoriteStore
+  | FavoriteReset
   | FavoriteAdded
   | FavoriteRemoved
   | StorageSettingsChanged
@@ -73,8 +73,8 @@ const reducer = (state: StorageState, action: StorageAction) => {
       return { ...state, themeMode: action.value }
     case 'favoriteSet':
       return { ...state, favorites: action.value }
-    case 'favoriteStore':
-      return { ...state, favorites: [...state.favorites.slice(0, MAX_FAVORITES)] }
+    case 'favoriteReset':
+      return { ...state, favorites: [] }
     case 'favoriteAdd': {
       if (Array.isArray(state.favorites)) {
         return {
