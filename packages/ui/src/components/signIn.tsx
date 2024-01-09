@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
 import { toast } from '@busmap/components/toast'
 
 import { login } from '@core/api/authn.js'
@@ -14,9 +13,6 @@ import { Dots } from './dots.js'
 import type { FC } from 'react'
 import type { RiderFavoriteItem } from '@busmap/common/types/favorites'
 
-const Note = styled.em`
-  font-size: 12px;
-`
 const SignIn: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
   const { dispatch } = useGlobals()
@@ -44,6 +40,7 @@ const SignIn: FC = () => {
             dispatch({ type: 'user', value: user })
             dispatch({ type: 'page', value: 'profile' })
             storageDispatch({ type: 'settingsChanged', value: user.settings })
+            storageDispatch({ type: 'favoriteReset' })
             setRiderFavorites(riderFavs)
           } catch (err) {
             toast({ type: 'error', message: 'Error signing in.' })
@@ -82,11 +79,12 @@ const SignIn: FC = () => {
         </p>
       ) : (
         <>
+          <p>Sign in with Google to save your favorite stops and settings.</p>
           <p>
-            Sign in to save your favorite stops and settings across devices. After signing
-            in, you can <strong>save up to {MAX_USER_FAVORITES} favorite stops</strong>.
+            You will also be able to{' '}
+            <strong>save up to {MAX_USER_FAVORITES} favorite stops</strong> after signing
+            in.
           </p>
-          <Note>Requires email verification</Note>
         </>
       )}
       <div ref={ref} />

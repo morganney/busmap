@@ -77,7 +77,7 @@ const Profile: FC = () => {
 
       dispatch({ type: 'page', value: 'locate' })
       dispatch({ type: 'user', value: undefined })
-      dispatchStorage({ type: 'favoriteStore' })
+      dispatchStorage({ type: 'favoriteReset' })
       toast({ type: 'info', message: `Goodbye ${result.user.givenName ?? ''}.` })
     } catch {
       toast({ type: 'error', message: 'Error signing out!' })

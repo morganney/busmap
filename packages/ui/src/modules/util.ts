@@ -1,4 +1,4 @@
-import { Agency, RouteName, DirectionName, Stop } from '@core/types.js'
+import { Agency, RouteName, DirectionName, Stop, Page } from '@core/types.js'
 
 interface Selection {
   agency: Agency
@@ -31,5 +31,26 @@ const same = (a: Selection, b: Selection): boolean => {
   return comboA === comboB
 }
 
-export { groupBy, same }
+const isAPage = (x: unknown): x is Page => {
+  if (
+    x &&
+    typeof x === 'string' &&
+    [
+      'locate',
+      'favorites',
+      'select',
+      'settings',
+      'info',
+      'signin',
+      'profile',
+      'busmap'
+    ].includes(x)
+  ) {
+    return true
+  }
+
+  return false
+}
+
+export { groupBy, same, isAPage }
 export type { Selection }
