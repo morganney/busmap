@@ -24,12 +24,12 @@ Parameters:
 Mappings:
   bmclusterEnvScalingConfigurationMap: 
     test:
-      "DBMinCapacity": 1   # AllowedValues: from 0.5 through 128
-      "DBMaxCapacity": 2   # AllowedValues: from 0.5 through 128
+      "DBMinCapacity": 0.5   # AllowedValues: from 0.5 through 128
+      "DBMaxCapacity": 1   # AllowedValues: from 0.5 through 128
     
     All:
-      "DBMinCapacity": 1   # AllowedValues: from 0.5 through 128
-      "DBMaxCapacity": 4   # AllowedValues: from 0.5 through 128
+      "DBMinCapacity": 0.5   # AllowedValues: from 0.5 through 128
+      "DBMaxCapacity": 1   # AllowedValues: from 0.5 through 128
 
 Resources:
   bmclusterDBSubnetGroup:
