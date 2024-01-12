@@ -34,7 +34,7 @@ const useTrackUser = () => {
   const { position, permission } = useLocation()
 
   useEffect(() => {
-    if (map && permission === 'granted') {
+    if (map && permission !== 'denied') {
       userCircle.addTo(map)
       user
         .addTo(map)
