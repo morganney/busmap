@@ -19,13 +19,13 @@ const icon = divIcon({
 })
 const circle = divIcon({
   html: `
-    <svg viewBox="0 0 100 100" width="28" height="28">
+    <svg viewBox="0 0 100 100" width="16" height="16">
       <circle cx="50" cy="50" r="48" stroke-width="2" stroke="${SLB20T}" fill="${SLB20T}" fill-opacity="0.4" />
     </svg>
   `,
   className: 'busmap-user-circle',
-  iconSize: [28, 28],
-  iconAnchor: [14, 14]
+  iconSize: [16, 16],
+  iconAnchor: [8, 8]
 })
 const user = marker([0, 0], { icon })
 const userCircle = marker([0, 0], { icon: circle })

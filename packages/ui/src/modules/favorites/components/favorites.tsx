@@ -8,7 +8,7 @@ import { Tooltip } from '@busmap/components/tooltip'
 import { Alert } from '@busmap/components/alert'
 import { MapMarked } from '@busmap/components/icons/mapMarked'
 import { Trash } from '@busmap/components/icons/trash'
-import { PB50T } from '@busmap/components/colors'
+import { PB50T, PB90T, PB20T } from '@busmap/components/colors'
 
 import { useGlobals } from '@core/globals.js'
 import { useMap } from '@core/contexts/map.js'
@@ -34,6 +34,7 @@ import { MAX_FAVORITES, MAX_USER_FAVORITES } from '../common.js'
 import { remove } from '../api/delete.js'
 
 import type { MouseEvent } from 'react'
+import type { Mode } from '@busmap/common/types/settings'
 import type { Favorite } from '@busmap/common/types/favorites'
 import type {
   ErrorsMap,
@@ -50,13 +51,14 @@ const Empty = styled.div`
     margin: 0;
   }
 `
-const Section = styled(Page)`
+const Section = styled(Page)<{ mode: Mode }>`
   button {
     margin: 0;
     padding: 0;
     background: none;
     border: none;
     cursor: pointer;
+    color: ${({ mode }) => (mode === 'light' ? PB20T : PB90T)};
 
     &.link {
       font-weight: 700;
@@ -164,7 +166,7 @@ const Favorites = memo(function Favorites() {
   }, [favorites, maximum])
 
   return (
-    <Section title="Favorite Stops">
+    <Section title="Favorite Stops" mode={mode}>
       {!favorites.length ? (
         <Empty>
           <span>⭐⭐⭐</span>
