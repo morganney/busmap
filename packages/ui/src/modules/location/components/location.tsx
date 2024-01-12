@@ -79,7 +79,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   const { data: predictions, error: predictionsError } = useQuery({
     queryKey: ['location', [position?.point.lat, position?.point.lon]],
     queryFn: () => getPredictions(position?.point),
-    enabled: Boolean(permission === 'granted' && active && position?.point),
+    enabled: Boolean(permission !== 'denied' && active && position?.point),
     refetchOnWindowFocus: true,
     refetchInterval: 10_000
   })
