@@ -1,13 +1,7 @@
 name: E2E Tests
 
 on:
-  push:
-    branches:
-      - main
-      - develop
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   test:
@@ -28,9 +22,9 @@ jobs:
         run: npm test
         env:
           CI: true
-          SERVER_NAME: busmap.ci
-          HOST_NAME: busmap.ci
-          UPSTREAM_API_HOST: ci
+          SERVER_NAME: localhost
+          HOST_NAME: localhost
+          UPSTREAM_API_HOST: api
           SSL_CERT_PATH: /etc/ci/file.pem
           SSL_KEY_PATH: /etc/ci/file.key
           BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
