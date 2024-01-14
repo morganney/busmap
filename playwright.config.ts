@@ -57,6 +57,7 @@ export default defineConfig({
   webServer: {
     command: 'docker compose up dev',
     url: 'http://localhost:3000/health',
-    reuseExistingServer: !process.env.CI
+    reuseExistingServer: !process.env.CI,
+    timeout: 60_000 * 5
   }
 })
