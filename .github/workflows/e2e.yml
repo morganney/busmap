@@ -42,6 +42,9 @@ jobs:
           UPSTREAM_API_HOST: api
           SSL_CERT_PATH: /etc/ci/file.pem
           SSL_KEY_PATH: /etc/ci/file.key
+          BM_SESSION_STORE: memory
+          BM_COOKIE_SECURE: false
+          BM_COOKIE_SAMESITE: lax
           BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
           BM_POSTGRES_PASSWORD: ${{ secrets.BM_POSTGRES_PASSWORD }}
           BM_POSTGRES_USER: ${{ secrets.BM_POSTGRES_USER }}
