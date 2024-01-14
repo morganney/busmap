@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: E2E Tests
 
 on:
   push:
@@ -10,19 +10,21 @@ on:
       - main
 
 jobs:
-  playwright:
-    name: 'Playwright Tests'
+  test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.40.0-jammy
     steps:
-      - uses: actions/checkout@v3.5.2
-      - uses: actions/setup-node@v3.6.0
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - name: Setup Node
+        uses: actions/setup-node@v3.6.0
         with:
           node-version: '20.10.0'
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm ci
-      - name: Run your tests
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Run Tests
         run: npm test
         env:
           CI: true
