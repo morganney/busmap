@@ -10,6 +10,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
+      - name: Apt Pkgs
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libnss3-tools
+          version: 1.3.1
+      - name: Install mkcert
+        run: |
+          curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+          chmod +x mkcert-v*-linux-amd64
+          sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+      - name: Install Certificates
+        run: |
+          mkcert -install
+          mkcert -key-file busmap.localhost-key.pem -cert-file busmap.localhost.pem busmap.localhost localhost
+          cp busmap.localhost.pem busmap.localhost localhost packages/web/certs
       - name: Setup Node
         uses: actions/setup-node@v3.6.0
         with:

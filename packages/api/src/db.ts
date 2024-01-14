@@ -17,8 +17,8 @@ interface AuroraCluster {
   engine: string
 }
 
-let host = 'db'
-let port = '5432'
+let host = env.POSTGRES_HOST ?? 'db'
+let port = env.POSTGRES_PORT ?? '5432'
 let database = env.POSTGRES_DB
 let username = env.POSTGRES_USER
 let password = env.POSTGRES_PASSWORD

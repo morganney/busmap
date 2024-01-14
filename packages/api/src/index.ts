@@ -43,7 +43,20 @@ let redisClient: ReturnType<typeof createClient> | null = null
 
 if (env.BM_SESSION_STORE === 'redis') {
   debug('initializing redis store at host', env.BM_REDIS_HOST)
-  redisClient = createClient({ url: env.BM_REDIS_HOST })
+  redisClient = createClient({
+    url: env.BM_REDIS_HOST,
+    socket: {
+      reconnectStrategy(retries, cause) {
+        if (/ENOTFOUND/i.test(cause.message) && retries > 3) {
+          logger.warn('Redis host not found, done reconnecting.')
+
+          return false
+        }
+
+        return Math.min(retries * 50, 1000)
+      }
+    }
+  })
   redisClient.on('error', err => {
     logger.error(err, 'Redis unexpected error.')
   })
@@ -65,6 +78,8 @@ if (env.BM_SESSION_STORE === 'redis') {
      */
     sess.store = new RedisStore({ client: redisClient, disableTouch: true })
   } catch (err) {
+    await sql.end({ timeout: 5 })
+    logger.info('Database connections closed.')
     logger.fatal(err, 'Redis client failed to connect. Exiting.')
     exit(1)
   }
