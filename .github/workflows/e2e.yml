@@ -27,7 +27,7 @@ jobs:
         run: |
           mkcert -install
           mkcert -key-file busmap.localhost-key.pem -cert-file busmap.localhost.pem busmap.localhost localhost
-          cp busmap.localhost.pem busmap.localhost localhost packages/web/certs
+          cp *.pem packages/web/certs
       - name: Setup Node
         uses: actions/setup-node@v3.6.0
         with:
