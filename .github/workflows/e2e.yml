@@ -28,3 +28,14 @@ jobs:
         run: npm test
         env:
           CI: true
+          SERVER_NAME: busmap.ci
+          HOST_NAME: busmap.ci
+          UPSTREAM_API_HOST: ci
+          SSL_CERT_PATH: /etc/ci/file.pem
+          SSL_KEY_PATH: /etc/ci/file.key
+          BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
+          BM_POSTGRES_PASSWORD: ${{ secrets.BM_POSTGRES_PASSWORD }}
+          BM_POSTGRES_USER: ${{ secrets.BM_POSTGRES_USER }}
+          BM_POSTGRES_DB: ${{ secrets.BM_POSTGRES_DB }}
+          SSO_GOOG_CLIENT_ID: ${{ secrets.SSO_GOOG_CLIENT_ID }}
+          SSO_GOOG_CLIENT_SECRET: ${{ secrets.SSO_GOOG_CLIENT_SECRET }}
