@@ -1,0 +1,35 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.2
+      - name: Setup Node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: '20.10.0'
+      - name: Install Dependencies
+        run: npm ci
+      - name: Install Playwright Browsers
+        run: npx playwright install chrome webkit
+      - name: Run Tests
+        run: npm test
+        env:
+          CI: true
+          SERVER_NAME: localhost
+          HOST_NAME: localhost
+          UPSTREAM_API_HOST: api
+          SSL_CERT_PATH: /etc/ci/file.pem
+          SSL_KEY_PATH: /etc/ci/file.key
+          BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
+          BM_POSTGRES_PASSWORD: ${{ secrets.BM_POSTGRES_PASSWORD }}
+          BM_POSTGRES_USER: ${{ secrets.BM_POSTGRES_USER }}
+          BM_POSTGRES_DB: ${{ secrets.BM_POSTGRES_DB }}
+          SSO_GOOG_CLIENT_ID: ${{ secrets.SSO_GOOG_CLIENT_ID }}
+          SSO_GOOG_CLIENT_SECRET: ${{ secrets.SSO_GOOG_CLIENT_SECRET }}

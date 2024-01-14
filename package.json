@@ -19,12 +19,14 @@
     "clean": "rm -rf ./node_modules ./dist",
     "clean:all": "npm run clean --workspaces --include-workspace-root",
     "cycles": "npm run cycles --workspaces",
-    "prettier": "npm run prettier --workspaces",
+    "prettier": "prettier . -w",
     "lint": "npm run lint --workspaces",
     "build:deps": "npm run build -w @busmap/components && npm run build -w @busmap/common",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test --reporter=list"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.1",
+    "@types/node": "^20.11.0",
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.4.1",
@@ -38,7 +40,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "madge": "^6.1.0",
     "postcss-styled-syntax": "^0.5.0",
-    "prettier": "^3.0.1",
+    "prettier": "^3.2.1",
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
     "tsx": "^3.14.0",
