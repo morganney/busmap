@@ -1,7 +1,17 @@
 name: E2E Tests
 
 on:
+<<<<<<< HEAD
   workflow_dispatch:
+=======
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+>>>>>>> 42ba9c7 (ci: rename playwright.)
 
 jobs:
   test:
@@ -17,14 +27,24 @@ jobs:
       - name: Install Dependencies
         run: npm ci
       - name: Install Playwright Browsers
+<<<<<<< HEAD
         run: npx playwright install chrome webkit
+=======
+        run: npx playwright install --with-deps
+>>>>>>> 42ba9c7 (ci: rename playwright.)
       - name: Run Tests
         run: npm test
         env:
           CI: true
+<<<<<<< HEAD
           SERVER_NAME: localhost
           HOST_NAME: localhost
           UPSTREAM_API_HOST: api
+=======
+          SERVER_NAME: busmap.ci
+          HOST_NAME: busmap.ci
+          UPSTREAM_API_HOST: ci
+>>>>>>> 42ba9c7 (ci: rename playwright.)
           SSL_CERT_PATH: /etc/ci/file.pem
           SSL_KEY_PATH: /etc/ci/file.key
           BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
