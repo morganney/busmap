@@ -25,7 +25,7 @@ services:
         max-size: 20m
     environment:
       NODE_ENV: production
-      DEBUG: ""
+      DEBUG: ''
   stage:
     restart: unless-stopped
     logging:

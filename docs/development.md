@@ -27,9 +27,9 @@ The container for the API service is started when running the `dev` service `doc
 
 The API server can be configured by defining variables in the root `.env` file, or directly on the CLI when running `docker compose up`. These environment variables are then interpolated within `packages/api/.env` and provided to the running container through the compose `env_file` service attribute. Renaming `.env.example` to `.env` is a good starting point.
 
-* `BM_COOKIE_SECRET`: The secret used by `express-session` when signing the cookie.
-* `BM_SESSION_STORE`: What store to use for persisting the `express-session` session. Either `memory` or `redis`.
-* `DEBUG`: Enable particular logs from [`debug`](https://www.npmjs.com/package/debug), either directly from BusMap source code, or a dependencies.
+- `BM_COOKIE_SECRET`: The secret used by `express-session` when signing the cookie.
+- `BM_SESSION_STORE`: What store to use for persisting the `express-session` session. Either `memory` or `redis`.
+- `DEBUG`: Enable particular logs from [`debug`](https://www.npmjs.com/package/debug), either directly from BusMap source code, or a dependencies.
 
 Here is an example of defining some on the CLI before starting the dev service:
 
@@ -57,11 +57,11 @@ You can visualize the built bundles by running `npm run visualizer -w ui`.
 
 A separate container can be started to run Storybook for `packages/components` at `https://busmap.localhost:9000`.
 
-* `docker compose up storybook`
+- `docker compose up storybook`
 
 It can also be run locally.
 
-* `npm run storybook -w @busmap/components`
+- `npm run storybook -w @busmap/components`
 
 ### Stage
 

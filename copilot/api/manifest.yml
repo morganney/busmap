@@ -24,7 +24,7 @@ cpu: 512
 memory: 1024
 count: 1
 exec: true
-command: ["node", "packages/api/dist/index.js"]
+command: ['node', 'packages/api/dist/index.js']
 
 network:
   connect: true

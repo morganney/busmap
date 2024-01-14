@@ -7,14 +7,14 @@ services:
       target: adminer
     container_name: adminer
     ports:
-      - "8080:8080"
+      - '8080:8080'
   api:
     build:
       target: builder
     image: busmap-api_dev
     container_name: api_dev
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./packages/api:/app/packages/api
       - ./packages/common/dist:/app/packages/common/dist
@@ -37,7 +37,7 @@ services:
       - ./packages/components/dist:/app/packages/components/dist
       - ./.env:/app/.env # used to inject VITE_ env vars
     ports:
-      - "5173:5173"
+      - '5173:5173'
     environment:
       API_HOST: ${API_HOST}
     command:
@@ -54,13 +54,13 @@ services:
     volumes:
       - ./packages/components:/app/packages/components
     ports:
-      - "9000:9000"
+      - '9000:9000'
     command:
       - npm
       - run
       - storybook
       - -w
-      - "@busmap/components"
+      - '@busmap/components'
   dev:
     depends_on:
       - ui
@@ -69,8 +69,8 @@ services:
       target: dev
     container_name: dev
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     environment:
       UPSTREAM_API_HOST: ${UPSTREAM_API_HOST}
 

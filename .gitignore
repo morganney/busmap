@@ -6,3 +6,7 @@ stats.html
 packages/web/certs/*.pem
 .env
 !packages/api/.env
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
