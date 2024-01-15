@@ -11,7 +11,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.2
       - name: Apt Pkgs
-      - uses: awalsh128/cache-apt-pkgs-action@latest
+        uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: libnss3-tools
           version: 1.3.1
@@ -24,7 +24,7 @@ jobs:
         run: |
           mkcert -install
           mkcert -key-file busmap.localhost-key.pem -cert-file busmap.localhost.pem busmap.localhost localhost
-          cp busmap.localhost.pem busmap.localhost localhost packages/web/certs
+          cp *.pem packages/web/certs
       - name: Setup Node
         uses: actions/setup-node@v3.6.0
         with:
@@ -42,6 +42,9 @@ jobs:
           UPSTREAM_API_HOST: api
           SSL_CERT_PATH: /etc/ci/file.pem
           SSL_KEY_PATH: /etc/ci/file.key
+          BM_SESSION_STORE: memory
+          BM_COOKIE_SECURE: false
+          BM_COOKIE_SAMESITE: lax
           BM_COOKIE_SECRET: ${{ secrets.BM_COOKIE_SECRET }}
           BM_POSTGRES_PASSWORD: ${{ secrets.BM_POSTGRES_PASSWORD }}
           BM_POSTGRES_USER: ${{ secrets.BM_POSTGRES_USER }}

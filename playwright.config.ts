@@ -55,9 +55,10 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'docker compose up dev',
+    command: 'docker compose up --attach-dependencies dev',
     url: 'http://localhost:3000/health',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000 * 5
+    timeout: 60_000 * 7,
+    stdout: 'pipe'
   }
 })
