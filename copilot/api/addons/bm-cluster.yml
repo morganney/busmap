@@ -4,72 +4,65 @@ Parameters:
     Description: Your application's name.
   Env:
     Type: String
-    Description: The name of the environment being deployed.
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: Your workload's name.
   # Customize your Aurora Serverless cluster by setting the default value of the following parameters.
   bmclusterDBName:
     Type: String
-    Description: The name of the initial database to be created in the Aurora Serverless v2 cluster.
+    Description: The name of the initial database to be created in the DB cluster.
     Default: busmap
     # Cannot have special characters
     # Naming constraints: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html#RDS_Limits.Constraints
-  VPCID:
-    Type: String
-    Description: The ID of the VPC in which to create the Aurora Serverless v2 cluster.
-    Default: ''
-  PrivateSubnets:
-    Type: String
-    Description: The IDs of the private subnets in which to create the Aurora Serverless v2 cluster.
-    Default: ''
-
+  bmclusterDBAutoPauseSeconds:
+    Type: Number
+    Description: The duration in seconds before the cluster pauses.
+    Default: 1000
 Mappings:
   bmclusterEnvScalingConfigurationMap:
     test:
-      'DBMinCapacity': 0.5 # AllowedValues: from 0.5 through 128
-      'DBMaxCapacity': 1 # AllowedValues: from 0.5 through 128
+      'DBMinCapacity': 2 # AllowedValues: [2, 4, 8, 16, 32, 64, 192, 384]
+      'DBMaxCapacity': 4 # AllowedValues: [2, 4, 8, 16, 32, 64, 192, 384]
 
     All:
-      'DBMinCapacity': 0.5 # AllowedValues: from 0.5 through 128
-      'DBMaxCapacity': 1 # AllowedValues: from 0.5 through 128
+      'DBMinCapacity': 2 # AllowedValues: [2, 4, 8, 16, 32, 64, 192, 384]
+      'DBMaxCapacity': 4 # AllowedValues: [2, 4, 8, 16, 32, 64, 192, 384]
 
 Resources:
   bmclusterDBSubnetGroup:
     Type: 'AWS::RDS::DBSubnetGroup'
     Properties:
-      DBSubnetGroupDescription: Group of private subnets for Aurora Serverless v2 cluster.
-      SubnetIds: !Split [',', !Ref PrivateSubnets]
-
-  bmclusterWorkloadSecurityGroup:
+      DBSubnetGroupDescription: Group of Copilot private subnets for Aurora cluster.
+      SubnetIds: !Split [',', { 'Fn::ImportValue': !Sub '${App}-${Env}-PrivateSubnets' }]
+  bmclusterSecurityGroup:
     Metadata:
-      'aws:copilot:description': 'A security group for one or more workloads to access the Aurora Serverless v2 cluster bmcluster'
+      'aws:copilot:description': 'A security group for your workload to access the DB cluster bmcluster'
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: 'The Security Group to access Aurora Serverless v2 cluster bmcluster.'
-      VpcId: !Ref VPCID
+      GroupDescription: !Sub 'The Security Group for ${Name} to access DB cluster bmcluster.'
+      VpcId:
+        Fn::ImportValue: !Sub '${App}-${Env}-VpcId'
       Tags:
         - Key: Name
-          Value: !Sub 'copilot-${App}-${Env}-Aurora'
-
+          Value: !Sub 'copilot-${App}-${Env}-${Name}-Aurora'
   bmclusterDBClusterSecurityGroup:
     Metadata:
-      'aws:copilot:description': 'A security group for your Aurora Serverless v2 cluster bmcluster'
+      'aws:copilot:description': 'A security group for your DB cluster bmcluster'
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: The Security Group for the Aurora Serverless v2 cluster.
-      VpcId: !Ref VPCID
+      GroupDescription: The Security Group for the database cluster.
+      SecurityGroupIngress:
+        - ToPort: 5432
+          FromPort: 5432
+          IpProtocol: tcp
+          Description: !Sub 'From the Aurora Security Group of the workload ${Name}.'
+          SourceSecurityGroupId: !Ref bmclusterSecurityGroup
+      VpcId:
+        Fn::ImportValue: !Sub '${App}-${Env}-VpcId'
       Tags:
         - Key: Name
-          Value: !Sub 'copilot-${App}-${Env}-Aurora'
-
-  bmclusterDBClusterSecurityGroupIngressFromWorkload:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      Description: Ingress from one or more workloads in the environment.
-      GroupId: !Ref bmclusterDBClusterSecurityGroup
-      IpProtocol: tcp
-      ToPort: 5432
-      FromPort: 5432
-      SourceSecurityGroupId: !Ref bmclusterWorkloadSecurityGroup
-
+          Value: !Sub 'copilot-${App}-${Env}-${Name}-Aurora'
   bmclusterAuroraSecret:
     Metadata:
       'aws:copilot:description': 'A Secrets Manager secret to store your DB credentials'
@@ -88,13 +81,12 @@ Resources:
     Type: 'AWS::RDS::DBClusterParameterGroup'
     Properties:
       Description: !Ref 'AWS::StackName'
-      Family: 'aurora-postgresql15'
+      Family: 'aurora-postgresql13'
       Parameters:
         client_encoding: 'UTF8'
-
   bmclusterDBCluster:
     Metadata:
-      'aws:copilot:description': 'The bmcluster Aurora Serverless v2 database cluster'
+      'aws:copilot:description': 'The bmcluster Aurora Serverless database cluster'
     Type: 'AWS::RDS::DBCluster'
     Properties:
       MasterUsername:
@@ -117,48 +109,30 @@ Resources:
         ]
       DatabaseName: !Ref bmclusterDBName
       Engine: 'aurora-postgresql'
-      EngineVersion: '15.5'
+      EngineVersion: '13.9' # LTS versions of PostgreSQL for Aurora Serverless v1 are v13.9 and v11.9
+      EngineMode: serverless
       DBClusterParameterGroupName: !Ref bmclusterDBClusterParameterGroup
       DBSubnetGroupName: !Ref bmclusterDBSubnetGroup
-      Port: 5432
       VpcSecurityGroupIds:
         - !Ref bmclusterDBClusterSecurityGroup
-      ServerlessV2ScalingConfiguration:
+      ScalingConfiguration:
+        AutoPause: true
         # Replace "All" below with "!Ref Env" to set different autoscaling limits per environment.
         MinCapacity:
           !FindInMap [bmclusterEnvScalingConfigurationMap, !Ref Env, DBMinCapacity]
         MaxCapacity:
           !FindInMap [bmclusterEnvScalingConfigurationMap, !Ref Env, DBMaxCapacity]
-
-  bmclusterDBWriterInstance:
-    Metadata:
-      'aws:copilot:description': 'The bmcluster Aurora Serverless v2 writer instance'
-    Type: 'AWS::RDS::DBInstance'
-    Properties:
-      DBClusterIdentifier: !Ref bmclusterDBCluster
-      DBInstanceClass: db.serverless
-      Engine: 'aurora-postgresql'
-      PromotionTier: 1
-      AvailabilityZone: !Select
-        - 0
-        - !GetAZs
-          Ref: AWS::Region
-
+        SecondsUntilAutoPause: !Ref bmclusterDBAutoPauseSeconds
   bmclusterSecretAuroraClusterAttachment:
     Type: AWS::SecretsManager::SecretTargetAttachment
     Properties:
       SecretId: !Ref bmclusterAuroraSecret
       TargetId: !Ref bmclusterDBCluster
       TargetType: AWS::RDS::DBCluster
-
 Outputs:
-  bmclusterSecret:
+  bmclusterSecret: # injected as BMCLUSTER_SECRET environment variable by Copilot.
     Description: "The JSON secret that holds the database username and password. Fields are 'host', 'port', 'dbname', 'username', 'password', 'dbClusterIdentifier' and 'engine'"
     Value: !Ref bmclusterAuroraSecret
-    Export:
-      Name: !Sub ${App}-${Env}-bmclusterAuroraSecret
   bmclusterSecurityGroup:
     Description: 'The security group to attach to the workload.'
-    Value: !Ref bmclusterWorkloadSecurityGroup
-    Export:
-      Name: !Sub ${App}-${Env}-bmclusterSecurityGroup
+    Value: !Ref bmclusterSecurityGroup
