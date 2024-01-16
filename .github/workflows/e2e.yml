@@ -15,7 +15,9 @@ jobs:
         uses: actions/checkout@v3.5.2
       - name: Install docker
         run: |
-          brew install docker
+          brew install docker docker-compose
+          mkdir -p ~/.docker/cli-plugins
+          ln -sfn $(brew --prefix)/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
           colima start --arch x86_64
       - name: Apt Pkgs
         if: runner.os == 'ubuntu'
