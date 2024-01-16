@@ -14,7 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.2
       - name: Install docker
-        uses: docker-practice/actions-setup-docker@master
+        run: |
+          brew install docker
+          colima start --arch x86_64
       - name: Apt Pkgs
         if: runner.os == 'ubuntu'
         uses: awalsh128/cache-apt-pkgs-action@latest
