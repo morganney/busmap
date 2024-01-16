@@ -33,13 +33,24 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
+      name: 'Google Chrome',
+      use: { ...devices['Desktop Chrome'], channel: 'chrome' }
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] }
+    },
+
+    /* Test against mobile viewports. */
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] }
+    },
+
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] }
     }
   ],
 
@@ -49,7 +60,6 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
     url: 'https://localhost/healthcheck',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000 * 3,
-    stdout: 'pipe'
+    timeout: 60_000 * 3
   }
 })
