@@ -1,9 +1,6 @@
 name: E2E Tests
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
 
 jobs:
@@ -13,30 +10,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.2
-      - name: Install docker
-        if: runner.os == 'macos'
-        run: |
-          brew install docker docker-compose
-          mkdir -p ~/.docker/cli-plugins
-          ln -sfn $(brew --prefix)/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
-          colima start --arch x86_64
       - name: Apt Pkgs
-        if: runner.os == 'ubuntu'
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: libnss3-tools
           version: 1.3.1
       - name: Install mkcert
-        if: runner.os == 'ubuntu'
         run: |
           curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
           chmod +x mkcert-v*-linux-amd64
           sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
-      - name: Install mkcert (macos)
-        if: runner.os == 'macos'
-        run: |
-          brew install mkcert
-          brew install nss
       - name: Install Certificates
         run: |
           mkcert -install
