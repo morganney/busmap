@@ -26,8 +26,8 @@ let password = env.POSTGRES_PASSWORD
 /**
  * Check for environment variable injected by AWS copilot.
  */
-if (env.DB_SECRET) {
-  const secrets = JSON.parse(env.DB_SECRET) as AuroraCluster
+if (env.BMCLUSTER_SECRET) {
+  const secrets = JSON.parse(env.BMCLUSTER_SECRET) as AuroraCluster
 
   host = secrets.host
   port = secrets.port
