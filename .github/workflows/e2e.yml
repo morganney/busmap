@@ -14,15 +14,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.2
       - name: Apt Pkgs
+        if: runner.os == 'ubuntu'
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: libnss3-tools
           version: 1.3.1
       - name: Install mkcert
+        if: runner.os == 'ubuntu'
         run: |
           curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
           chmod +x mkcert-v*-linux-amd64
           sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+      - name: Install mkcert (macos)
+        if: runner.os == 'macos'
+        run: |
+          brew install mkcert
+          brew install nss
       - name: Install Certificates
         run: |
           mkcert -install
