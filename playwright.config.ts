@@ -59,6 +59,7 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
     url: 'https://localhost/healthcheck',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000 * 3
+    timeout: 60_000 * 5,
+    stdout: 'pipe'
   }
 })
