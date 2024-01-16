@@ -1,9 +1,6 @@
 name: E2E Tests
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
 
 jobs:
