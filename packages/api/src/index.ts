@@ -47,8 +47,8 @@ if (env.BM_SESSION_STORE === 'redis') {
     url: env.BM_REDIS_HOST,
     socket: {
       reconnectStrategy(retries, cause) {
-        if (/ENOTFOUND/i.test(cause.message) && retries > 3) {
-          logger.warn('Redis host not found, done reconnecting.')
+        if (/ENOTFOUND|ECONNREFUSED/i.test(cause.message) && retries > 3) {
+          logger.warn('Redis host not found or accepting connections, done reconnecting.')
 
           return false
         }
