@@ -1,9 +1,6 @@
 name: E2E Tests
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
 
 jobs:
@@ -25,9 +22,6 @@ jobs:
           sudo cp mkcert-v*-linux-amd64 /usr/local/bin/mkcert
       - name: Install Certificates
         run: |
-          mkcert -install
-          mkcert -uninstall
-          rm -rf ~/.local/share/mkcert
           mkcert -install
           mkcert -key-file busmap.localhost-key.pem -cert-file busmap.localhost.pem busmap.localhost localhost
           cp *.pem packages/web/certs

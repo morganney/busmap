@@ -31,33 +31,47 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
-    },
+  projects: process.env.CI
+    ? [
+        /**
+         * Ubuntu and mkcert issues with Chrome / Firefox
+         * @see https://github.com/FiloSottile/mkcert/issues/447
+         *
+         * Other option is to use macos GitHub action runner and
+         * install docker, etc. Could also, use `ignoreHTTPSErrors`
+         * from playwright in the test specs to cover more browsers.
+         */
+        {
+          name: 'webkit',
+          use: { ...devices['Desktop Safari'] }
+        },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] }
-    },
+        /* Test against mobile viewports. */
+        {
+          name: 'Mobile Safari',
+          use: { ...devices['iPhone 12'] }
+        }
+      ]
+    : [
+        {
+          name: 'chromium',
+          use: { ...devices['Desktop Chrome'] }
+        },
+        {
+          name: 'webkit',
+          use: { ...devices['Desktop Safari'] }
+        },
 
-    /* Test against mobile viewports. */
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] }
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] }
-    },
-
-    /* Test against branded browsers. */
-    {
-      name: 'Google Chrome',
-      use: { ...devices['Desktop Chrome'], channel: 'chrome' }
-    }
-  ],
+        /* Test against mobile viewports. */
+        {
+          name: 'Mobile Chrome',
+          use: { ...devices['Pixel 5'] }
+        },
+        {
+          name: 'Mobile Safari',
+          use: { ...devices['iPhone 12'] }
+        }
+      ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
@@ -65,7 +79,6 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
     url: 'https://localhost/healthcheck',
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000 * 7,
-    stdout: 'pipe'
+    timeout: 60_000 * 7
   }
 })
