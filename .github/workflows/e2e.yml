@@ -23,7 +23,6 @@ jobs:
       - name: Install Certificates
         run: |
           mkcert -install
-          mkcert -install
           mkcert -key-file busmap.localhost-key.pem -cert-file busmap.localhost.pem busmap.localhost localhost
           cp *.pem packages/web/certs
       - name: Setup Node
