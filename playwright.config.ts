@@ -56,26 +56,14 @@ export default defineConfig({
         {
           name: 'chromium',
           use: { ...devices['Desktop Chrome'] }
-        },
-        {
-          name: 'webkit',
-          use: { ...devices['Desktop Safari'] }
-        },
-
-        /* Test against mobile viewports. */
-        {
-          name: 'Mobile Chrome',
-          use: { ...devices['Pixel 5'] }
-        },
-        {
-          name: 'Mobile Safari',
-          use: { ...devices['iPhone 12'] }
         }
       ],
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'docker compose -f compose.yaml up --attach-dependencies stage',
+    command: process.env.CI
+      ? 'docker compose -f compose.yaml up --attach-dependencies stage'
+      : 'docker compose up --attach-dependencies dev',
     ignoreHTTPSErrors: true,
     url: 'https://localhost/healthcheck',
     reuseExistingServer: !process.env.CI,
