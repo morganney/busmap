@@ -21,6 +21,10 @@ test('Nearby stops for Toronto Transit Commission.', async ({ page }) => {
     .click()
   await expect(page.getByRole('heading', { name: 'Next Departures' })).toBeVisible()
   await expect(page.getByText(/You are .+ miles away/)).toBeVisible()
+
+  // Close the flyout menu before clicking map marker (necessary for mobile viewports).
+  await page.getByRole('navigation').locator('ul > li:last-child button').click()
+
   await page.getByRole('button', { name: 'Marker' }).click()
   await expect(page.locator('#map').getByText('Davisville Station')).toBeVisible()
 })
