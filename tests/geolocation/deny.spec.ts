@@ -4,7 +4,7 @@ test.beforeEach(async ({ context }) => {
   await context.clearPermissions()
 })
 
-test('Deny geolocation use selector to find stop.', async ({ page, context }) => {
+test('Deny geolocation use selector to find stop.', async ({ page }) => {
   await page.goto('/')
   await expect(
     page.getByText('Location permission denied. Check your OS or browser settings.')
