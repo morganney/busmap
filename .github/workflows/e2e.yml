@@ -1,16 +1,22 @@
 name: E2E Tests
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       testPath:
         description: 'Files to test.'
-        required: true
         default: 'tests'
         type: string
 
 jobs:
   test:
+    name: E2E Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
@@ -40,7 +46,7 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run Tests
-        run: npm test -- ${{ inputs.testPath }}
+        run: npm test -- ${{ inputs.testPath || 'tests' }}
         env:
           CI: true
           SERVER_NAME: localhost
