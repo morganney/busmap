@@ -16,6 +16,7 @@ interface LayoutProps {
   children: ReactNode
 }
 
+const orientationMql = window.matchMedia('(orientation: landscape)')
 const Layout: FC<LayoutProps> = ({ children }) => {
   const location = useLocation()
   const { mode } = useTheme()
@@ -45,14 +46,14 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     if (map) {
       map.on('move', moveListener)
       map.on('moveend', moveEndListener)
-      screen.orientation.addEventListener('change', orientationListener)
+      orientationMql.addEventListener('change', orientationListener)
     }
 
     return () => {
       if (map) {
         map.off('move', moveListener)
         map.off('moveend', moveEndListener)
-        screen.orientation.removeEventListener('change', orientationListener)
+        orientationMql.removeEventListener('change', orientationListener)
       }
     }
   }, [map])
