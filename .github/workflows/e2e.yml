@@ -1,21 +1,30 @@
 name: E2E Tests
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
+      branchName:
+        description: 'Branch name.'
+        default: 'main'
+        type: string
       testPath:
         description: 'Files to test.'
-        required: true
         default: 'tests'
         type: string
 
 jobs:
   test:
+    name: E2E Tests
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ inputs.branchName || 'main' }}
       - name: Apt Pkgs
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
@@ -40,7 +49,7 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run Tests
-        run: npm test -- ${{ inputs.testPath }}
+        run: npm test -- ${{ inputs.testPath || 'tests' }}
         env:
           CI: true
           SERVER_NAME: localhost
