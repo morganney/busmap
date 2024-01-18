@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
+      branchName:
+        description: 'Branch name.'
+        default: 'main'
+        type: string
       testPath:
         description: 'Files to test.'
         default: 'tests'
@@ -21,7 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5.2
+        uses: actions/checkout@v4.1.1
+        with:
+          ref: ${{ inputs.branchName || 'main' }}
       - name: Apt Pkgs
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
