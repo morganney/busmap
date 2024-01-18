@@ -1,10 +1,13 @@
 name: E2E Tests
 
 on:
-  push:
-    branches:
-      - develop
   workflow_dispatch:
+    inputs:
+      testPath:
+        description: 'Files to test.'
+        required: true
+        default: 'tests'
+        type: string
 
 jobs:
   test:
@@ -37,7 +40,7 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run Tests
-        run: npm test -- tests/geolocation/omnitrans.spec.ts
+        run: npm test -- ${{ inputs.testPath }}
         env:
           CI: true
           SERVER_NAME: localhost
