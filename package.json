@@ -20,7 +20,8 @@
     "clean:all": "npm run clean --workspaces --include-workspace-root",
     "cycles": "npm run cycles --workspaces",
     "prettier": "prettier . -w",
-    "lint": "npm run lint --workspaces",
+    "lint": "npm run lint:tests && npm run lint --workspaces",
+    "lint:tests": "eslint . tests --ext .ts,.tsx --max-warnings 0",
     "build:deps": "npm run build -w @busmap/components && npm run build -w @busmap/common",
     "test": "playwright test --reporter=list"
   },

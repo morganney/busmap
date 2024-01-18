@@ -46,6 +46,30 @@ services:
       - dev
       - -w
       - ui
+  playwright:
+    depends_on:
+      - api
+    build:
+      context: .
+      target: playwright
+    container_name: playwright
+    volumes:
+      - ./packages/ui:/app/packages/ui
+      - ./packages/common/dist:/app/packages/common/dist
+      - ./packages/components/dist:/app/packages/components/dist
+      - ./tests:/app/tests
+      - ./playwright.config.ts:/app/playwright.config.ts
+      - ./.env:/app/.env # used to inject VITE_ env vars
+    ports:
+      - '5173:5173'
+    environment:
+      API_HOST: ${API_HOST}
+    command:
+      - npm
+      - run
+      - dev
+      - -w
+      - ui
   storybook:
     build:
       context: .

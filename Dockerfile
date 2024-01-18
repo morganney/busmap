@@ -53,5 +53,11 @@ COPY packages/web/templates/core/upstreams.conf.template /etc/nginx/templates/co
 COPY packages/web/nginx.dev.conf /etc/nginx/nginx.conf
 EXPOSE 80 443
 
+FROM builder AS playwright
+RUN apt-get update
+RUN apt-get install -y vim
+RUN npx playwright install
+RUN npx playwright install-deps
+
 FROM adminer:4.8.1 as adminer
 EXPOSE 8080
