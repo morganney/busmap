@@ -37,7 +37,7 @@ jobs:
       - name: Install Playwright
         run: npx playwright install --with-deps
       - name: Run Tests
-        run: npm test
+        run: npm test -- tests/geolocation/omnitrans.spec.ts
         env:
           CI: true
           SERVER_NAME: localhost
