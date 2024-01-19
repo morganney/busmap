@@ -33,7 +33,13 @@ const useInitMap = () => {
     mapRef.current = lMap(mapNode.current, {
       zoomControl: false
     })
-    mapRef.current.createPane(VEHICLE_PANE).style.zIndex = '650'
+    const pane = mapRef.current.createPane(VEHICLE_PANE)
+
+    // Ensure vehicle markers overlay stop markers, etc.
+    pane.style.zIndex = '650'
+    // Ensure e2e tests pass on Linux ('subtree intercepts pointer events' error message playwright)
+    pane.style.pointerEvents = 'none'
+
     popupRef.current.setContent(selectionRef.current)
     popupRef.current.on('remove', () => {
       dispatch({ type: 'selected', value: undefined })
