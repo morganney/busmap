@@ -108,7 +108,7 @@ const FavoriteStop: FC<FavoriteStopProps> = ({ selection, size = 'medium' }) => 
   if (isFavoritable) {
     return (
       <Tip title={favorite ? 'Remove favorite.' : 'Add favorite.'}>
-        <Button>
+        <Button data-testid="favoriteStop">
           <Star size={size} color={SY30T} outlined={!favorite} onClick={onClick} />
         </Button>
       </Tip>

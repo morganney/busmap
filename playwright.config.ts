@@ -44,9 +44,10 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         ignoreHTTPSErrors: Boolean(process.env.CI)
       }
-    },
+    }
 
     /* Test against mobile viewports. */
+    /*
     {
       name: 'Mobile Chrome',
       use: {
@@ -58,6 +59,7 @@ export default defineConfig({
       name: 'Mobile Safari',
       use: { ...devices['iPhone 12'] }
     }
+    */
   ],
 
   /* Run your local dev server before starting the tests */

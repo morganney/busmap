@@ -254,6 +254,7 @@ const Favorites = memo(function Favorites() {
                               <ReactColorA11y colorPaletteKey={mode}>
                                 <h5>
                                   <Link
+                                    data-testid="favoriteLink"
                                     to={`/stop/${fav.agency.id}/${fav.route.id}/${fav.direction.id}/${fav.stop.id}`}>
                                     {fav.stop.title}
                                   </Link>
