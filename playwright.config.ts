@@ -45,8 +45,6 @@ export default defineConfig({
         ignoreHTTPSErrors: Boolean(process.env.CI)
       }
     },
-
-    /* Test against mobile viewports. */
     {
       name: 'Mobile Chrome',
       use: {
