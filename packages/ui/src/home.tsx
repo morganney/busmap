@@ -132,7 +132,7 @@ const Home: FC = () => {
   }, [vehiclesDispatch, vehicles])
 
   return (
-    <Aside mode={mode} collapsed={collapsed}>
+    <Aside mode={mode} collapsed={collapsed} data-testid="flyout">
       {agenciesError instanceof Error ? (
         <ErrorAgencies error={agenciesError} />
       ) : agencies ? (
