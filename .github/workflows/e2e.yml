@@ -8,7 +8,7 @@ on:
     inputs:
       branchName:
         description: 'Branch name.'
-        default: 'main'
+        default: 'develop'
         type: string
       testPath:
         description: 'Files to test.'
