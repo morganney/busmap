@@ -8,7 +8,7 @@ test.use({
   permissions: ['geolocation']
 })
 
-test('test', async ({ page, context }) => {
+test('Nearby stops for OmniTrans.', async ({ page, context }) => {
   await context.grantPermissions(['geolocation'])
   // Navigate to the homepage and select the Nearby stops tab, check for OmniTrans
   await page.goto('/')
