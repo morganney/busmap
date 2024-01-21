@@ -39,13 +39,13 @@ server {
 
     location ~* \.(js|css)$ {
       include /etc/nginx/conf.d/core/headers.conf;
-      add_header Cache-Control "max-age=604800 must-revalidate";
+      add_header Cache-Control "max-age=604800, must-revalidate";
     }
 
     # Do not cache index.html for SPA
     location ~* ^.+.html$ {
       include /etc/nginx/conf.d/core/headers.conf;
-      add_header Cache-Control "no-store max-age=0";
+      add_header Cache-Control "no-store, max-age=0";
     }
 
     access_log /var/log/nginx/core.log core;
