@@ -104,13 +104,13 @@
   },
   "devDependencies": {
     "@knighted/duel": "^1.0.1",
-    "@storybook/addon-a11y": "^7.3.2",
-    "@storybook/addon-essentials": "^7.3.2",
-    "@storybook/builder-vite": "^7.3.2",
-    "@storybook/react": "^7.3.2",
-    "@storybook/react-vite": "^7.3.2",
+    "@storybook/addon-a11y": "8.0.0-alpha.12",
+    "@storybook/addon-essentials": "8.0.0-alpha.12",
+    "@storybook/builder-vite": "8.0.0-alpha.12",
+    "@storybook/react": "8.0.0-alpha.12",
+    "@storybook/react-vite": "8.0.0-alpha.12",
     "@types/lodash.debounce": "^4.0.7",
-    "storybook": "^7.3.2",
+    "storybook": "8.0.0-alpha.12",
     "styled-components": "^5.3.11"
   }
 }

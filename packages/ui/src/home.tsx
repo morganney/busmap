@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react'
+import { useReducer, useEffect, useCallback, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import { toast } from '@busmap/components/toast'
@@ -28,18 +28,25 @@ import type { Mode } from '@busmap/common/types/settings'
 
 interface HomeState {
   timestamp: number
+  touchStartX: number
 }
 interface PredTimestampChanged {
   type: 'timestamp'
   value: number
 }
-type HomeAction = PredTimestampChanged
+interface TouchStartChanged {
+  type: 'touchStart'
+  value: number
+}
+type HomeAction = PredTimestampChanged | TouchStartChanged
 
-const initialState: HomeState = { timestamp: 0 }
+const initialState: HomeState = { timestamp: 0, touchStartX: 0 }
 const reducer = (state: HomeState, action: HomeAction) => {
   switch (action.type) {
     case 'timestamp':
       return { ...state, timestamp: action.value }
+    case 'touchStart':
+      return { ...state, touchStartX: action.value }
     default:
       return state
   }
@@ -81,10 +88,11 @@ const Wrap = styled.div`
   }
 `
 const Home: FC = () => {
+  const ref = useRef<HTMLElement>(null)
   const { mode } = useTheme()
   const vehiclesDispatch = useVehiclesDispatch()
   const { dispatch: predsDispatch } = usePredictions()
-  const { agency, route, stop, collapsed, page } = useGlobals()
+  const { agency, route, stop, collapsed, page, dispatch: globalDispatch } = useGlobals()
   const [state, dispatch] = useReducer(reducer, initialState)
   const { data: agencies, error: agenciesError } = useQuery({
     queryKey: ['agencies'],
@@ -105,9 +113,55 @@ const Home: FC = () => {
     refetchOnWindowFocus: true,
     refetchInterval: 10_000
   })
+  const handleTouchStart = useCallback((evt: TouchEvent) => {
+    const touches = Array.from(evt.changedTouches)
+
+    if (Array.isArray(touches) && touches.length > 0) {
+      dispatch({ type: 'touchStart', value: touches[0].pageX })
+    }
+  }, [])
+  const handleTouchEnd = useCallback(
+    (evt: TouchEvent) => {
+      const touches = Array.from(evt.changedTouches)
+
+      if (Array.isArray(touches) && touches.length > 0) {
+        const touchEndX = touches[0].pageX
+
+        // Allow a small fudge factor
+        if (Math.abs(touchEndX - state.touchStartX) > 10) {
+          // Close
+          if (touchEndX < state.touchStartX) {
+            globalDispatch({ type: 'collapsed', value: true })
+          }
+
+          // Open
+          if (touchEndX > state.touchStartX) {
+            globalDispatch({ type: 'collapsed', value: false })
+          }
+        }
+      }
+    },
+    [state.touchStartX, globalDispatch]
+  )
   const messages = preds?.length ? preds[0].messages : []
   const tabsBackground = mode === 'dark' ? PB50T : undefined
   const tabsColor = mode === 'dark' ? PB90T : undefined
+
+  useEffect(() => {
+    const refCurrent = ref.current
+
+    if (refCurrent) {
+      refCurrent.addEventListener('touchstart', handleTouchStart)
+      refCurrent.addEventListener('touchend', handleTouchEnd)
+    }
+
+    return () => {
+      if (refCurrent) {
+        refCurrent.removeEventListener('touchstart', handleTouchStart)
+        refCurrent.removeEventListener('touchend', handleTouchEnd)
+      }
+    }
+  }, [handleTouchStart, handleTouchEnd])
 
   useEffect(() => {
     if (preds) {
@@ -132,7 +186,7 @@ const Home: FC = () => {
   }, [vehiclesDispatch, vehicles])
 
   return (
-    <Aside mode={mode} collapsed={collapsed} data-testid="flyout">
+    <Aside ref={ref} mode={mode} collapsed={collapsed} data-testid="flyout">
       {agenciesError instanceof Error ? (
         <ErrorAgencies error={agenciesError} />
       ) : agencies ? (
