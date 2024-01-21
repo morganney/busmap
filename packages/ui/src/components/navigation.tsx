@@ -286,6 +286,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Busmap">
           <button
             data-name="busmap"
+            aria-label="Busmap Logo"
             onClick={onClickNavItem}
             className={page === 'busmap' ? 'active' : undefined}>
             <span dangerouslySetInnerHTML={{ __html: logoSvg }} />
@@ -300,6 +301,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Nearby">
           <button
             data-name="locate"
+            aria-label="Nearby"
             onClick={onClickNavItem}
             className={page === 'locate' ? 'active' : undefined}>
             <MapPin />
@@ -309,6 +311,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Selector">
           <button
             data-name="select"
+            aria-label="Selector"
             onClick={onClickNavItem}
             className={page === 'select' ? 'active' : undefined}>
             <Bus />
@@ -318,6 +321,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Favorites">
           <button
             data-name="favorites"
+            aria-label="Favorites"
             onClick={onClickNavItem}
             className={page === 'favorites' ? 'active' : undefined}>
             <Star />
@@ -327,6 +331,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Settings">
           <button
             data-name="settings"
+            aria-label="Settings"
             onClick={onClickNavItem}
             className={page === 'settings' ? 'active' : undefined}>
             <Cog />
@@ -336,6 +341,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
         <li title="Profile">
           <button
             data-name="profile"
+            aria-label="Profile"
             onClick={onClickNavItem}
             className={page === 'profile' ? 'active' : undefined}>
             <UserIcon />
@@ -343,7 +349,10 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
           </button>
         </li>
         <li>
-          <button onClick={onClickToggle} className={!collapsed ? 'active' : undefined}>
+          <button
+            onClick={onClickToggle}
+            className={!collapsed ? 'active' : undefined}
+            aria-label="Toggle flyout menu">
             <Exchange />
             <span>{collapsed ? 'Open' : 'Close'}</span>
           </button>

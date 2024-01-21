@@ -151,8 +151,8 @@ const Home: FC = () => {
     const refCurrent = ref.current
 
     if (refCurrent) {
-      refCurrent.addEventListener('touchstart', handleTouchStart)
-      refCurrent.addEventListener('touchend', handleTouchEnd)
+      refCurrent.addEventListener('touchstart', handleTouchStart, { passive: true })
+      refCurrent.addEventListener('touchend', handleTouchEnd, { passive: true })
     }
 
     return () => {
