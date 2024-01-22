@@ -29,6 +29,11 @@ server {
       add_header Cache-Control "max-age=604800, must-revalidate";
     }
 
+    location ~* \.ttf$ {
+      include /etc/nginx/conf.d/core/headers.conf;
+      add_header Cache-Control "max-age=31536000, must-revalidate";
+    }
+
     # Do not cache index.html for SPA
     location ~* ^.+.html$ {
       include /etc/nginx/conf.d/core/headers.conf;
