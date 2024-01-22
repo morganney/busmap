@@ -128,7 +128,7 @@ const Home: FC = () => {
         const touchEndX = touches[0].pageX
 
         // Allow a small fudge factor
-        if (Math.abs(touchEndX - state.touchStartX) > 10) {
+        if (Math.abs(touchEndX - state.touchStartX) > 15) {
           // Close
           if (touchEndX < state.touchStartX) {
             globalDispatch({ type: 'collapsed', value: true })

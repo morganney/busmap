@@ -18,11 +18,23 @@ const SignIn: FC = () => {
   const { dispatch } = useGlobals()
   const [riderFavorites, setRiderFavorites] = useState<RiderFavoriteItem[]>()
   const [loading, setLoading] = useState(false)
+  const [gsiLoaded, setGsiLoaded] = useState(false)
   const storageDispatch = useStorageDispatch()
 
   useEffect(() => {
-    if (google && ref.current) {
-      google.accounts.id.initialize({
+    const script = document.createElement('script')
+
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.addEventListener('load', () => {
+      setGsiLoaded(true)
+    })
+    document.head.appendChild(script)
+  }, [])
+
+  useEffect(() => {
+    if (gsiLoaded && window.google && ref.current) {
+      window.google.accounts.id.initialize({
         ux_mode: 'popup',
         client_id: import.meta.env.VITE_GOOG_CLIENT_ID,
         nonce: btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(32)))),
@@ -53,14 +65,14 @@ const SignIn: FC = () => {
           }
         }
       })
-      google.accounts.id.renderButton(ref.current, {
+      window.google.accounts.id.renderButton(ref.current, {
         type: 'standard',
         click_listener: () => {
           // TODO: Record metrics.
         }
       })
     }
-  }, [dispatch, storageDispatch])
+  }, [gsiLoaded, dispatch, storageDispatch])
 
   useEffect(() => {
     if (riderFavorites?.length) {
@@ -73,7 +85,9 @@ const SignIn: FC = () => {
 
   return (
     <Page title="Sign In">
-      {loading ? (
+      {!gsiLoaded ? (
+        <Dots />
+      ) : loading ? (
         <p>
           Signing you in <Dots />
         </p>
