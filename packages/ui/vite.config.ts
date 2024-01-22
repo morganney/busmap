@@ -22,8 +22,7 @@ export default defineConfig(() => {
         output: {
           manualChunks: {
             leaflet: ['leaflet'],
-            'react-dom': ['react-dom'],
-            react: ['react']
+            react: ['react', 'react-dom']
           }
         }
       }
