@@ -41,9 +41,9 @@ jobs:
           mkcert -key-file busmap.localhost-key.pem -cert-file busmap.localhost.pem busmap.localhost localhost
           cp *.pem packages/web/certs
       - name: Setup Node
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v4.0.1
         with:
-          node-version: '20.10.0'
+          node-version: '20.11.0'
       - name: Install Dependencies
         run: npm ci
       - name: Install Playwright
@@ -68,8 +68,8 @@ jobs:
           SSO_GOOG_CLIENT_ID: ${{ secrets.SSO_GOOG_CLIENT_ID }}
           SSO_GOOG_CLIENT_SECRET: ${{ secrets.SSO_GOOG_CLIENT_SECRET }}
       - name: Upload Test Results
-        uses: actions/upload-artifact@v3
-        if: always()
+        uses: actions/upload-artifact@v4.3.0
+        if: failure()
         with:
           name: playwright-report
           path: test-results
