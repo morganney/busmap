@@ -41,7 +41,6 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
   position: relative;
   z-index: 9999;
   background: ${({ mode }) => (mode === 'light' ? PB90T : DARK_MODE_FIELD)};
-  border-right: 1px solid ${({ mode }) => (mode === 'light' ? PB80T : PB50T)};
 
   ul {
     margin: 0;

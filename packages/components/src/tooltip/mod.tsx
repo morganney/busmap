@@ -8,10 +8,14 @@ interface TooltipProps {
   className?: string
   children: ReactNode
   title: string
+  fontSize?: string
   placement?: 'top' | 'bottom' | 'right' | 'left'
   underline?: UnderlineStyle
 }
 
+const Tip = styled.span<{ $fontSize: string }>`
+  font-size: ${({ $fontSize }) => $fontSize};
+`
 const Wrap = styled.div<{ underline: UnderlineStyle }>`
   text-decoration: ${({ underline }) => (underline ? `underline ${underline}` : 'none')};
 `
@@ -20,10 +24,14 @@ const Tooltip: FC<TooltipProps> = ({
   children,
   underline = 'dotted',
   placement = 'top',
+  fontSize = '12px',
   title = ''
 }) => {
   return (
-    <MuiTooltip title={title} placement={placement} className={className}>
+    <MuiTooltip
+      title={<Tip $fontSize={fontSize}>{title}</Tip>}
+      placement={placement}
+      className={className}>
       <Wrap underline={underline}>{children}</Wrap>
     </MuiTooltip>
   )

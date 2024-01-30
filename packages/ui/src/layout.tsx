@@ -63,6 +63,14 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     document.body.classList.add(`busmap-${mode}`)
   }, [mode])
 
+  useLayoutEffect(() => {
+    if (map) {
+      map.on('load', () => {
+        document.body.classList.add('busmap-loaded')
+      })
+    }
+  }, [map])
+
   useRouteLayer({ routeLayer, map, popup })
   useVehiclesLayer({ vehiclesLayer })
   useZoomSelectedStop({ map })

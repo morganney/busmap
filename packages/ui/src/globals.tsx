@@ -9,8 +9,8 @@ const urlParts = window.location.pathname.split('/').filter(Boolean)
 const isHomeStop = urlParts[0] === 'stop' && urlParts.length <= 5
 const defaultGlobals: BusmapGlobals = {
   dispatch: () => {},
-  page: isHomeStop ? 'select' : 'locate',
-  collapsed: false,
+  page: isHomeStop ? 'select' : 'busmap',
+  collapsed: true,
   center: { lat: 37.7775, lon: -122.416389 },
   bounds: {
     sw: {

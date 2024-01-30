@@ -14,11 +14,12 @@ import { useGlobals } from '@core/globals.js'
 import { useMap } from '@core/contexts/map.js'
 import { useStorage, useStorageDispatch } from '@core/contexts/storage.js'
 import { useHomeStop } from '@core/hooks/useHomeStop.js'
-import { useTheme } from '@core/modules/settings/contexts/theme.js'
 import { Page } from '@core/components/page.js'
+import { PageTabButton } from '@core/components/pageTabButton.js'
 import { Details } from '@core/components/details.js'
 import { Minutes } from '@core/components/predictionFormats/minutes.js'
 import { Time } from '@core/components/predictionFormats/time.js'
+import { useTheme } from '@module/settings/contexts/theme.js'
 import { usePredictionsSettings } from '@module/settings/contexts/predictions.js'
 import {
   AgenciesWrap,
@@ -27,7 +28,7 @@ import {
   RouteSection,
   StopArticle
 } from '@module/components.js'
-import { groupBy, isAPage } from '@module/util.js'
+import { groupBy } from '@module/util.js'
 
 import { getPredsKey } from '../util.js'
 import { MAX_FAVORITES, MAX_USER_FAVORITES } from '../common.js'
@@ -66,7 +67,7 @@ const Section = styled(Page)<{ mode: Mode }>`
   }
 `
 const Favorites = memo(function Favorites() {
-  const { user, dispatch } = useGlobals()
+  const { user } = useGlobals()
   const map = useMap()
   const workerRef = useRef<Worker>()
   const homeStop = useHomeStop()
@@ -119,16 +120,6 @@ const Favorites = memo(function Favorites() {
     },
     [storageDispatch, user]
   )
-  const onClickTab = useCallback(
-    (evt: MouseEvent<HTMLButtonElement>) => {
-      const tab = evt.currentTarget.dataset.tab
-
-      if (isAPage(tab)) {
-        dispatch({ type: 'page', value: tab })
-      }
-    },
-    [dispatch]
-  )
   const maximum = user ? MAX_USER_FAVORITES : MAX_FAVORITES
   const PredFormat = format === 'minutes' ? Minutes : Time
 
@@ -174,33 +165,19 @@ const Favorites = memo(function Favorites() {
             <p>
               {user.givenName}, you can select up to {MAX_USER_FAVORITES} favorite stops
               across any number of transit agencies from the{' '}
-              <button onClick={onClickTab} data-tab="select" className="link">
-                Selector
-              </button>{' '}
-              or{' '}
-              <button onClick={onClickTab} data-tab="locate" className="link">
-                Nearby
-              </button>{' '}
-              tabs.
+              <PageTabButton page="select">Selector</PageTabButton> or{' '}
+              <PageTabButton page="locate">Nearby</PageTabButton> tabs.
             </p>
           ) : (
             <>
               <p>
                 You can select up to {MAX_FAVORITES} favorite stops from the{' '}
-                <button onClick={onClickTab} data-tab="select" className="link">
-                  Selector
-                </button>{' '}
-                or{' '}
-                <button onClick={onClickTab} data-tab="locate" className="link">
-                  Nearby
-                </button>{' '}
-                tabs. They will be stored by this device.
+                <PageTabButton page="select">Selector</PageTabButton> or{' '}
+                <PageTabButton page="locate">Nearby</PageTabButton> tabs.
               </p>
               <p>
-                <button onClick={onClickTab} data-tab="signin" className="link">
-                  Sign in with Google
-                </button>{' '}
-                to save more favorite stops.
+                <PageTabButton page="signin">Sign in with Google</PageTabButton> to save
+                more favorite stops.
               </p>
             </>
           )}

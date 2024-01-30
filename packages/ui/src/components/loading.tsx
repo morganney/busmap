@@ -19,7 +19,7 @@ const Text = styled.p`
   align-items: center;
   justify-content: center;
   font-family: Roboto, Arial, sans-serif;
-  font-size: 1rem;
+  font-size: 1.8rem;
 `
 const Loading: FC<LoadingProps> = ({ text, useIcon = true }) => {
   return (
