@@ -25,7 +25,8 @@ export default {
   args: {
     title: 'Story title',
     placement: 'top',
-    underline: 'dashed'
+    underline: 'dashed',
+    fontSize: '12px'
   },
   argTypes: {
     placement: {

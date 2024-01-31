@@ -61,7 +61,8 @@ export default {
   args: {
     children: 'An alert message',
     type: 'info',
-    variant: 'standard'
+    variant: 'standard',
+    fontSize: '0.875rem'
   },
   argTypes: {
     type: {

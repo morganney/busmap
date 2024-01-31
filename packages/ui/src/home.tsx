@@ -2,7 +2,7 @@ import { useReducer, useEffect, useCallback, useRef } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Tabs, TabList, Tab, TabPanel } from '@busmap/components/tabs'
 import { toast } from '@busmap/components/toast'
-import { PB50T, PB90T, PB80T, PB10T } from '@busmap/components/colors'
+import { PB50T, PB90T, PB10T } from '@busmap/components/colors'
 import styled from 'styled-components'
 
 import { useGlobals } from './globals.js'
@@ -19,9 +19,11 @@ import { BusSelector } from './components/busSelector.js'
 import { Loading } from './components/loading.js'
 import { Predictions } from './components/predictions.js'
 import { ErrorAgencies } from './components/error/agencies.js'
+import { EmptyMap } from './components/emptyMap.js'
 import { getAll as getAllAgencies } from './api/rb/agency.js'
 import { getAll as getAllVehicles } from './api/rb/vehicles.js'
 import { getForStop } from './api/rb/predictions.js'
+import { useHomeStop } from './hooks/useHomeStop.js'
 
 import type { FC } from 'react'
 import type { Mode } from '@busmap/common/types/settings'
@@ -60,13 +62,12 @@ const Aside = styled.aside<{ mode: Mode; collapsed: boolean }>`
   width: calc(100% - 49px);
   max-width: 385px;
   background: ${({ mode }) => (mode === 'light' ? '#ffffffcc' : `${PB10T}cc`)};
-  border-right: 1px solid ${({ mode }) => (mode === 'light' ? PB80T : PB50T)};
   transform: ${({ collapsed }) => (!collapsed ? 'translateX(0)' : 'translateX(-100%)')};
   transition: transform 0.25s ease;
 
   @media (width >= 431px) and (height >= 536px) {
-    left: 79px;
-    width: calc(33% + 79px);
+    left: 78px;
+    width: calc(33% + 78px);
     min-width: 325px;
   }
 `
@@ -89,6 +90,7 @@ const Wrap = styled.div`
 `
 const Home: FC = () => {
   const ref = useRef<HTMLElement>(null)
+  const homeStop = useHomeStop()
   const { mode } = useTheme()
   const vehiclesDispatch = useVehiclesDispatch()
   const { dispatch: predsDispatch } = usePredictions()
@@ -186,65 +188,68 @@ const Home: FC = () => {
   }, [vehiclesDispatch, vehicles])
 
   return (
-    <Aside ref={ref} mode={mode} collapsed={collapsed} data-testid="flyout">
-      {agenciesError instanceof Error ? (
-        <ErrorAgencies error={agenciesError} />
-      ) : agencies ? (
-        <Wrap>
-          <Tabs
-            label="Navigation Tabs"
-            initialTab={page}
-            position="end"
-            fontSize="14px"
-            gap="16px"
-            borderRadius="5px 5px 0 0"
-            color={tabsColor}
-            background={tabsBackground}>
-            <TabList>
-              <Tab name="signin">Sign In</Tab>
-              <Tab name="locate">📍</Tab>
-              <Tab name="select">🚌</Tab>
-              <Tab name="favorites">⭐</Tab>
-              <Tab name="settings">⚙️</Tab>
-              <Tab name="profile">👤</Tab>
-              <Tab name="busmap">BM</Tab>
-            </TabList>
-            <TabPanel name="busmap">
-              <BusmapPage />
-            </TabPanel>
-            <TabPanel name="signin">
-              <SignIn />
-            </TabPanel>
-            <TabPanel name="locate">
-              <Location active={page === 'locate'} />
-            </TabPanel>
-            <TabPanel name="select">
-              <BusSelector agencies={agencies} />
-            </TabPanel>
-            <TabPanel name="favorites">
-              <Favorites />
-            </TabPanel>
-            <TabPanel name="settings">
-              <Settings />
-            </TabPanel>
-            <TabPanel name="profile">
-              <Profile />
-            </TabPanel>
-          </Tabs>
-          <Predictions
-            isFetching={isPredsFetching}
-            stop={stop}
-            route={route}
-            preds={preds}
-            locateActive={page === 'locate'}
-            messages={messages}
-            timestamp={state.timestamp}
-          />
-        </Wrap>
-      ) : (
-        <Loading text="Loading agencies" />
-      )}
-    </Aside>
+    <>
+      <Aside ref={ref} mode={mode} collapsed={collapsed} data-testid="flyout">
+        {agenciesError instanceof Error ? (
+          <ErrorAgencies error={agenciesError} />
+        ) : agencies ? (
+          <Wrap>
+            <Tabs
+              label="Navigation Tabs"
+              initialTab={page}
+              position="end"
+              fontSize="14px"
+              gap="16px"
+              borderRadius="5px 5px 0 0"
+              color={tabsColor}
+              background={tabsBackground}>
+              <TabList>
+                <Tab name="signin">Sign In</Tab>
+                <Tab name="locate">📍</Tab>
+                <Tab name="select">🚌</Tab>
+                <Tab name="favorites">⭐</Tab>
+                <Tab name="settings">⚙️</Tab>
+                <Tab name="profile">👤</Tab>
+                <Tab name="busmap">BM</Tab>
+              </TabList>
+              <TabPanel name="busmap">
+                <BusmapPage />
+              </TabPanel>
+              <TabPanel name="signin">
+                <SignIn />
+              </TabPanel>
+              <TabPanel name="locate">
+                <Location active={page === 'locate'} />
+              </TabPanel>
+              <TabPanel name="select">
+                <BusSelector agencies={agencies} />
+              </TabPanel>
+              <TabPanel name="favorites">
+                <Favorites />
+              </TabPanel>
+              <TabPanel name="settings">
+                <Settings />
+              </TabPanel>
+              <TabPanel name="profile">
+                <Profile />
+              </TabPanel>
+            </Tabs>
+            <Predictions
+              isFetching={isPredsFetching}
+              stop={stop}
+              route={route}
+              preds={preds}
+              locateActive={page === 'locate'}
+              messages={messages}
+              timestamp={state.timestamp}
+            />
+          </Wrap>
+        ) : (
+          <Loading text="Loading agencies" />
+        )}
+      </Aside>
+      {!homeStop && <EmptyMap />}
+    </>
   )
 }
 

@@ -10,21 +10,37 @@ interface AlertProps {
   children: ReactNode
   icon?: ReactNode
   fullWidth?: boolean
+  fontSize?: string
   onClose?: (evt: SyntheticEvent | Event | CustomEvent) => void
 }
 type AlertRef = HTMLDivElement
 
-const AlertBase = styled(MuiAlert)<{ $fullWidth: boolean }>`
+const AlertBase = styled(MuiAlert)<{ $fullWidth: boolean; $fontSize: string }>`
   &.MuiAlert-root {
     width: ${({ $fullWidth }) => ($fullWidth ? '100%' : 'auto')};
 
     .MuiAlert-message {
       width: 100%;
+      font-size: ${({ $fontSize }) => $fontSize};
+    }
+
+    .MuiAlert-action {
+      .MuiSvgIcon-root {
+        font-size: 20px;
+      }
     }
   }
 `
 const Alert: FC<AlertProps> = forwardRef<AlertRef, AlertProps>(function Alert(
-  { children, icon, onClose, type = 'info', variant = 'standard', fullWidth = false },
+  {
+    children,
+    icon,
+    onClose,
+    type = 'info',
+    variant = 'standard',
+    fullWidth = false,
+    fontSize = '14px'
+  },
   ref
 ) {
   return (
@@ -33,6 +49,7 @@ const Alert: FC<AlertProps> = forwardRef<AlertRef, AlertProps>(function Alert(
       severity={type}
       variant={variant}
       icon={icon}
+      $fontSize={fontSize}
       $fullWidth={fullWidth}
       onClose={onClose}>
       {children}

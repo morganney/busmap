@@ -20,6 +20,7 @@ const SignOutBtn = styled.button<{ $mode: Mode }>`
   cursor: pointer;
   background: none;
   font-weight: bold;
+  font-size: 16px;
   border: none;
   margin: 0 0 0 auto;
   padding: 0;

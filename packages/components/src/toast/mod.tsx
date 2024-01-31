@@ -34,7 +34,11 @@ const EVENT_NAME = 'busmap-toaster'
 const toast = (props: ToasterProps) => {
   window.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: props }))
 }
-const Toaster: FC<{ anchor?: Positions; kind?: Variant }> = ({ anchor, kind }) => {
+const Toaster: FC<{ anchor?: Positions; kind?: Variant; fontSize?: string }> = ({
+  anchor,
+  kind,
+  fontSize = '14px'
+}) => {
   const [{ open, type, variant, message, position, timeout }, setState] =
     useState(defaultState)
   const onClose = useCallback(
@@ -72,6 +76,7 @@ const Toaster: FC<{ anchor?: Positions; kind?: Variant }> = ({ anchor, kind }) =
     <Snackbar open={open} autoHideDuration={timeout} anchorOrigin={pos} onClose={onClose}>
       <Alert
         type={type ?? 'info'}
+        fontSize={fontSize}
         variant={variant ?? kind ?? 'standard'}
         onClose={onClose}>
         {message ?? ''}

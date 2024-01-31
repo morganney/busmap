@@ -40,6 +40,7 @@ const Definition = styled.dl`
   gap: 8px;
   margin: 0;
   padding: 0;
+  font-size: 1.3rem;
 
   dt,
   dd {

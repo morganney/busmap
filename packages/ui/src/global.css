@@ -74,6 +74,7 @@ html {
   height: fill-available;
   display: grid;
   box-sizing: border-box;
+  font-size: 62.5%;
 }
 body {
   color: var(--color-light);
@@ -82,14 +83,15 @@ body {
   font-family: Roboto, Arial, sans-serif;
   font-weight: 400;
   font-style: normal;
+  font-size: 1.6rem;
 }
 body.busmap-light {
   color: var(--color-light);
-  background: #e5e5e5;
+  background: #eee;
 }
 body.busmap-dark {
   color: var(--color-dark);
-  background: #3b3b3b;
+  background: #333;
 }
 body.busmap-dark .leaflet-layer,
 body.busmap-dark .leaflet-control-zoom-in,
@@ -115,6 +117,13 @@ main {
 }
 #map {
   width: 100%;
+  visibility: hidden;
+}
+body.busmap-loaded #map {
+  visibility: visible;
+}
+body.busmap-loaded #busmap-empty-map {
+  display: none;
 }
 body.busmap-error #map {
   display: none;
@@ -170,6 +179,9 @@ body.busmap-dark .busmap-user-circle {
 .busmap-vehicle-popup dd {
   margin: 0;
 }
+.leaflet-popup {
+  font-size: 1.2rem;
+}
 /* increased specificity necessary due to cascade from dynamic import of leaflets css file. */
 .leaflet-popup.busmap-vehicle-popup.selected {
   transition: transform 3.75s ease;
@@ -180,6 +192,7 @@ body.busmap-dark .busmap-user-circle {
   white-space: nowrap;
   border: 1px solid black;
   transition: transform 3.75s ease;
+  font-size: 1.2rem;
 }
 body.busmap-mapmove .busmap-vehicle {
   transition: none;

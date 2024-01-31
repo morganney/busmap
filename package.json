@@ -23,7 +23,8 @@
     "lint": "npm run lint:tests && npm run lint --workspaces",
     "lint:tests": "eslint . tests --ext .ts,.tsx --max-warnings 0",
     "build:deps": "npm run build -w @busmap/components && npm run build -w @busmap/common",
-    "test": "playwright test --reporter=list"
+    "test": "playwright test --reporter=list",
+    "test:local": "playwright test --project=chromium"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.1",
