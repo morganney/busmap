@@ -29,6 +29,7 @@ const Tooltip: FC<TooltipProps> = ({
 }) => {
   return (
     <MuiTooltip
+      describeChild
       title={<Tip $fontSize={fontSize}>{title}</Tip>}
       placement={placement}
       className={className}>

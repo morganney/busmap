@@ -5,11 +5,9 @@ import type { BusmapGlobals, BusmapAction } from './types.js'
 
 type BusmapState = Omit<BusmapGlobals, 'dispatch'>
 
-const urlParts = window.location.pathname.split('/').filter(Boolean)
-const isHomeStop = urlParts[0] === 'stop' && urlParts.length <= 5
 const defaultGlobals: BusmapGlobals = {
   dispatch: () => {},
-  page: isHomeStop ? 'select' : 'busmap',
+  page: 'select',
   collapsed: true,
   center: { lat: 37.7775, lon: -122.416389 },
   bounds: {

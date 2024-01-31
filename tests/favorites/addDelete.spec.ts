@@ -14,7 +14,7 @@ test('Add and then delete a favorite stop.', async ({ page, context }) => {
   await expect(page.getByRole('heading', { name: 'Bus Selector' })).toBeVisible()
 
   // Select first agency, click first stop
-  await page.getByText('Agency').click()
+  await page.getByText(/^Agency$/).click()
   await page.getByRole('option').first().click()
   await page.getByText('Stop', { exact: true }).click()
 
@@ -42,7 +42,7 @@ test('Add and then delete a favorite stop.', async ({ page, context }) => {
   expect(favorites[0].stop.title).toEqual(stopOptionText)
 
   // Delete the favorite and restore the empty state
-  await page.getByLabel('Delete').getByRole('button').click()
+  await page.locator('footer').getByRole('button').first().click()
   await expect(page.getByText('You can select up to 3')).toBeVisible()
   storage = await context.storageState()
   favoritesEntry = storage.origins[0].localStorage.find(

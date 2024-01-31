@@ -26,17 +26,19 @@ import type { Mode } from '@busmap/common/types/settings'
 const Article = styled.article<{ $mode: Mode }>`
   overflow-y: auto;
   max-height: 100%;
-  width: 100%;
+  height: 100%;
+  width: calc(100% - 78px);
   position: fixed;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  align-self: center;
   align-items: center;
-  gap: 24px;
+  justify-content: center;
+  gap: 16px;
   padding: 16px 8px;
+  margin-left: 78px;
 
-  h5 {
+  h2 {
     font-size: 18px;
     font-weight: normal;
     margin: 0;
@@ -91,6 +93,7 @@ const Article = styled.article<{ $mode: Mode }>`
 
   @media (width <= 431px) {
     margin-left: 48px;
+    width: calc(100% - 48px);
 
     ul.busmap-start {
       flex-direction: column;
@@ -138,10 +141,10 @@ const EmptyMap: FC = () => {
 
   return (
     <Article id="busmap-empty-map" $mode={mode}>
-      <h5>
+      <h2>
         <span>Busmap</span>
         <span dangerouslySetInnerHTML={{ __html: logoSvg }} />
-      </h5>
+      </h2>
       <p>Choose one to get started.</p>
       <ul className="busmap-start">
         <li>

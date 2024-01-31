@@ -38,7 +38,9 @@ interface NavigationProps {
 }
 
 const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
-  position: relative;
+  position: fixed;
+  left: 0;
+  height: 100%;
   z-index: 9999;
   background: ${({ mode }) => (mode === 'light' ? PB90T : DARK_MODE_FIELD)};
 
@@ -287,7 +289,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
             data-name="busmap"
             aria-label="Busmap Logo"
             onClick={onClickNavItem}
-            className={page === 'busmap' ? 'active' : undefined}>
+            className={page === 'busmap' && !collapsed ? 'active' : undefined}>
             <span dangerouslySetInnerHTML={{ __html: logoSvg }} />
           </button>
         </li>
@@ -302,7 +304,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
             data-name="locate"
             aria-label="Nearby"
             onClick={onClickNavItem}
-            className={page === 'locate' ? 'active' : undefined}>
+            className={page === 'locate' && !collapsed ? 'active' : undefined}>
             <MapPin />
             <span>Nearby</span>
           </button>
@@ -312,7 +314,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
             data-name="select"
             aria-label="Selector"
             onClick={onClickNavItem}
-            className={page === 'select' ? 'active' : undefined}>
+            className={page === 'select' && !collapsed ? 'active' : undefined}>
             <Bus />
             <span>Selector</span>
           </button>
@@ -322,7 +324,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
             data-name="favorites"
             aria-label="Favorites"
             onClick={onClickNavItem}
-            className={page === 'favorites' ? 'active' : undefined}>
+            className={page === 'favorites' && !collapsed ? 'active' : undefined}>
             <Star />
             <span>Favorites</span>
           </button>
@@ -332,7 +334,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
             data-name="settings"
             aria-label="Settings"
             onClick={onClickNavItem}
-            className={page === 'settings' ? 'active' : undefined}>
+            className={page === 'settings' && !collapsed ? 'active' : undefined}>
             <Cog />
             <span>Settings</span>
           </button>
@@ -342,7 +344,7 @@ const Navigation: FC<NavigationProps> = ({ status }) => {
             data-name="profile"
             aria-label="Profile"
             onClick={onClickNavItem}
-            className={page === 'profile' ? 'active' : undefined}>
+            className={page === 'profile' && !collapsed ? 'active' : undefined}>
             <UserIcon />
             <span>Profile</span>
           </button>
