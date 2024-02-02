@@ -69,6 +69,7 @@ const Settings: FC = () => {
       const payload: RiderSettings = {
         themeMode: settings.theme.mode,
         predsFormat: settings.predictions.format,
+        predsPersistentOverlay: settings.predictions.persistentOverlay,
         vehicleVisible: settings.vehicle.visible,
         vehicleSpeedUnit: settings.vehicle.speedUnit,
         vehicleColorPredicted: settings.vehicle.markPredictedVehicles

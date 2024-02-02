@@ -42,8 +42,12 @@ const Layout: FC<LayoutProps> = ({ children }) => {
         }
       }, 100)
     }
+    const loadedListener = () => {
+      document.body.classList.add('busmap-loaded')
+    }
 
     if (map) {
+      map.on('load', loadedListener)
       map.on('move', moveListener)
       map.on('moveend', moveEndListener)
       orientationMql.addEventListener('change', orientationListener)
@@ -51,6 +55,7 @@ const Layout: FC<LayoutProps> = ({ children }) => {
 
     return () => {
       if (map) {
+        map.off('load', loadedListener)
         map.off('move', moveListener)
         map.off('moveend', moveEndListener)
         orientationMql.removeEventListener('change', orientationListener)
@@ -62,14 +67,6 @@ const Layout: FC<LayoutProps> = ({ children }) => {
     document.body.classList.remove('busmap-light', 'busmap-dark')
     document.body.classList.add(`busmap-${mode}`)
   }, [mode])
-
-  useLayoutEffect(() => {
-    if (map) {
-      map.on('load', () => {
-        document.body.classList.add('busmap-loaded')
-      })
-    }
-  }, [map])
 
   useRouteLayer({ routeLayer, map, popup })
   useVehiclesLayer({ vehiclesLayer })

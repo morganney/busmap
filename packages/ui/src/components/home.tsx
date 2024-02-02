@@ -5,25 +5,27 @@ import { toast } from '@busmap/components/toast'
 import { PB50T, PB90T, PB10T } from '@busmap/components/colors'
 import styled from 'styled-components'
 
-import { useGlobals } from './globals.js'
-import { usePredictions } from './contexts/predictions.js'
-import { useVehiclesDispatch } from './contexts/vehicles.js'
-import { useTheme } from './modules/settings/contexts/theme.js'
-import { Location } from './modules/location/components/location.js'
-import { Settings } from './modules/settings/components/settings.js'
-import { Favorites } from './modules/favorites/components/favorites.js'
-import { SignIn } from './components/signIn.js'
-import { Profile } from './components/profile.js'
-import { BusmapPage } from './components/busmap.js'
-import { BusSelector } from './components/busSelector.js'
-import { Loading } from './components/loading.js'
-import { Predictions } from './components/predictions.js'
-import { ErrorAgencies } from './components/error/agencies.js'
-import { EmptyMap } from './components/emptyMap.js'
-import { getAll as getAllAgencies } from './api/rb/agency.js'
-import { getAll as getAllVehicles } from './api/rb/vehicles.js'
-import { getForStop } from './api/rb/predictions.js'
-import { useHomeStop } from './hooks/useHomeStop.js'
+import { SignIn } from './signIn.js'
+import { Profile } from './profile.js'
+import { BusmapPage } from './busmap.js'
+import { BusSelector } from './busSelector.js'
+import { Loading } from './loading.js'
+import { Predictions } from './predictions.js'
+import { PredictionsOverlay } from './predictionsOverlay.js'
+import { ErrorAgencies } from './error/agencies.js'
+import { EmptyMap } from './emptyMap.js'
+
+import { useGlobals } from '../globals.js'
+import { usePredictions } from '../contexts/predictions.js'
+import { useVehiclesDispatch } from '../contexts/vehicles.js'
+import { useTheme } from '../modules/settings/contexts/theme.js'
+import { Location } from '../modules/location/components/location.js'
+import { Settings } from '../modules/settings/components/settings.js'
+import { Favorites } from '../modules/favorites/components/favorites.js'
+import { getAll as getAllAgencies } from '../api/rb/agency.js'
+import { getAll as getAllVehicles } from '../api/rb/vehicles.js'
+import { getForStop } from '../api/rb/predictions.js'
+import { useHomeStop } from '../hooks/useHomeStop.js'
 
 import type { FC } from 'react'
 import type { Mode } from '@busmap/common/types/settings'
@@ -56,13 +58,14 @@ const reducer = (state: HomeState, action: HomeAction) => {
 const Aside = styled.aside<{ mode: Mode; collapsed: boolean }>`
   position: fixed;
   top: 0;
-  left: 49px;
-  z-index: 999;
+  left: 48px;
+  z-index: 9999;
   height: 100%;
-  width: calc(100% - 49px);
+  width: calc(100% - 48px);
   max-width: 385px;
   background: ${({ mode }) => (mode === 'light' ? '#ffffffcc' : `${PB10T}cc`)};
-  transform: ${({ collapsed }) => (!collapsed ? 'translateX(0)' : 'translateX(-100%)')};
+  transform: ${({ collapsed }) =>
+    !collapsed ? 'translateX(0)' : 'translateX(calc(-100% - 48px))'};
   transition: transform 0.25s ease;
 
   @media (width >= 431px) and (height >= 536px) {
@@ -248,6 +251,7 @@ const Home: FC = () => {
           <Loading text="Loading agencies" />
         )}
       </Aside>
+      <PredictionsOverlay preds={preds} stop={stop} />
       {!homeStop && <EmptyMap />}
     </>
   )

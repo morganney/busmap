@@ -8,6 +8,7 @@ import type { PredictionFormat } from '@busmap/common/types/settings'
 
 interface PredictionsSettingsState {
   format: PredictionFormat
+  persistentOverlay: boolean
   dispatch: Dispatch<PredictionsSettingsAction>
 }
 interface FormatChanged {
@@ -18,7 +19,8 @@ type PredictionsSettingsAction = FormatChanged
 
 const defaultState: PredictionsSettingsState = {
   dispatch: () => {},
-  format: 'minutes'
+  format: 'minutes',
+  persistentOverlay: false
 }
 const PredictionsSettings = createContext<PredictionsSettingsState>(defaultState)
 const reducer = (
@@ -33,11 +35,15 @@ const reducer = (
   }
 }
 const PredictionsSettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { predsFormat } = useStorage()
+  const { predsFormat, predsPersistentOverlay } = useStorage()
   const [format, dispatch] = useReducer(reducer, predsFormat ?? 'minutes')
   const context = useMemo(
-    () => ({ format: predsFormat ?? format, dispatch }),
-    [format, predsFormat, dispatch]
+    () => ({
+      format: predsFormat ?? format,
+      persistentOverlay: predsPersistentOverlay ?? false,
+      dispatch
+    }),
+    [format, predsFormat, predsPersistentOverlay, dispatch]
   )
 
   return (

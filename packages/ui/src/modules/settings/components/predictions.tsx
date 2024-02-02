@@ -12,6 +12,7 @@ import type { FC, ChangeEvent } from 'react'
 const Form = styled.form`
   display: flex;
   flex-direction: column;
+  gap: 20px;
 
   fieldset {
     display: flex;
@@ -35,7 +36,7 @@ const Form = styled.form`
 `
 const PredictionsSettings: FC = () => {
   const storageDispatch = useStorageDispatch()
-  const { format } = usePredictionsSettings()
+  const { format, persistentOverlay } = usePredictionsSettings()
   const onChangeFormat = useCallback(
     (evt: ChangeEvent<HTMLInputElement>) => {
       const { value } = evt.currentTarget
@@ -49,12 +50,32 @@ const PredictionsSettings: FC = () => {
     },
     [storageDispatch]
   )
+  const onChangePersistentOverlay = useCallback(() => {
+    const value = !persistentOverlay
+
+    storageDispatch({
+      value,
+      type: 'predsPersistentOverlay'
+    })
+  }, [storageDispatch, persistentOverlay])
 
   return (
     <Form
       onSubmit={evt => {
         evt.preventDefault()
       }}>
+      <FormItem
+        label="Persistent overlay"
+        direction="horizontal-rev"
+        justifyContent="flex-end"
+        fontWeight="normal">
+        <input
+          type="checkbox"
+          name="visible"
+          checked={persistentOverlay}
+          onChange={onChangePersistentOverlay}
+        />
+      </FormItem>
       <fieldset className="row">
         <legend>Format</legend>
         <FormItem

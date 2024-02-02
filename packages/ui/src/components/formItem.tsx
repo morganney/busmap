@@ -71,8 +71,9 @@ const getJustifyContent = ({ direction, justifyContent }: FormItemProps) => {
 const Label = styled.label<LabelProps>`
   display: flex;
   flex-direction: ${getFlexDirection};
-  gap: 4px;
+  gap: 5px;
   font-size: ${({ fontSize }) => fontSize};
+  align-items: center;
 
   span:first-child {
     font-weight: ${({ fontWeight }) => fontWeight ?? 600};
@@ -93,6 +94,10 @@ const Wrap = styled.div<FormItemProps>`
   justify-content: ${getJustifyContent};
   gap: ${getGap};
   font-size: ${({ fontSize }) => fontSize};
+
+  input[type='radio'] {
+    margin: 0;
+  }
 
   > div:last-child {
     display: flex;

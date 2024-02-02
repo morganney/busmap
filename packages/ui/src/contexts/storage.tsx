@@ -20,6 +20,10 @@ interface PredsFormatUpdate {
   type: 'predsFormat'
   value?: PredictionFormat
 }
+interface PredsPersistentOverlayUpdate {
+  type: 'predsPersistentOverlay'
+  value: boolean
+}
 interface VehicleSpeedUnitUpdate {
   type: 'vehicleSpeedUnit'
   value?: SpeedUnit
@@ -57,6 +61,7 @@ interface StorageSettingsChanged {
 }
 type StorageAction =
   | PredsFormatUpdate
+  | PredsPersistentOverlayUpdate
   | VehicleVisible
   | VehicleSpeedUnitUpdate
   | VehicleColorPredictedUpdate
@@ -97,6 +102,8 @@ const reducer = (state: StorageState, action: StorageAction) => {
     }
     case 'predsFormat':
       return { ...state, predsFormat: action.value }
+    case 'predsPersistentOverlay':
+      return { ...state, predsPersistentOverlay: action.value }
     case 'vehicleVisible':
       return { ...state, vehicleVisible: action.value }
     case 'vehicleSpeedUnit':
@@ -116,6 +123,7 @@ const KEYS = {
   vehicleSpeedUnit: 'busmap-vehicleSpeedUnit',
   vehicleColorPredicted: 'busmap-vehicleColorPredicted',
   predsFormat: 'busmap-predsFormat',
+  predsPersistentOverlay: 'busmap-predsPersistentOverlay',
   favorites: 'busmap-favorites'
 }
 const initStorageState = { favorites: [] }
@@ -127,6 +135,7 @@ const init = (state: StorageState): StorageState => {
   const vehicleSpeedUnit = localStorage.getItem(KEYS.vehicleSpeedUnit)
   const vehicleColorPredicted = localStorage.getItem(KEYS.vehicleColorPredicted)
   const predsFormat = localStorage.getItem(KEYS.predsFormat)
+  const predsPersistentOverlay = localStorage.getItem(KEYS.predsPersistentOverlay)
   const favoritesJson = localStorage.getItem(KEYS.favorites)
 
   if (isAMode(themeMode)) {
@@ -135,6 +144,10 @@ const init = (state: StorageState): StorageState => {
 
   if (isAPredictionFormat(predsFormat)) {
     state.predsFormat = predsFormat
+  }
+
+  if (predsPersistentOverlay !== null) {
+    state.predsPersistentOverlay = predsPersistentOverlay !== 'false'
   }
 
   if (isASpeedUnit(vehicleSpeedUnit)) {
@@ -190,6 +203,17 @@ const StorageProvider: FC<{ children: ReactNode }> = ({ children }) => {
       localStorage.removeItem(KEYS.predsFormat)
     }
   }, [storage.predsFormat])
+
+  useEffect(() => {
+    if (storage.predsPersistentOverlay !== undefined) {
+      localStorage.setItem(
+        KEYS.predsPersistentOverlay,
+        storage.predsPersistentOverlay.toString()
+      )
+    } else {
+      localStorage.removeItem(KEYS.predsPersistentOverlay)
+    }
+  }, [storage.predsPersistentOverlay])
 
   useEffect(() => {
     if (storage.vehicleSpeedUnit) {
