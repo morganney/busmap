@@ -1,10 +1,14 @@
 import styled from 'styled-components'
 import { useCallback } from 'react'
+import { latLng } from 'leaflet'
+import { MapMarked } from '@busmap/components/icons/mapMarked'
+import { PB20T } from '@busmap/components/colors'
 
 import { Time } from './predictionFormats/time.js'
 import { Minutes } from './predictionFormats/minutes.js'
 
 import { useGlobals } from '../globals.js'
+import { useMap } from '../contexts/map.js'
 import { useVehicles } from '../contexts/vehicles.js'
 import { useTheme } from '../modules/settings/contexts/theme.js'
 import { usePredictionsSettings } from '../modules/settings/contexts/predictions.js'
@@ -12,27 +16,39 @@ import { useVehicleSettings } from '../modules/settings/contexts/vehicle.js'
 import { PredictedVehiclesColors, blinkStyles } from '../common.js'
 
 import type { FC } from 'react'
-import type { Prediction } from '@core/types'
+import type { Prediction, Stop } from '@core/types'
 import type { Mode } from '@busmap/common/types/settings'
 
 interface PredictionsOverlayProps {
   preds?: Prediction[]
+  stop?: Stop
 }
 
-const Section = styled.section`
+const Section = styled.section<{ $mode: Mode }>`
   position: fixed;
-  right: 24px;
-  top: 24px;
+  right: 8px;
+  top: 8px;
   z-index: 999;
   display: flex;
   flex-direction: column;
   gap: 8px;
   min-width: 100px;
+  max-width: 132px;
 
   h3 {
     margin: 0;
     font-size: 2rem;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: ${({ $mode }) => ($mode === 'light' ? 'black' : 'white')};
+  }
+
+  @media (width > 431px) {
+    right: 24px;
+    top: 24px;
+    max-width: 175px;
   }
 `
 const Preds = styled.ul`
@@ -44,6 +60,12 @@ const Preds = styled.ul`
   gap: 12px;
 `
 const Pred = styled.li<{ markPredictedVehicles: boolean; $mode: Mode }>`
+  button {
+    color: ${({ markPredictedVehicles }) => (markPredictedVehicles ? 'white' : PB20T)};
+    text-shadow: ${({ markPredictedVehicles }) =>
+      markPredictedVehicles ? `0 0 2px ${PB20T}` : 'none'};
+  }
+
   &:last-child button {
     background-color: ${({ markPredictedVehicles }) =>
       markPredictedVehicles ? PredictedVehiclesColors.red : '#ffffffcc'};
@@ -64,23 +86,25 @@ const Button = styled.button`
   margin: 0;
   cursor: pointer;
   border: none;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   font-weight: bold;
-  min-height: 28px;
+  min-height: 32px;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 3px;
 
   em {
     ${blinkStyles};
   }
 `
-const PredictionsOverlay: FC<PredictionsOverlayProps> = ({ preds }) => {
+const PredictionsOverlay: FC<PredictionsOverlayProps> = ({ preds, stop }) => {
+  const map = useMap()
   const { collapsed, dispatch } = useGlobals()
   const { mode } = useTheme()
   const vehicles = useVehicles()
-  const { format } = usePredictionsSettings()
+  const { format, persistentOverlay } = usePredictionsSettings()
   const { markPredictedVehicles } = useVehicleSettings()
   const onClickPred = useCallback(
     (vid: string) => {
@@ -94,8 +118,16 @@ const PredictionsOverlay: FC<PredictionsOverlayProps> = ({ preds }) => {
     },
     [dispatch, vehicles]
   )
+  const onClickTitle = useCallback(() => {
+    if (map && stop) {
+      const { lat, lon } = stop
+      const latLon = latLng(lat, lon)
 
-  if (!collapsed || !preds?.length) {
+      map.setView(latLon, Math.max(map.getZoom(), 16))
+    }
+  }, [stop, map])
+
+  if ((!collapsed && !persistentOverlay) || !preds?.length || !stop) {
     return null
   }
 
@@ -105,8 +137,11 @@ const PredictionsOverlay: FC<PredictionsOverlayProps> = ({ preds }) => {
   const Format = format === 'minutes' ? Minutes : Time
 
   return (
-    <Section>
-      <h3>{title}</h3>
+    <Section $mode={mode}>
+      <h3>
+        <span>{title}</span>
+        <MapMarked onClick={onClickTitle} color={mode === 'light' ? 'black' : 'white'} />
+      </h3>
       <Preds>
         {values.map(({ minutes, epochTime, affectedByLayover, vehicle }) => (
           <Pred

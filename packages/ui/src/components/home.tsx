@@ -58,13 +58,14 @@ const reducer = (state: HomeState, action: HomeAction) => {
 const Aside = styled.aside<{ mode: Mode; collapsed: boolean }>`
   position: fixed;
   top: 0;
-  left: 49px;
-  z-index: 999;
+  left: 48px;
+  z-index: 9999;
   height: 100%;
-  width: calc(100% - 49px);
+  width: calc(100% - 48px);
   max-width: 385px;
   background: ${({ mode }) => (mode === 'light' ? '#ffffffcc' : `${PB10T}cc`)};
-  transform: ${({ collapsed }) => (!collapsed ? 'translateX(0)' : 'translateX(-100%)')};
+  transform: ${({ collapsed }) =>
+    !collapsed ? 'translateX(0)' : 'translateX(calc(-100% - 48px))'};
   transition: transform 0.25s ease;
 
   @media (width >= 431px) and (height >= 536px) {
@@ -250,7 +251,7 @@ const Home: FC = () => {
           <Loading text="Loading agencies" />
         )}
       </Aside>
-      <PredictionsOverlay preds={preds} />
+      <PredictionsOverlay preds={preds} stop={stop} />
       {!homeStop && <EmptyMap />}
     </>
   )
