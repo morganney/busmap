@@ -81,5 +81,5 @@ const Layout: FC<LayoutProps> = ({ children }) => {
   )
 }
 
-export { Layout }
+export default Layout
 export type { LayoutProps }

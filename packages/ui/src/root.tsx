@@ -1,15 +1,16 @@
-import { useState, useEffect, StrictMode } from 'react'
+import { useState, useEffect, StrictMode, lazy, Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import { Toaster } from '@busmap/components/toast'
 
 import { authn } from './channels.js'
 import { status } from './api/authn.js'
-import { Layout } from './layout.js'
 import { Providers } from './providers.js'
 import { Navigation } from './components/navigation.js'
+import { Loading } from './components/loading.js'
 
 import type { Status } from './types.js'
 
+const Layout = lazy(() => import('./layout.js'))
 const Root = () => {
   const [authStatus, setAuthStatus] = useState<Status>()
 
@@ -37,9 +38,11 @@ const Root = () => {
       <Providers>
         <Toaster anchor="top right" />
         <Navigation status={authStatus} />
-        <Layout>
-          <Outlet />
-        </Layout>
+        <Suspense fallback={<Loading text="Loading" />}>
+          <Layout>
+            <Outlet />
+          </Layout>
+        </Suspense>
       </Providers>
     </StrictMode>
   )
