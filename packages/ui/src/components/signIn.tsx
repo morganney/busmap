@@ -1,3 +1,4 @@
+import styled from 'styled-components'
 import { useEffect, useRef, useState } from 'react'
 import { toast } from '@busmap/components/toast'
 
@@ -13,6 +14,11 @@ import { Dots } from './dots.js'
 import type { FC } from 'react'
 import type { RiderFavoriteItem } from '@busmap/common/types/favorites'
 
+const Btn = styled.div<{ gsiLoaded: boolean }>`
+  > div {
+    display: ${({ gsiLoaded }) => (gsiLoaded ? 'inline-block' : 'none')};
+  }
+`
 const SignIn: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
   const { dispatch, page } = useGlobals()
@@ -103,7 +109,7 @@ const SignIn: FC = () => {
           </p>
         </>
       )}
-      <div ref={ref} />
+      <Btn ref={ref} gsiLoaded={gsiLoaded} />
     </Page>
   )
 }
