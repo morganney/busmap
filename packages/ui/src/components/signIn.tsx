@@ -15,22 +15,24 @@ import type { RiderFavoriteItem } from '@busmap/common/types/favorites'
 
 const SignIn: FC = () => {
   const ref = useRef<HTMLDivElement>(null)
-  const { dispatch } = useGlobals()
+  const { dispatch, page } = useGlobals()
   const [riderFavorites, setRiderFavorites] = useState<RiderFavoriteItem[]>()
   const [loading, setLoading] = useState(false)
   const [gsiLoaded, setGsiLoaded] = useState(false)
   const storageDispatch = useStorageDispatch()
 
   useEffect(() => {
-    const script = document.createElement('script')
+    if (page === 'signin' && !gsiLoaded) {
+      const script = document.createElement('script')
 
-    script.src = 'https://accounts.google.com/gsi/client'
-    script.async = true
-    script.addEventListener('load', () => {
-      setGsiLoaded(true)
-    })
-    document.head.appendChild(script)
-  }, [])
+      script.src = 'https://accounts.google.com/gsi/client'
+      script.async = true
+      script.addEventListener('load', () => {
+        setGsiLoaded(true)
+      })
+      document.head.appendChild(script)
+    }
+  }, [page, gsiLoaded])
 
   useEffect(() => {
     if (gsiLoaded && window.google && ref.current) {

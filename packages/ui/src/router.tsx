@@ -1,8 +1,8 @@
+import { lazy } from 'react'
 import { createBrowserRouter, useRouteError } from 'react-router-dom'
 
 import { Root } from './root.js'
 import { Providers } from './providers.js'
-import { Home } from './components/home.js'
 import { ErrorBoundary } from './components/error/boundary.js'
 import { NotFound } from './components/error/notFound.js'
 
@@ -21,6 +21,7 @@ const ErrorElement = () => {
 
   return <ErrorBoundary error={new Error('An unknown error occured.')} />
 }
+const Home = lazy(() => import('./components/home.js'))
 const router = createBrowserRouter([
   {
     id: 'root',
