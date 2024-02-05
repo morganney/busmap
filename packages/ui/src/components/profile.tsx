@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { useCallback, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { toast } from '@busmap/components/toast'
 import { Button } from '@busmap/components/button'
 import { SignOut } from '@busmap/components/icons/signOut'
@@ -66,6 +67,7 @@ const ProviderBlock = styled.div`
   }
 `
 const Profile: FC = () => {
+  const navigate = useNavigate()
   const { mode } = useTheme()
   const { user, dispatch } = useGlobals()
   const dispatchStorage = useStorageDispatch()
@@ -76,16 +78,20 @@ const Profile: FC = () => {
     try {
       const result = await logout()
 
-      dispatch({ type: 'page', value: 'locate' })
+      dispatch({ type: 'page', value: 'select' })
+      dispatch({ type: 'collapsed', value: true })
       dispatch({ type: 'user', value: undefined })
+      dispatch({ type: 'agency', value: undefined })
       dispatchStorage({ type: 'favoriteReset' })
       toast({ type: 'info', message: `Goodbye ${result.user.givenName ?? ''}.` })
+      document.body.classList.remove('busmap-loaded')
+      navigate('/')
     } catch {
       toast({ type: 'error', message: 'Error signing out!' })
     } finally {
       setLoading(false)
     }
-  }, [dispatch, dispatchStorage])
+  }, [dispatch, dispatchStorage, navigate])
   const onClickDisconnect = useCallback(() => {
     if (user && google) {
       setLoading(true)
