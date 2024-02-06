@@ -36,9 +36,8 @@ const BusmapPage: FC = () => {
           <PageTabButton page="select">Selector</PageTabButton> tab to find a transit
           agency, route, direction, and stop that fits your itinerary. Alternatively, you
           can use the <PageTabButton page="locate">Nearby</PageTabButton> tab where you
-          will be prompted to permit your device to share its geolocation with Busmap, and
-          a list of the nearest stops for currently running transit agencies will be
-          displayed.
+          will be prompted to share your device&apos;s geolocation with Busmap, and a list
+          of the nearest stops will be displayed.
         </p>
         <p>
           From either option, you can favorite the stop by clicking the star ⭐ icon, and

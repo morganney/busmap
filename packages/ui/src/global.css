@@ -263,3 +263,7 @@ body.busmap-dark .busmap-vehicle::before {
   align-items: center;
   justify-content: center;
 }
+/* without, scrollbars appear after sign in. */
+#g_a11y_announcement {
+  display: none;
+}

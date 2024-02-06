@@ -134,7 +134,7 @@ const Nav = styled.nav<{ mode: Mode; isSignedIn: boolean }>`
     display: ${({ isSignedIn }) => (isSignedIn ? 'none' : 'list-item')};
 
     button {
-      padding: 3px 5px;
+      padding: 5px;
       white-space: nowrap;
       flex-direction: row;
       justify-content: center;
