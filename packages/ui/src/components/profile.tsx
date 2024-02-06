@@ -83,9 +83,11 @@ const Profile: FC = () => {
       dispatch({ type: 'user', value: undefined })
       dispatch({ type: 'agency', value: undefined })
       dispatchStorage({ type: 'favoriteReset' })
-      toast({ type: 'info', message: `Goodbye ${result.user.givenName ?? ''}.` })
       document.body.classList.remove('busmap-loaded')
       navigate('/')
+      setTimeout(() => {
+        toast({ type: 'info', message: `Goodbye ${result.user.givenName ?? ''}.` })
+      }, 350)
     } catch {
       toast({ type: 'error', message: 'Error signing out!' })
     } finally {

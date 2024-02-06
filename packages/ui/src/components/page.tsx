@@ -23,7 +23,7 @@ const Section = styled.section`
 
   p {
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.35;
   }
 `
 const Page: FC<PageProps> = ({ title, children, className, loading = false }) => {

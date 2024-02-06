@@ -49,10 +49,6 @@ const SignIn: FC = () => {
         callback: async response => {
           setLoading(true)
 
-          if (ref.current) {
-            ref.current.style.setProperty('display', 'none')
-          }
-
           try {
             const user = await login(response.credential)
             const riderFavs = await getFavorites()
@@ -66,10 +62,6 @@ const SignIn: FC = () => {
             toast({ type: 'error', message: 'Error signing in.' })
           } finally {
             setLoading(false)
-
-            if (ref.current) {
-              ref.current.style.setProperty('display', 'block')
-            }
           }
         }
       })
