@@ -191,6 +191,7 @@ body.busmap-dark .busmap-user-circle {
   height: auto !important;
   white-space: nowrap;
   border: 1px solid black;
+  border-radius: 4px;
   transition: transform 3.75s ease;
   font-size: 1.2rem;
 }
@@ -210,6 +211,7 @@ body.busmap-dark .busmap-vehicle {
   display: block;
   background: black;
   position: absolute;
+  border-radius: 3px;
 }
 body.busmap-dark .busmap-vehicle::before {
   background: var(--color-dark);
@@ -241,12 +243,13 @@ body.busmap-dark .busmap-vehicle::before {
 .busmap-vehicle.hidden {
   display: none;
 }
-.busmap-vehicle div {
+.busmap-vehicle > div {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
   position: relative;
+  border-radius: 3px;
 }
 .busmap-vehicle span {
   display: inline-block;
