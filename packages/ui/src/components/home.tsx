@@ -59,7 +59,7 @@ const Aside = styled.aside<{ mode: Mode; collapsed: boolean }>`
   position: fixed;
   top: 0;
   left: 48px;
-  z-index: 9999;
+  z-index: 999;
   height: 100%;
   width: calc(100% - 48px);
   max-width: 385px;
