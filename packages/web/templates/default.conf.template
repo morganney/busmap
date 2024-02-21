@@ -14,6 +14,17 @@ server {
   listen 443 ssl;
   listen [::]:443 ssl;
   http2 on;
+  server_name test.busmap.online;
+  server_tokens off;
+  include /etc/nginx/conf.d/core/ssl.conf;
+
+  return 301 https://try.busmap.online$request_uri;
+}
+
+server {
+  listen 443 ssl;
+  listen [::]:443 ssl;
+  http2 on;
   server_name ${SERVER_NAME};
   root /var/www/${HOST_NAME};
   index index.html;
