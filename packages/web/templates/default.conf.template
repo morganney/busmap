@@ -1,22 +1,8 @@
 # Configuration to stage a production build.
 
 server {
-  # Redirect server configuration
-  listen 80 default_server;
-  listen [::]:80 default_server;
-  server_name _;
-  server_tokens off;
-
-  return 301 https://$host$request_uri;
-}
-
-server {
-  listen 443 ssl;
-  listen [::]:443 ssl;
-  http2 on;
   server_name test.busmap.online;
   server_tokens off;
-  include /etc/nginx/conf.d/core/ssl.conf;
 
   return 301 https://try.busmap.online$request_uri;
 }

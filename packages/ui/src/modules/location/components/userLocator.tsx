@@ -79,7 +79,7 @@ const UserLocator: FC<UserLocatorProps> = ({ withDistance = false }) => {
     }
   }, [position, map])
 
-  if (permission !== 'granted') {
+  if (permission === 'denied') {
     return null
   }
 
