@@ -86,3 +86,13 @@ Here is another example using shell environment variables defined when starting 
 ```
 SERVER_NAME=busmap.online HOST_NAME=busmap.online docker compose -f compose.yaml up --attach-dependencies stage
 ```
+
+### Rebuilding in Production
+
+To rebuild images and recreate containers while already running on production server:
+
+1. `cd code/busmap`
+2. `git pull origin main`
+3. `docker compose -f compose.yaml -f compose.production.yaml up -d --build stage`
+4. `docker builder prune -a` (instance has little drive space, so this is essential)
+5. Optionally remove any dangling images too, `docker image prune`.

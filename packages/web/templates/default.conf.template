@@ -1,8 +1,11 @@
 # Configuration to stage a production build.
 
 server {
+  listen 443 ssl;
+  http2 on;
   server_name test.busmap.online;
   server_tokens off;
+  include /etc/nginx/conf.d/core/ssl.conf;
 
   return 301 https://try.busmap.online$request_uri;
 }
