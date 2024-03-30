@@ -5,7 +5,7 @@ EXPOSE 5432
 FROM redis:7.2.3 AS redis
 EXPOSE 6379
 
-FROM node:20.10-bookworm AS builder
+FROM node:20.12-bookworm AS builder
 ARG VITE_GOOG_CLIENT_ID
 WORKDIR /app
 COPY . .
@@ -17,7 +17,7 @@ RUN npm run build -w api
 RUN npm run build -w ui
 EXPOSE 3000 5173 9000
 
-FROM node:20.10-bookworm-slim AS busmap
+FROM node:20.12-bookworm-slim AS busmap
 WORKDIR /app
 COPY --chown=node:node --from=builder /app/package.json package.json
 COPY --chown=node:node --from=builder /app/package-lock.json package-lock.json

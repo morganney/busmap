@@ -103,7 +103,7 @@
     "match-sorter": "^6.3.1"
   },
   "devDependencies": {
-    "@knighted/duel": "^1.0.1",
+    "@knighted/duel": "^1.0.7",
     "@storybook/addon-a11y": "8.0.0-alpha.12",
     "@storybook/addon-essentials": "8.0.0-alpha.12",
     "@storybook/builder-vite": "8.0.0-alpha.12",
