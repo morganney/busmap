@@ -30,7 +30,7 @@
     "@busmap/common": "^1.0.0-alpha.0",
     "connect-redis": "^7.1.0",
     "debug": "^2.6.9",
-    "express": "^4.18.2",
+    "express": "^4.19.2",
     "express-session": "^1.17.3",
     "google-auth-library": "^9.2.0",
     "helmet": "^7.1.0",
@@ -39,7 +39,7 @@
     "postgres": "^3.4.3",
     "prexit": "^2.2.0",
     "redis": "^4.6.10",
-    "restbus": "^2.3.0"
+    "restbus": "^2.4.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
