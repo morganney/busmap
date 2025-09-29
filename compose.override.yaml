@@ -10,14 +10,18 @@ services:
       - '8080:8080'
   api:
     build:
-      target: builder
+      target: builder-api
     image: busmap-api_dev
     container_name: api_dev
+    user: node
     ports:
       - '3000:3000'
     volumes:
       - ./packages/api:/app/packages/api
-      - ./packages/common/dist:/app/packages/common/dist
+      # Use dist built inside the image for shared packages
+      - node_modules_root:/app/node_modules
+      - node_modules_api:/app/packages/api/node_modules
+      - dist_api:/app/packages/api/dist
     command:
       - npm
       - run
@@ -29,13 +33,18 @@ services:
       - api
     build:
       context: .
-      target: builder
+      target: builder-ui
     container_name: ui
+    user: node
     volumes:
       - ./packages/ui:/app/packages/ui
-      - ./packages/common/dist:/app/packages/common/dist
-      - ./packages/components/dist:/app/packages/components/dist
+      # Use dist built inside the image for shared packages
+      - ./packages/components/dist:/app/packages/components/dist:ro
+      - ./packages/common/dist:/app/packages/common/dist:ro
       - ./.env:/app/.env # used to inject VITE_ env vars
+      - node_modules_root:/app/node_modules
+      - node_modules_ui:/app/packages/ui/node_modules
+      - dist_ui:/app/packages/ui/dist
     ports:
       - '5173:5173'
     environment:
@@ -53,13 +62,16 @@ services:
       context: .
       target: playwright
     container_name: playwright
+    user: node
     volumes:
       - ./packages/ui:/app/packages/ui
-      - ./packages/common/dist:/app/packages/common/dist
-      - ./packages/components/dist:/app/packages/components/dist
+      # Use dist built inside the image for shared packages
       - ./tests:/app/tests
       - ./playwright.config.ts:/app/playwright.config.ts
       - ./.env:/app/.env # used to inject VITE_ env vars
+      - node_modules_root:/app/node_modules
+      - node_modules_ui:/app/packages/ui/node_modules
+      - dist_ui:/app/packages/ui/dist
     ports:
       - '5173:5173'
     environment:
@@ -73,10 +85,13 @@ services:
   storybook:
     build:
       context: .
-      target: builder
+      target: builder-common
     container_name: storybook
+    user: node
     volumes:
       - ./packages/components:/app/packages/components
+      - node_modules_root:/app/node_modules
+      - node_modules_components:/app/packages/components/node_modules
     ports:
       - '9000:9000'
     command:
@@ -101,3 +116,11 @@ services:
   stage:
     volumes:
       - ./packages/ui/dist:/var/www/${HOST_NAME}
+
+volumes:
+  node_modules_root:
+  node_modules_api:
+  node_modules_ui:
+  node_modules_components:
+  dist_ui:
+  dist_api:

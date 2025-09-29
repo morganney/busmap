@@ -4,12 +4,12 @@ import { useGlobals } from '../globals.js'
 import { usePredictions } from '../contexts/predictions'
 
 const useDocMeta = () => {
-  const metaDesc = useRef<Element>()
+  const metaDesc = useRef<HTMLMetaElement | null>(null)
   const { agency, stop } = useGlobals()
   const { predictions } = usePredictions()
 
   useEffect(() => {
-    const meta = document.querySelector('meta[name="description"]')
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="description"]')
 
     if (meta) {
       metaDesc.current = meta

@@ -15,9 +15,12 @@
     "packages/common"
   ],
   "scripts": {
+    "reinstall:platform": "rm -rf node_modules package-lock.json && npm run clean --workspaces --include-workspace-root && npm install",
+    "lock:platform": "npm i --package-lock-only && npm ci",
     "loc": "git ls-files | grep '\\.ts' | xargs wc -l",
     "clean": "rm -rf ./node_modules ./dist",
     "clean:all": "npm run clean --workspaces --include-workspace-root",
+    "docker:clean": "docker builder prune -af && docker volume prune -af && docker rmi $(docker images -a -q)",
     "cycles": "npm run cycles --workspaces",
     "prettier": "prettier . -w",
     "lint": "npm run lint:tests && npm run lint --workspaces",
@@ -27,7 +30,7 @@
     "test:local": "playwright test --project=chromium"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.1",
+    "@playwright/test": "^1.55.1",
     "@types/node": "^20.11.0",
     "@types/styled-components": "^5.1.26",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
@@ -45,8 +48,8 @@
     "prettier": "^3.2.1",
     "stylelint": "^15.11.0",
     "stylelint-config-standard": "^34.0.0",
-    "tsx": "^3.14.0",
-    "typescript": "^5.1.6"
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.2"
   },
   "prettier": {
     "arrowParens": "avoid",
