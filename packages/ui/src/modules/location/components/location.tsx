@@ -75,7 +75,7 @@ const Location = memo(function Location({ active = false }: LocationProps) {
   const { mode } = useTheme()
   const { format } = usePredictionsSettings()
   const { permission, position } = useLocation()
-  const presentation = useRef<Presentation>()
+  const presentation = useRef<Presentation | undefined>(undefined)
   const { data: predictions, error: predictionsError } = useQuery({
     queryKey: ['location', [position?.point.lat, position?.point.lon]],
     queryFn: () => getPredictions(position?.point),

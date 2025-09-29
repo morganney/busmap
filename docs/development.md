@@ -5,8 +5,11 @@ Development is done using Docker and Compose.
 Quick start:
 
 1. Rename `.env.example` to `.env` filling in any missing values as needed.
-2. `docker compose build`
-3. `docker compose up dev`
+2. `npm run clean:all`.
+3. `npm run docker:clean`.
+4. `npm install`.
+5. `npm run build:deps`.
+6. `docker compose up --attach-dependencies dev`.
 
 That will start the `dev`, `session`, `api` and `ui` containers. If you have already setup local DNS and [created the SSL certifcates](../packages/web/certs/README.md), then you should be able to reach the site at `https://busmap.localhost`.
 
@@ -62,6 +65,31 @@ A separate container can be started to run Storybook for `packages/components` a
 It can also be run locally.
 
 - `npm run storybook -w @busmap/components`
+
+#### Troubleshooting: Rollup native binary error
+
+If you see an error like:
+
+> Error: Cannot find module @rollup/rollup-linux-x64-gnu (optional dependency)
+
+This usually means the lockfile and/or node_modules were last resolved on a different OS/architecture, so the platform-specific optional binary for Rollup was not installed for your current platform.
+
+Fix on Linux without deleting the lockfile:
+
+1. Regenerate the lock for the current platform, then install from it:
+   - `npm run lock:platform`
+
+2. Try Storybook again:
+   - `npm run storybook -w @busmap/components`
+
+Alternative (clean reinstall):
+
+- `npm run reinstall:platform`
+
+Why this happens: Rollup 4 distributes platform-specific native binaries as optional dependencies. Cross-platform lockfiles or installs can omit the needed optional package for your OS. See:
+
+- Vite discussion: https://github.com/vitejs/vite/discussions/15532
+- npm CLI issue: https://github.com/npm/cli/issues/4828
 
 ### Stage
 

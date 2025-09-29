@@ -26,7 +26,7 @@ const Directions: FC<Props> = ({
     if (item) {
       if (item.title) {
         return /unknown/i.test(item.title)
-          ? item.shortTitle ?? 'Direction N/A'
+          ? (item.shortTitle ?? 'Direction N/A')
           : item.title
       }
     }

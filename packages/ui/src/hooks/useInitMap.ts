@@ -15,7 +15,7 @@ const useInitMap = () => {
   const mapNode = useRef(document.createElement('div'))
   const selectionRef = useRef(document.createElement('div'))
   const popupRef = useRef(popup({ minWidth: 200 }))
-  const mapRef = useRef<Map>()
+  const mapRef = useRef<Map | undefined>(undefined)
   const routeLayerRef = useRef<LayerGroup>(layerGroup())
   const vehiclesLayerRef = useRef<LayerGroup>(layerGroup())
   const predVehLayerRef = useRef<LayerGroup>(layerGroup())

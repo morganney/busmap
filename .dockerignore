@@ -1,4 +1,7 @@
 node_modules
+**/node_modules
+packages/*/node_modules
+
 Dockerfile
 coverage
 stats.html
@@ -7,3 +10,8 @@ npm-debug.log
 .github
 .git
 .gitignore
+
+# Ignore build outputs to avoid copying host dist into images
+dist
+**/dist
+packages/*/dist

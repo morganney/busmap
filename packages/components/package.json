@@ -89,8 +89,8 @@
   "author": "Morgan Ney <morganney@gmail.com>",
   "license": "MIT",
   "peerDependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
     "styled-components": "^5.3.11"
   },
   "dependencies": {
@@ -103,14 +103,13 @@
     "match-sorter": "^6.3.1"
   },
   "devDependencies": {
-    "@knighted/duel": "^2.0.0-rc.1",
-    "@storybook/addon-a11y": "8.0.5",
-    "@storybook/addon-essentials": "8.0.5",
-    "@storybook/builder-vite": "8.0.5",
-    "@storybook/react": "8.0.5",
-    "@storybook/react-vite": "8.0.5",
+    "@knighted/duel": "^2.1.5",
+    "@storybook/addon-a11y": "^9.1.8",
+    "@storybook/addon-docs": "^9.1.8",
+    "@storybook/react": "^9.1.8",
+    "@storybook/react-vite": "^9.1.8",
     "@types/lodash.debounce": "^4.0.7",
-    "storybook": "8.0.5",
+    "storybook": "^9.1.8",
     "styled-components": "^5.3.11"
   }
 }
